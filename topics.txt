@@ -1,0 +1,30 @@
+Batch Normalization
+Attention Mechanism
+Transformer Architecture
+Backpropagation
+Gradient Descent
+Dropout Regularization
+Convolutional Neural Networks
+Recurrent Neural Networks
+Long Short-Term Memory (LSTM)
+Transfer Learning
+Fine-tuning vs Feature Extraction
+Embeddings and Word2Vec
+RLHF (Reinforcement Learning from Human Feedback)
+Low-Rank Adaptation (LoRA)
+Quantization
+Knowledge Distillation
+Beam Search
+Temperature and Sampling Strategies
+Perplexity
+Tokenization
+Positional Encoding
+Multi-Head Attention
+Cross-Entropy Loss
+Precision, Recall, and F1 Score
+Bias-Variance Tradeoff
+Overfitting and Underfitting
+Data Augmentation
+Learning Rate Scheduling
+Mixture of Experts (MoE)
+Retrieval-Augmented Generation (RAG)
