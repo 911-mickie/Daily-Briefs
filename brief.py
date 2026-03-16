@@ -1,8 +1,8 @@
 import os
 import feedparser
-import google.generativeai as genai
 import requests
 from datetime import date
+from langchain_core.messages import HumanMessage
 
 # ── RSS feeds ──────────────────────────────────────────────────────────────────
 FEEDS = [
@@ -13,87 +13,166 @@ FEEDS = [
     "https://www.deeplearning.ai/the-batch/feed/",
 ]
 
-MAX_ARTICLES = 15
+MAX_ARTICLES = 25
 
 
-# ── Step 3a: Fetch feeds ───────────────────────────────────────────────────────
+# ── Step 1: Fetch feeds ────────────────────────────────────────────────────────
 def fetch_articles() -> list[dict]:
     articles = []
     for url in FEEDS:
         feed = feedparser.parse(url)
-        for entry in feed.entries[:4]:  # up to 4 per feed
+        for entry in feed.entries[:5]:
             articles.append({
                 "title": entry.get("title", "").strip(),
-                "summary": entry.get("summary", entry.get("description", "")).strip()[:300],
+                "summary": entry.get("summary", entry.get("description", "")).strip()[:400],
                 "source": feed.feed.get("title", url),
+                "link": entry.get("link", ""),
             })
-        if len(articles) >= MAX_ARTICLES:
-            break
     return articles[:MAX_ARTICLES]
 
 
-# ── Step 3b: Pick today's concept ─────────────────────────────────────────────
-def get_todays_topic() -> str:
+# ── Step 2: Pick today's concept ──────────────────────────────────────────────
+def get_todays_topics() -> list[str]:
     with open("topics.txt") as f:
         topics = [line.strip() for line in f if line.strip()]
     day = date.today().day
-    return topics[day % len(topics)]
+    return [topics[day % len(topics)]]
 
 
-# ── Step 3c: Call Claude ───────────────────────────────────────────────────────
-def generate_brief(articles: list[dict], topic: str) -> str:
+# ── Step 3: Build LLM client ──────────────────────────────────────────────────
+def get_llm():
+    provider = os.environ.get("MODEL_PROVIDER", "groq").lower()
+
+    if provider == "groq":
+        from langchain_groq import ChatGroq
+        return ChatGroq(
+            api_key=os.environ["GROQ_API_KEY"],
+            model="llama-3.3-70b-versatile",
+        )
+    elif provider == "gemini":
+        from langchain_google_genai import ChatGoogleGenerativeAI
+        return ChatGoogleGenerativeAI(
+            google_api_key=os.environ["GEMINI_API_KEY"],
+            model="gemini-2.0-flash",
+        )
+    elif provider == "anthropic":
+        from langchain_anthropic import ChatAnthropic
+        return ChatAnthropic(
+            api_key=os.environ["ANTHROPIC_API_KEY"],
+            model="claude-haiku-4-5-20251001",
+        )
+    else:
+        raise ValueError(f"Unknown MODEL_PROVIDER: {provider}. Use 'groq', 'gemini', or 'anthropic'.")
+
+
+# ── Step 4: Call LLM ──────────────────────────────────────────────────────────
+def generate_brief(articles: list[dict], topics: list[str]) -> str:
     articles_block = "\n".join(
-        f"[{a['source']}] {a['title']}\n{a['summary']}"
-        for a in articles
+        f"[{i+1}] [{a['source']}] {a['title']}\nURL: {a['link']}\n{a['summary']}"
+        for i, a in enumerate(articles)
     )
 
-    prompt = f"""Here are today's articles from ML/AI sources:
+    concepts_block = "\n".join(f"- {t}" for t in topics)
+
+    prompt = f"""You are writing a daily ML/AI morning brief for a machine learning practitioner preparing for interviews and staying current with the field.
+
+Here are today's articles (each has a URL — you MUST use the exact URLs provided):
 
 {articles_block}
 
-Write a morning brief with exactly these three sections:
+Write the brief using Telegram HTML formatting. Use these exact tags only:
+- <b>text</b> for bold
+- <i>text</i> for italic
+- <a href="URL">text</a> for clickable links — use the EXACT URLs from the articles above, never make up URLs
 
-1. **📰 NEWS** — Top 3 news items, each with a one-line take on why it matters to an ML practitioner.
+Structure the brief exactly like this:
 
-2. **📄 PAPER OF THE DAY** — Pick the most interesting research item from the list and explain it in plain English (3-4 sentences max).
+━━━━━━━━━━━━━━━━━━━
+📰 <b>TOP NEWS</b>
+━━━━━━━━━━━━━━━━━━━
 
-3. **💡 CONCEPT REFRESHER** — Today's concept is: {topic}
-   Explain it clearly in 3-4 lines, then give 2 likely interview questions with one-line answers.
+Pick the 3 most interesting news/product/announcement items (not research papers). For each:
 
-Keep the entire brief under 450 words. Use plain text, no markdown headers beyond what's shown above."""
+• <b><a href="EXACT_URL">Title</a></b>
+<i>Why it matters:</i> One sharp sentence for an ML practitioner.
 
-    genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-    model = genai.GenerativeModel("gemini-2.0-flash")
-    response = model.generate_content(prompt)
-    return response.text
+━━━━━━━━━━━━━━━━━━━
+📄 <b>PAPERS & RESEARCH</b>
+━━━━━━━━━━━━━━━━━━━
+
+Pick the 3 most interesting research papers or technical findings. For each:
+
+• <b><a href="EXACT_URL">Paper title</a></b>
+2-3 sentences: what it does, why it matters, in plain English.
+
+━━━━━━━━━━━━━━━━━━━
+💡 <b>CONCEPT REFRESHER</b>
+━━━━━━━━━━━━━━━━━━━
+
+Today's concept: {concepts_block}
+
+<b>[Concept Name]</b>
+3-4 clear sentences explaining it. Then:
+<b>Q1:</b> [interview question] → <i>[one-line answer]</i>
+<b>Q2:</b> [interview question] → <i>[one-line answer]</i>
+
+Rules:
+- Only use <b>, <i>, <a href=""> HTML tags — nothing else
+- Do NOT use markdown (**bold**, [text](url), ## headers)
+- Never invent or modify URLs — only use exact URLs from the article list above
+- Writing must be punchy and specific, not generic filler"""
+
+    llm = get_llm()
+    response = llm.invoke([HumanMessage(content=prompt)])
+    return response.content
 
 
-# ── Step 3d: Send to Telegram ──────────────────────────────────────────────────
+# ── Step 5: Send to Telegram ──────────────────────────────────────────────────
 def send_telegram(text: str) -> None:
     token = os.environ["TELEGRAM_BOT_TOKEN"]
     chat_id = os.environ["TELEGRAM_CHAT_ID"]
     today = date.today().strftime("%B %-d")
-    message = f"🧠 *ML Daily Brief — {today}*\n\n{text}"
+    header = f"🧠 <b>ML Daily Brief — {today}</b>\n\n"
 
+    payload = {
+        "chat_id": chat_id,
+        "text": header + text,
+        "parse_mode": "HTML",
+        "disable_web_page_preview": True,
+    }
     resp = requests.post(
         f"https://api.telegram.org/bot{token}/sendMessage",
-        json={"chat_id": chat_id, "text": message, "parse_mode": "Markdown"},
+        json=payload,
         timeout=10,
     )
-    resp.raise_for_status()
+
+    if not resp.ok:
+        print(f"Telegram error: {resp.json()}")
+        # Fallback: strip all HTML tags and send as plain text
+        import re
+        plain = re.sub(r"<[^>]+>", "", header + text)
+        resp = requests.post(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            json={"chat_id": chat_id, "text": plain, "disable_web_page_preview": True},
+            timeout=10,
+        )
+        resp.raise_for_status()
 
 
 # ── Main ───────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
+    provider = os.environ.get("MODEL_PROVIDER", "groq")
+    print(f"Using provider: {provider}")
+
     print("Fetching articles...")
     articles = fetch_articles()
     print(f"  Got {len(articles)} articles")
 
-    topic = get_todays_topic()
-    print(f"  Today's concept: {topic}")
+    topics = get_todays_topics()
+    print(f"  Today's concepts: {', '.join(topics)}")
 
-    print("Generating brief with Claude...")
-    brief = generate_brief(articles, topic)
+    print("Generating brief...")
+    brief = generate_brief(articles, topics)
     print("  Done.\n")
     print(brief)
 

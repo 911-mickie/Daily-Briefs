@@ -5,3 +5,6 @@ groq
 langchain
 langchain-groq
 google-generativeai
+langchain-core
+langchain-google-genai
+langchain-anthropic
