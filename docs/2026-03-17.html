@@ -19,27 +19,64 @@
 📰 <b>TOP NEWS</b><br>
 <hr class="divider"><br>
 <br>
-• <b><a href="https://huggingface.co/blog">State of Open Source on Hugging Face: Spring 2026</a></b><br>
-<i>Why it matters:</i> This update provides insights into the latest developments in the HF ecosystem, essential for ML practitioners.<br>
+• <b><a href="https://www.latent.space/p/turbopuffer">Retrieval After RAG: Hybrid Search, Agents, and Database Design — Simon Hørup Eskildsen of Turbopuffer</a></b><br>
+<i>What happened:</i> Turbopuffer's founder details their architecture: a search engine for unstructured data built entirely on object storage and NVMe, with a tiered cost/latency model — skip the consensus layer, lean on cloud primitives, and serve cold queries from S3 and hot ones from memory.<br>
+<i>Why it matters:</i> For anyone building RAG pipelines at scale, this is a direct case study in why vector DB cost structure matters as much as recall quality — the $5k→$30k/month jump that killed Readwise's semantic search feature is the exact inflection point most RAG systems hit in production.<br>
+<i>Interview angle:</i> Be ready to discuss trade-offs between managed vector DB services vs. object-storage-native retrieval backends when designing a RAG system under cost constraints.<br>
+<i>Connection to your work:</i> Lexi's retrieval layer will face this exact cost/latency trade-off as codebase sizes scale — understanding tiered storage (object → NVMe → memory) maps directly to how you'd architect the vector store behind your file-relevance queries.<br>
 <br>
-• <b><a href="https://huggingface.co/blog">Holotron-12B - High Throughput Computer Use Agent</a></b><br>
-<i>Why it matters:</i> Signifies a significant advancement in high-throughput computing impacting various ML applications.<br>
+• <b><a href="https://simonwillison.net/guides/agentic-engineering-patterns/subagents/#atom-everything">Subagents — Agentic Engineering Patterns</a></b><br>
+<i>What happened:</i> Simon Willison publishes a detailed breakdown of the subagent pattern as used by Claude Code: dispatching a fresh context window to a child agent for scoped tasks (e.g., repo exploration), returning a structured summary to the parent, keeping top-level context clean.<br>
+<i>Why it matters:</i> Context budget management is the core engineering constraint in agentic systems — subagents aren't just an API feature, they're the primary mechanism for keeping long-horizon tasks coherent without hitting token limits.<br>
+<i>Interview angle:</i> Expect questions on how you'd design a multi-agent orchestration layer that decomposes tasks, manages sub-context lifecycles, and aggregates results without losing information fidelity.<br>
+<i>Connection to your work:</i> Lexi's batch summarization pass over a codebase is structurally identical to Claude Code's Explore subagent — formalizing this as a subagent pattern (with scoped prompts and structured return schemas) would make the architecture significantly more extensible as you scale toward a full coding agent.<br>
+<br>
+• <b><a href="https://openai.com/index/introducing-gpt-5-4-mini-and-nano">Introducing GPT-5.4 mini and nano</a></b><br>
+<i>What happened:</i> OpenAI released GPT-5.4 mini and nano — smaller, faster variants of GPT-5.4 explicitly optimized for tool use, multimodal reasoning, coding, and high-volume subagent workloads.<br>
+<i>Why it matters:</i> Having a cheap, fast model tier purpose-built for agentic subtasks changes the cost calculus for multi-agent pipelines — you can now route exploration/worker subagents to nano while reserving full model capacity for planning and synthesis.<br>
+<i>Interview angle:</i> Be able to discuss model routing strategies in agent architectures — when to use a smaller model for a subtask vs. the frontier model, and how to evaluate quality degradation at each tier.<br>
 <br>
 <hr class="divider"><br>
 📄 <b>PAPERS & RESEARCH</b><br>
 <hr class="divider"><br>
 <br>
-• <b><a href="https://arxiv.org">Hitchhikers Guide to AI Agents</a></b><br>
-A comprehensive introduction to AI agents covering real-world applications. Understanding agents is crucial for autonomous systems.<br>
+• <b><a href="https://huggingface.co/papers/2603.15594">OpenSeeker: Democratizing Frontier Search Agents by Fully Open-Sourcing Training Data</a></b><br>
+A purely academic team achieves SOTA search agent performance using only 11.7k synthesized training samples — no RL, no continual pre-training, SFT only — releasing both the 30B model and the full training data. Their data synthesis pipeline uses Entity Obfuscation to reverse-engineer web graphs into multi-hop queries, and Asymmetric Context Training to teach the model to predict expert search actions from raw noisy HTML. The result beats Alibaba's Tongyi DeepResearch (48.4% vs 46.7% on BrowseComp-ZH) with a fraction of the training complexity, directly challenging the assumption that frontier search agents require corporate-scale data pipelines.<br>
+<i>Interview angle:</i> Be ready to discuss trajectory synthesis and how training data quality and task complexity can substitute for scale — especially relevant if asked about fine-tuning agents on tool-use traces.<br>
+<i>Connection to your work:</i> The Asymmetric Context Training technique — teaching a model to extract signal from noisy raw HTML — maps directly to what your OCR pipeline does at inference time, and hints at how you might fine-tune a model specifically on noisy document extraction trajectories.<br>
+<br>
+• <b><a href="https://engineering.fb.com/2025/10/17/ai-research/scaling-llm-inference-innovations-tensor-parallelism-context-parallelism-expert-parallelism/">Scaling LLM Inference: Innovations in Tensor Parallelism, Context Parallelism, and Expert Parallelism</a></b><br>
+Meta details how they separate the compute profile of prefill (compute-bound, quadratic attention scaling) from decoding (memory-bandwidth-bound, KV cache reads) and apply distinct parallelism strategies to each: tensor parallelism for weight distribution, context parallelism for long-sequence prefill, and expert parallelism for MoE routing. Their targets — TTFT under 350ms, TTIT under 25ms — are hard production SLAs, not theoretical benchmarks. This is the clearest public articulation of how a hyperscaler actually deploys LLMs at production scale, beyond what's in most academic papers.<br>
+<i>Interview angle:</i> Any system design question at Meta, Google, or NVIDIA touching LLM serving will probe whether you understand prefill/decode separation and why they have fundamentally different bottlenecks.<br>
+<br>
+• <b><a href="https://simonwillison.net/2026/Mar/16/codex-subagents/#atom-everything">Use subagents and custom agents in Codex</a></b><br>
+OpenAI GA'd subagents in Codex, introducing a three-tier default agent structure (explorer, worker, default) plus user-definable custom agents as TOML configs in <i>~/.codex/agents/</i>, each with custom instructions and assigned models. The "worker" agent appears designed for high-parallelism small-task fan-out, while "default" handles general orchestration — the TOML-based custom agent definition is a notable shift toward user-programmable agent topologies. Combined with the GPT-5.4 nano announcement, this makes cheap parallelized subagent execution a practical default architecture for coding agents.<br>
+<i>Interview angle:</i> Be prepared to design a custom agent topology for a coding task — what roles you'd define, how you'd assign models per role, and how you'd handle result aggregation across parallel workers.<br>
+<i>Connection to your work:</i> Lexi's planned extension into a full coding agent maps precisely onto this architecture — defining a file-explorer agent, a summarization worker agent, and a query-routing orchestrator agent, each using the cheapest capable model, is a concrete near-term design target.<br>
 <br>
 <hr class="divider"><br>
 💡 <b>CONCEPT REFRESHER</b><br>
 <hr class="divider"><br>
 <br>
-<b>Temperature and Sampling Strategies</b><br>
-Temperature in ML refers to a hyperparameter used in sampling strategies to control the randomness of output. Proper temperature settings improve model performance and convergence.<br>
-<b>Q1:</b> What is the role of temperature in sampling? → <i>Controls randomness to balance exploration and exploitation.</i><br>
-<b>Q2:</b> Why is adjusting temperature important? → <i>It affects model performance by influencing solution space exploration.</i>
+<b>Context Window Budget Management in Agentic Systems</b><br>
+<br>
+In agentic LLM systems, the context window is a finite, non-replenishable resource per inference call — once full, you either truncate, summarize, or fail. Unlike single-turn generation, agents accumulate tool call results, conversation history, retrieved chunks, and intermediate reasoning traces across many steps, making context budget exhaustion the primary failure mode in long-horizon tasks. The core strategies are: (1) <b>subagent delegation</b> — dispatch scoped child agents with fresh windows for bounded subtasks and return only a compressed summary; (2) <b>rolling summarization</b> — periodically compress older context into a summary and evict raw history; (3) <b>retrieval over memory</b> — don't keep everything in context, externalize to a vector store and retrieve on demand. A common misconception is that larger context windows (1M tokens) eliminate this problem — benchmarks consistently show quality degradation well before the limit, and cost scales linearly with tokens used, making aggressive context trimming a production necessity even when headroom exists.<br>
+<br>
+<b>Q1:</b> Why does Claude Code use a subagent for repo exploration rather than just loading all files into the main context? → <i>To preserve top-level context budget for planning and synthesis, and because exploration is a bounded scoped task whose output can be summarized into a compact artifact.</i><br>
+<br>
+<b>Q2:</b> You have a RAG pipeline where retrieved chunks plus chat history are approaching the context limit mid-session. What are your mitigation options in priority order? → <i>First, compress/evict older chat turns via rolling summarization; second, reduce chunk count or chunk size from retrieval; third, re-rank retrieved chunks more aggressively to keep only the highest-signal ones.</i><br>
+<br>
+<b>Q3:</b> In a multi-agent coding system, a worker subagent needs to return its findings to the orchestrator — what's the right output schema design to minimize orchestrator context consumption? → <i>Return a structured, typed summary (e.g., JSON with file paths, relevance scores, and a one-sentence rationale per file) rather than raw content — the orchestrator consumes the schema, not the evidence, and fetches raw content on demand.</i><br>
+<br>
+<hr class="divider"><br>
+🔗 <b>QUICK LINKS</b><br>
+<hr class="divider"><br>
+<br>
+• <b><a href="https://simonwillison.net/2026/Mar/16/mistral-small-4/#atom-everything">Introducing Mistral Small 4</a></b> — 119B MoE (6B active), Apache 2 licensed, unifies reasoning (Magistral), multimodal (Pixtral), and agentic coding (Devstral) into one model with tunable reasoning effort; relevant as a self-hostable alternative to GPT-5.4 mini for your agent toolchain.<br>
+<br>
+• <b><a href="https://huyenchip.com//2025/01/07/agents.html">Chip Huyen — Agents</a></b> — Foundational framework covering agent architecture, tools, planning, and failure modes adapted from <i>AI Engineering</i>; essential reading before any agent system design interview.<br>
+<br>
+• <b><a href="https://huyenchip.com//2024/07/25/genai-platform.html">Chip Huyen — Building A Generative AI Platform</a></b> — End-to-end GenAI platform architecture covering context augmentation, guardrails, model routing, caching, and observability; directly maps to how you'd design Lexi's production backend.
     </main>
 
     <footer>
