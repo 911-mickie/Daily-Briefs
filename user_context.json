@@ -1,0 +1,24 @@
+{
+  "role": "AI/ML Engineer focused on GenAI, RAG systems, agentic workflows, document intelligence, and production ML systems, preparing for high-impact roles at top product companies and strong AI startups",
+  "focus_areas": [
+    "RAG pipelines, retrieval systems, and vector databases",
+    "Multi-agent systems and agentic workflows",
+    "LLMs, transformers, and production GenAI systems",
+    "Document intelligence, OCR pipelines, and multimodal extraction",
+    "Code understanding, code generation, and developer productivity tools",
+    "Vision models and multimodal AI applications",
+    "ML system design, APIs, and deployment in production environments"
+  ],
+  "interview_target_companies": [
+    "Google",
+    "Microsoft",
+    "Amazon",
+    "Meta",
+    "Adobe",
+    "Salesforce",
+    "NVIDIA",
+    "OpenAI",
+    "Anthropic",
+    "High-growth AI startups"
+  ]
+}

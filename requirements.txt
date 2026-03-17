@@ -1,10 +1,9 @@
 feedparser
-anthropic
 requests
 groq
-langchain
-langchain-groq
-google-generativeai
-langchain-core
-langchain-google-genai
-langchain-anthropic
+anthropic
+httpx
+readability-lxml
+lxml_html_clean
+beautifulsoup4
+jinja2

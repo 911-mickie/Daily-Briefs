@@ -1,0 +1,144 @@
+/* ── Reset & Base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #f0ede8;
+  color: #1a1a1a;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+  padding: 2.5rem 1rem;
+}
+
+/* ── Layout ───────────────────────────────────────────────────────────────── */
+.page {
+  max-width: 700px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07), 0 8px 32px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+header {
+  background: #111111;
+  color: #ffffff;
+  padding: 2rem 2.5rem 1.75rem;
+}
+
+header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.3rem;
+}
+
+header .date {
+  font-size: 0.8rem;
+  color: #888;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.archive-link {
+  display: inline-block;
+  font-size: 0.78rem;
+  color: #666;
+  text-decoration: none;
+  margin-bottom: 1.1rem;
+  letter-spacing: 0.03em;
+  transition: color 0.15s;
+}
+.archive-link:hover { color: #aaa; }
+
+/* ── Main Content ─────────────────────────────────────────────────────────── */
+main {
+  padding: 2rem 2.5rem 2.5rem;
+}
+
+/* ── Brief content ────────────────────────────────────────────────────────── */
+.brief-content {
+  font-size: 0.975rem;
+  line-height: 1.8;
+  color: #222;
+}
+
+.brief-content b {
+  font-weight: 650;
+  color: #111;
+}
+
+.brief-content i {
+  color: #555;
+  font-style: italic;
+}
+
+.brief-content a {
+  color: #1a56db;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid #c7d7f9;
+  transition: border-color 0.15s, color 0.15s;
+}
+.brief-content a:hover {
+  color: #0f3a9e;
+  border-color: #1a56db;
+}
+
+/* Section dividers that replaced ━━━ */
+.brief-content hr.divider {
+  border: none;
+  border-top: 2px solid #f0f0f0;
+  margin: 1.5rem 0 1.25rem;
+}
+
+/* ── Archive List ─────────────────────────────────────────────────────────── */
+.archive-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.archive-list li {
+  padding: 0.85rem 1.1rem;
+  border: 1px solid #ebebeb;
+  border-radius: 7px;
+  transition: background 0.1s, border-color 0.1s;
+}
+.archive-list li:hover {
+  background: #fafafa;
+  border-color: #d0d0d0;
+}
+
+.archive-list a {
+  font-weight: 500;
+  color: #1a1a1a;
+  text-decoration: none;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+}
+.archive-list a:hover { color: #1a56db; }
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+footer {
+  padding: 1.25rem 2.5rem;
+  border-top: 1px solid #f2f2f2;
+  font-size: 0.78rem;
+  color: #bbb;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+footer a { color: #bbb; text-decoration: underline; }
+
+/* ── Mobile ───────────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  body { padding: 0; background: #fff; }
+  .page { border-radius: 0; box-shadow: none; }
+  header { padding: 1.5rem 1.25rem 1.25rem; }
+  main { padding: 1.5rem 1.25rem 2rem; }
+  footer { padding: 1rem 1.25rem; }
+  header h1 { font-size: 1.4rem; }
+}

@@ -1,0 +1,12 @@
+{
+  "projects": [
+    {
+      "name": "Lexi",
+      "description": "A code understanding and Q&A agent that ingests a codebase via GitHub ZIP, summarizes all files in batches, and exposes tools to query and find relevant files. Essentially a RAG system over codebases. Planning to extend it into a full coding agent."
+    },
+    {
+      "name": "OCR Pipeline",
+      "description": "A robust document OCR pipeline that accepts documents in any format and extracts text accurately using Nemotron Parse and GLM-OCR. Focus on vision models and multimodal document understanding."
+    }
+  ]
+}
