@@ -1,30 +1,50 @@
 /* ── Reset & Base ─────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/*
+  Palette — warm espresso + parchment
+  ─────────────────────────────────────
+  Page bg:     #e8e0d0  (warm sand)
+  Card:        #fdfaf3  (warm parchment)
+  Header bg:   #2c1a08 → #3d2b14  (espresso gradient)
+  Accent line: #c8782a  (caramel amber)
+  Body text:   #2b2010  (warm near-black)
+  Italic/meta: #7a6245  (warm mid-brown)
+  Links:       #a84e10  (warm rust)
+  Link hover:  #7a3208
+  Divider:     #ddd0b5  (warm tan)
+  Footer bg:   #f5efe2
+*/
+
 body {
-  background: #f0ede8;
-  color: #1a1a1a;
+  background: #e8e0d0;
+  color: #2b2010;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.75;
   padding: 2.5rem 1rem;
+  min-height: 100vh;
 }
 
 /* ── Layout ───────────────────────────────────────────────────────────────── */
 .page {
   max-width: 700px;
   margin: 0 auto;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07), 0 8px 32px rgba(0,0,0,0.05);
+  background: #fdfaf3;
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 1px rgba(80, 50, 10, 0.10),
+    0 4px 16px rgba(60, 30, 5, 0.12),
+    0 16px 48px rgba(40, 20, 5, 0.10);
   overflow: hidden;
 }
 
 /* ── Header ───────────────────────────────────────────────────────────────── */
 header {
-  background: #111111;
-  color: #ffffff;
+  background: linear-gradient(135deg, #2c1a08 0%, #3d2b14 100%);
+  color: #f5ead8;
   padding: 2rem 2.5rem 1.75rem;
+  border-bottom: 3px solid #c8782a;
 }
 
 header h1 {
@@ -32,11 +52,12 @@ header h1 {
   font-weight: 700;
   letter-spacing: -0.03em;
   margin-bottom: 0.3rem;
+  color: #fdf2e0;
 }
 
 header .date {
   font-size: 0.8rem;
-  color: #888;
+  color: #b89a70;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   font-weight: 500;
@@ -45,53 +66,54 @@ header .date {
 .archive-link {
   display: inline-block;
   font-size: 0.78rem;
-  color: #666;
+  color: #9a7a50;
   text-decoration: none;
   margin-bottom: 1.1rem;
   letter-spacing: 0.03em;
   transition: color 0.15s;
 }
-.archive-link:hover { color: #aaa; }
+.archive-link:hover { color: #c8a070; }
 
 /* ── Main Content ─────────────────────────────────────────────────────────── */
 main {
   padding: 2rem 2.5rem 2.5rem;
+  background: #fdfaf3;
 }
 
 /* ── Brief content ────────────────────────────────────────────────────────── */
 .brief-content {
   font-size: 0.975rem;
-  line-height: 1.8;
-  color: #222;
+  line-height: 1.85;
+  color: #2b2010;
 }
 
 .brief-content b {
   font-weight: 650;
-  color: #111;
+  color: #1a1208;
 }
 
 .brief-content i {
-  color: #555;
+  color: #7a6245;
   font-style: italic;
 }
 
 .brief-content a {
-  color: #1a56db;
+  color: #a84e10;
   text-decoration: none;
   font-weight: 500;
-  border-bottom: 1px solid #c7d7f9;
+  border-bottom: 1px solid #e8c090;
   transition: border-color 0.15s, color 0.15s;
 }
 .brief-content a:hover {
-  color: #0f3a9e;
-  border-color: #1a56db;
+  color: #7a3208;
+  border-color: #a84e10;
 }
 
-/* Section dividers that replaced ━━━ */
+/* Section dividers replacing ━━━ */
 .brief-content hr.divider {
   border: none;
-  border-top: 2px solid #f0f0f0;
-  margin: 1.5rem 0 1.25rem;
+  border-top: 1px solid #ddd0b5;
+  margin: 1.75rem 0 1.25rem;
 }
 
 /* ── Archive List ─────────────────────────────────────────────────────────── */
@@ -104,39 +126,41 @@ main {
 
 .archive-list li {
   padding: 0.85rem 1.1rem;
-  border: 1px solid #ebebeb;
-  border-radius: 7px;
-  transition: background 0.1s, border-color 0.1s;
+  border: 1px solid #ddd0b5;
+  border-radius: 8px;
+  background: #faf6ec;
+  transition: background 0.1s, border-color 0.1s, transform 0.1s;
 }
 .archive-list li:hover {
-  background: #fafafa;
-  border-color: #d0d0d0;
+  background: #f5ead8;
+  border-color: #c8a070;
+  transform: translateX(3px);
 }
 
 .archive-list a {
   font-weight: 500;
-  color: #1a1a1a;
+  color: #2b2010;
   text-decoration: none;
   font-size: 0.95rem;
-  letter-spacing: 0.01em;
 }
-.archive-list a:hover { color: #1a56db; }
+.archive-list a:hover { color: #a84e10; }
 
 /* ── Footer ───────────────────────────────────────────────────────────────── */
 footer {
   padding: 1.25rem 2.5rem;
-  border-top: 1px solid #f2f2f2;
+  border-top: 1px solid #ddd0b5;
+  background: #f5efe2;
   font-size: 0.78rem;
-  color: #bbb;
+  color: #a09070;
   text-align: center;
   letter-spacing: 0.02em;
 }
-footer a { color: #bbb; text-decoration: underline; }
+footer a { color: #a09070; text-decoration: underline; }
 
 /* ── Mobile ───────────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  body { padding: 0; background: #fff; }
-  .page { border-radius: 0; box-shadow: none; }
+  body { padding: 0; background: #e8e0d0; }
+  .page { border-radius: 0; }
   header { padding: 1.5rem 1.25rem 1.25rem; }
   main { padding: 1.5rem 1.25rem 2rem; }
   footer { padding: 1rem 1.25rem; }

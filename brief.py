@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     # ── 2. Filter & Score ──────────────────────────────────────────────────────
     print("Scoring and filtering...")
-    top_articles = scorer.score_and_filter(articles, n=10)
+    top_articles = scorer.score_and_filter(articles, n=15)
 
     # ── 3. Synthesize ──────────────────────────────────────────────────────────
     concept = get_todays_concept()

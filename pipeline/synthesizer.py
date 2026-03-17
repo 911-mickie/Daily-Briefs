@@ -11,7 +11,7 @@ from pathlib import Path
 import anthropic
 
 _MODEL = "claude-sonnet-4-6"
-_MAX_TOKENS = 4096
+_MAX_TOKENS = 8192
 
 _SYSTEM_TEMPLATE = """\
 You write a daily ML/AI morning brief for a specific reader. Here is who they are:
@@ -46,10 +46,10 @@ Structure exactly like this:
 📰 <b>TOP NEWS</b>
 ━━━━━━━━━━━━━━━━━━━
 
-Pick the 3 most important news/product/announcement items (not papers). For each:
+Pick the 5 most important news/product/announcement items (not papers). For each:
 
 • <b><a href="EXACT_URL">Title</a></b>
-<i>What happened:</i> 1-2 sentences of substance.
+<i>What happened:</i> 2-3 sentences of substance — be specific, include numbers or technical details where available.
 <i>Why it matters:</i> One sharp sentence for an ML practitioner.
 <i>Interview angle:</i> One sentence on how this connects to ML interviews or production systems.
 
@@ -57,10 +57,10 @@ Pick the 3 most important news/product/announcement items (not papers). For each
 📄 <b>PAPERS & RESEARCH</b>
 ━━━━━━━━━━━━━━━━━━━
 
-Pick the 3 most relevant research papers or technical findings. For each:
+Pick the 5 most relevant research papers or technical findings. For each:
 
 • <b><a href="EXACT_URL">Paper title</a></b>
-2-3 sentences: what they did, key result, why it matters — in plain English.
+3-4 sentences: what problem they tackled, their approach, key result, and why it matters — in plain English.
 <i>Interview angle:</i> One sentence on the concept an interviewer might probe here.
 
 ━━━━━━━━━━━━━━━━━━━
