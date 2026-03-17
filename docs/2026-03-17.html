@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML Daily Brief — 2026-03-17</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="page">
+    <header>
+      <a class="archive-link" href="./index.html">← All Briefs</a>
+      <h1>🧠 ML Daily Brief</h1>
+      <p class="date">2026-03-17</p>
+    </header>
+
+    <main class="brief-content">
+      <hr class="divider"><br>
+📰 <b>TOP NEWS</b><br>
+<hr class="divider"><br>
+<br>
+• <b><a href="https://www.latent.space/p/turbopuffer">Retrieval After RAG: Hybrid Search, Agents, and Database Design — Turbopuffer</a></b><br>
+<i>What happened:</i> Simon Eskildsen (ex-Shopify infra) built Turbopuffer after discovering that adding vector search to Readwise would balloon costs from $5k to $20-30k/month. The architecture bets entirely on object storage + NVMe tiers — no traditional consensus layer — with a tiered serving model: cold queries from object storage, warm from NVMe, hot from memory, adapting automatically to query frequency.<br>
+<i>Why it matters:</i> The cost structure of vector search is a real production constraint, and Turbopuffer's tiered architecture directly addresses the latency/cost tradeoff that kills RAG features before they ship.<br>
+<i>Interview angle:</i> Expect questions about vector DB cost vs. latency tradeoffs and how storage tier selection impacts retrieval SLAs in production RAG systems.<br>
+<i>Connection to your work:</i> Lexi does batch summarization and file-level retrieval over codebases — if you scale it to large orgs with thousands of files queried infrequently, cold-path object storage retrieval is exactly the cost model you'd hit. Turbopuffer's architecture is worth understanding when justifying your vector DB choice in interviews.<br>
+<br>
+• <b><a href="https://huggingface.co/blog/Hcompany/holotron-12b">Holotron-12B - High Throughput Computer Use Agent</a></b><br>
+<i>What happened:</i> H Company released Holotron-12B, post-trained from NVIDIA's Nemotron-Nano-2 VL on proprietary data, specifically engineered for production computer-use agents. The key architectural bet is a hybrid SSM + attention design: SSMs avoid quadratic KV-cache scaling, dramatically reducing memory footprint for long-context agentic workloads with many sequential images.<br>
+<i>Why it matters:</i> For agents that must perceive GUI state across many steps (long interaction histories with repeated screenshots), transformer-only architectures are memory-inefficient; SSM hybrids change the economics of deployment.<br>
+<i>Interview angle:</i> Be ready to discuss KV-cache memory growth in long-context inference and why SSM-hybrid architectures are emerging specifically for agentic, multi-turn visual workloads.<br>
+<i>Connection to your work:</i> Your OCR pipeline processes document images — a hybrid SSM architecture handling multi-page documents without quadratic memory blowup is directly relevant if you extend to multi-page or multi-document flows.<br>
+<br>
+• <b><a href="https://simonwillison.net/guides/agentic-engineering-patterns/subagents/#atom-everything">Subagents — Simon Willison</a></b><br>
+<i>What happened:</i> Simon Willison published a detailed pattern guide on subagents, using Claude Code as the canonical example. The key insight: subagents aren't just parallelism tools — they're a context management strategy. Claude Code dispatches an "Explore" subagent with a fresh context window to do repo triage before the main agent ever touches the task, keeping top-level context clean and focused.<br>
+<i>Why it matters:</i> Context window burn-rate is the dominant cost and quality constraint in coding agents; the subagent-as-context-isolator pattern is a concrete architectural primitive, not just a vague abstraction.<br>
+<i>Interview angle:</i> Interviewers at Anthropic/Google will probe how you'd design context management in a multi-step coding agent — be specific about what each subagent sees and why.<br>
+<i>Connection to your work:</i> Lexi's batch summarization of files is essentially a subagent pattern already — each file summary is a bounded context operation. When you extend Lexi to a full coding agent, the Explore subagent pattern maps directly to your "find relevant files" tool.<br>
+<br>
+• <b><a href="https://simonwillison.net/2026/Mar/16/mistral-small-4/#atom-everything">Introducing Mistral Small 4</a></b><br>
+<i>What happened:</i> Mistral released Mistral Small 4, a 119B parameter MoE model (6B active parameters) under Apache 2.0 license. It unifies reasoning (Magistral), multimodal (Pixtral), and agentic coding (Devstral) into one model, with a <i>reasoning_effort</i> parameter accepting "none" or "high" — though API support for this flag isn't fully documented yet. Model is 242GB on Hugging Face.<br>
+<i>Why it matters:</i> A single open-weight model covering reasoning + vision + code at 6B active params is a viable self-hosted backbone for agentic pipelines that previously required stitching multiple specialized models.<br>
+<i>Interview angle:</i> MoE active parameter count vs. total parameter count is a common inference cost question — know why 6B active params at 119B total changes the serving math.<br>
+<br>
+• <b><a href="https://engineering.fb.com/2025/10/17/ai-research/scaling-llm-inference-innovations-tensor-parallelism-context-parallelism-expert-parallelism/">Scaling LLM Inference: Innovations in Tensor Parallelism, Context Parallelism, and Expert Parallelism — Meta</a></b><br>
+<i>What happened:</i> Meta published their production LLM inference stack, covering three distinct parallelism strategies: tensor parallelism for layer-level GPU splitting, context parallelism for distributing long sequences across devices, and expert parallelism for MoE routing. They target TTFT under 350ms and TTIT under 25ms, explicitly calling out prefill as compute-bound (quadratic attention) and decoding as memory-bandwidth-bound.<br>
+<i>Why it matters:</i> These are the exact metrics and architectural constraints any ML engineer at FAANG-tier must reason about when designing or critiquing an inference system.<br>
+<i>Interview angle:</i> "Why is prefill compute-bound but decoding memory-bound?" is a direct interview question at Meta, Google, and NVIDIA — this post gives you the production framing.<br>
+<br>
+<hr class="divider"><br>
+📄 <b>PAPERS & RESEARCH</b><br>
+<hr class="divider"><br>
+<br>
+• <b><a href="https://arxiv.org/abs/2603.15566v1">Lore: Repurposing Git Commit Messages as a Structured Knowledge Protocol for AI Coding Agents</a></b><br>
+Git history is an underutilized signal in code understanding systems — commits encode <i>why</i> code changed, not just what it looks like now. Lore proposes treating commit messages as a structured knowledge protocol, essentially a timestamped, human-authored rationale layer that agents can query. For a coding agent, this means retrieving not just "which file is relevant" but "what was the intent behind the last modification to this function." The paper frames this as a retrieval problem over structured temporal knowledge, not just static code embeddings.<br>
+<i>Interview angle:</i> Be ready to discuss how you'd augment a code RAG system beyond file-level embeddings — commit history as a retrieval signal is a concrete differentiator worth articulating.<br>
+<i>Connection to your work:</i> This is directly applicable to Lexi. Your current pipeline ingests code at a point in time; adding git log metadata as a retrieval layer would significantly improve answer quality for questions like "why does this function exist?"<br>
+<br>
+• <b><a href="https://huggingface.co/papers/2603.15594">OpenSeeker: Democratizing Frontier Search Agents by Fully Open-Sourcing Training Data</a></b><br>
+State-of-the-art search agents have been gated behind proprietary training data even when model weights were released. OpenSeeker from a purely academic team achieves frontier performance on BrowseComp and xbench using only 11.7k synthesized training samples via SFT — no RL, no continual pre-training — beating Alibaba's Tongyi DeepResearch (which uses CPT + SFT + RL) on BrowseComp-ZH (48.4% vs 46.7%). Their data synthesis uses entity obfuscation to generate complex multi-hop queries and asymmetric context training to teach models to extract information from noisy raw HTML. Full data, trajectories, and a 30B SFT model are released openly.<br>
+<i>Interview angle:</i> The result that 11.7k high-quality synthesized samples outperform RL-trained pipelines at scale is a sharp data-efficiency argument — interviewers will probe your intuition on when data quality beats data volume.<br>
+<br>
+• <b><a href="https://arxiv.org/abs/2603.15473v1">Agent Lifecycle Toolkit (ALTK): Reusable Middleware Components for Robust AI Agents</a></b><br>
+ALTK addresses the problem that most agentic systems are built from scratch per-application, creating brittle, hard-to-maintain pipelines. It proposes reusable middleware components covering agent lifecycle concerns: memory management, tool invocation, error recovery, and state persistence across turns. The framing is explicitly middleware — decoupling agent logic from infrastructure concerns in the same way web frameworks decoupled business logic from HTTP handling. This matters because reliability failures in production agents are usually infrastructure-layer (retry logic, state corruption, tool timeout handling), not model quality issues.<br>
+<i>Interview angle:</i> System design interviews for agentic roles will ask how you'd make agents fault-tolerant — be specific about which failure modes live at the middleware layer vs. the model layer.<br>
+<br>
+• <b><a href="https://lilianweng.github.io/posts/2024-07-07-hallucination/">Extrinsic Hallucinations in LLMs — Lil'Log</a></b><br>
+Lilian Weng distinguishes extrinsic hallucination (output not grounded by world knowledge in pre-training data) from in-context hallucination (output contradicts the provided context). The post argues that extrinsic hallucination is fundamentally a retrieval problem: the model lacks the fact, and without RAG or tool access, it confabulates. Key causes: pre-training data noise/staleness, fine-tuning on synthetic data that introduces factual drift, and RLHF reward hacking toward fluency over factual accuracy.<br>
+<i>Interview angle:</i> In RAG system design interviews, you must distinguish when hallucination is a retrieval failure (wrong chunks retrieved) vs. a generation failure (model ignores retrieved context) — Weng's taxonomy gives you the vocabulary.<br>
+<i>Connection to your work:</i> In Lexi, if a user asks about a function that was recently refactored, you face both extrinsic hallucination risk (stale model knowledge) and in-context hallucination risk (model ignores retrieved code snippet) — your eval strategy needs to test both failure modes separately.<br>
+<br>
+• <b><a href="https://arxiv.org/abs/2603.15594v1">OpenSeeker: Democratizing Frontier Search Agents by Fully Open-Sourcing Training Data (arxiv)</a></b><br>
+The arxiv version contains full methodology details on the two core data synthesis techniques: entity obfuscation (masking named entities to force multi-hop reasoning rather than lookup) and asymmetric context training (training the model to predict expert search actions from noisy HTML that the expert never saw, forcing generalization). The 30B SFT model achieves 74.0% on xbench and 59.4% on WideSearch using only supervised fine-tuning, suggesting that trajectory quality in training data matters more than the training objective complexity for search agents.<br>
+<i>Interview angle:</i> Asymmetric context training is a clean example of the broader principle of training on harder inputs than the model will see at inference — expect questions about data augmentation strategies for agent training.<br>
+<br>
+<hr class="divider"><br>
+💡 <b>CONCEPT REFRESHER</b><br>
+<hr class="divider"><br>
+<br>
+Today's concept: Context Window Management in Multi-Agent Systems<br>
+<br>
+<b>Context Window Management in Multi-Agent Systems</b><br>
+The context window is the single most constrained resource in any agentic system — it determines what the model can "see" at decision time, and unlike compute, you can't simply throw more hardware at it. The core problem: as agents take more steps, accumulate tool outputs, and build up conversation history, the context fills with low-value tokens that crowd out high-value ones. Modern LLMs technically support up to 1M tokens, but quality benchmarks consistently degrade above 200k tokens, and cost scales linearly with tokens at inference time. The primary strategies are: (1) <b>subagent dispatch</b> — fresh context windows for bounded subtasks, as Claude Code does; (2) <b>context compression</b> — summarizing or truncating earlier turns; (3) <b>selective retrieval</b> — injecting only the top-k relevant chunks at each step rather than appending everything; and (4) <b>structured state</b> — maintaining a separate key-value state object outside the context that the agent reads selectively. A common misconception is that "bigger context window = better agent" — in practice, irrelevant context actively degrades reasoning quality (the "lost in the middle" problem), so aggressive context curation beats passive accumulation.<br>
+<br>
+<b>Q1:</b> Why does a 1M token context window not simply eliminate context management as a problem? → <i>Quality degrades and cost scales linearly well before the limit; "lost in the middle" means models under-attend to information not at the edges of context.</i><br>
+<b>Q2:</b> In Lexi, a user asks a question that requires synthesizing information from 50 files. How do you avoid burning the full context on file contents? → <i>Use the summarization layer you already have — retrieve top-k file summaries first, then selectively fetch full content only for the highest-confidence files, using a two-stage retrieval pattern.</i><br>
+<b>Q3:</b> What's the tradeoff between context compression (summarizing history) vs. subagent dispatch (fresh context per task) for a long-running coding agent? → <i>Compression loses precise details (exact variable names, stack traces) that matter for code tasks; subagents preserve precision but require careful handoff prompts to avoid losing critical state across boundaries.</i><br>
+<br>
+<hr class="divider"><br>
+🔗 <b>QUICK LINKS</b><br>
+<hr class="divider"><br>
+<br>
+• <b><a href="https://huyenchip.com//2025/01/07/agents.html">Chip Huyen — Agents</a></b> — comprehensive framework for agent architecture, tools, planning, and evaluation; useful as a reference when structuring your answers on agentic system design in interviews.<br>
+<br>
+• <b><a href="https://huyenchip.com//2024/07/25/genai-platform.html">Chip Huyen — Building A Generative AI Platform</a></b> — end-to-end GenAI platform architecture from context augmentation through guardrails, caching, and observability; good mental model to have cold for system design rounds.<br>
+<br>
+• <b><a href="https://huyenchip.com//2025/01/16/ai-engineering-pitfalls.html">Chip Huyen — Common Pitfalls When Building Generative AI Applications</a></b> — practical failure modes including over-applying GenAI, poor evaluation loops, and latency mismanagement; worth internalizing before product-focused interviews where you'll be asked to critique AI feature proposals.<br>
+<br>
+• <b><a href="https://pub.towardsai.net/how-to-build-multimodal-memory-for-ai-agents-with-gemini-embeddings-db9bf37dd3b0?source=rss------machine_learning-5">How to Build Multimodal Memory for AI Agents with Gemini Embeddings</a></b> — covers embedding images and text into a shared vector space for agent memory; relevant if you extend your OCR pipeline to support semantic retrieval over extracted document content.
+    </main>
+
+    <footer>
+      <p>Generated by <a href="./index.html">Daily Briefs</a></p>
+    </footer>
+  </div>
+</body>
+</html>
