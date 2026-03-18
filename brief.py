@@ -1,4 +1,7 @@
 import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 import requests
 from datetime import date
 import render
@@ -11,6 +14,24 @@ def get_todays_concept() -> str:
     with open("topics.txt") as f:
         topics = [line.strip() for line in f if line.strip()]
     return topics[date.today().day % len(topics)]
+
+
+# ── Send email with full HTML brief ───────────────────────────────────────────
+def send_email_brief(html_content: str, date_str: str) -> None:
+    gmail_user = os.environ["GMAIL_USER"]
+    gmail_password = os.environ["GMAIL_APP_PASSWORD"]
+    recipients = [r.strip() for r in os.environ["GMAIL_RECIPIENTS"].split(",") if r.strip()]
+
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = f"🧠 ML Daily Brief — {date_str}"
+    msg["From"] = gmail_user
+    msg["To"] = ", ".join(recipients)
+    msg.attach(MIMEText(html_content, "html"))
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(gmail_user, gmail_password)
+        server.sendmail(gmail_user, recipients, msg.as_string())
+    print(f"  Email sent to: {', '.join(recipients)}")
 
 
 # ── Send Telegram teaser with link ────────────────────────────────────────────
@@ -73,6 +94,11 @@ if __name__ == "__main__":
 
     # ── 4. Deliver ─────────────────────────────────────────────────────────────
     date_str = date.today().strftime("%Y-%m-%d")
+
+    # Save raw brief text so it can be re-rendered (e.g. for email testing)
+    render.DOCS_DIR.mkdir(exist_ok=True)
+    (render.DOCS_DIR / f"{date_str}.txt").write_text(brief, encoding="utf-8")
+
     print(f"\nRendering HTML to docs/{date_str}.html ...")
     render.render_daily_brief(brief, date_str)
     render.render_index()
@@ -81,6 +107,11 @@ if __name__ == "__main__":
     pages_url = render.get_github_pages_url()
     brief_url = f"{pages_url}/{date_str}.html" if pages_url else ""
 
-    print("\nSending Telegram teaser...")
-    send_telegram_teaser(concept, brief_url)
+    # print("\nSending Telegram teaser...")
+    # send_telegram_teaser(concept, brief_url)
+    # print("  Delivered.")
+
+    print("\nSending email brief...")
+    email_html = render.render_email_brief(brief, date_str)
+    send_email_brief(email_html, date_str)
     print("  Delivered.")

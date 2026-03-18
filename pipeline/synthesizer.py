@@ -1,8 +1,8 @@
 """Stage 2: Generate the full brief using Claude Sonnet.
 
 Uses the Anthropic SDK directly (not LangChain).
-Receives pre-filtered top articles with full_text, user context, and
-current projects to produce a personalized, well-written brief.
+Receives pre-filtered top articles with full_text and focus areas
+to produce a practitioner-focused daily brief.
 """
 import json
 import os
@@ -14,18 +14,14 @@ _MODEL = "claude-sonnet-4-6"
 _MAX_TOKENS = 8192
 
 _SYSTEM_TEMPLATE = """\
-You write a daily ML/AI morning brief for a specific reader. Here is who they are:
+You write a daily ML/AI morning brief for practitioners working in AI/ML. \
+The audience cares about these areas:
 
-Role: {role}
-Interview targets: {companies}
-Focus areas: {focus_areas}
+{focus_areas}
 
-Their active projects:
-{projects}
-
-Your job is to take today's top articles and write a brief that feels personally curated — \
-not generic ML news, but content interpreted through this person's lens. For every item, \
-include one "connection to their work" observation where relevant.
+Your job is to take today's top articles and write a brief that feels curated for someone \
+building production AI systems — not generic ML news, but content filtered and interpreted \
+for practitioners who ship real systems.
 
 Tone: direct, technically precise, zero filler. Write for a practitioner, not a student.\
 """
@@ -117,22 +113,13 @@ def generate(
     concept: str,
     interview_posts: list[dict] | None = None,
     user_context_path: str = "user_context.json",
-    current_projects_path: str = "current_projects.json",
 ) -> str:
     """Generate the brief using Claude Sonnet. Returns the formatted HTML-compatible string."""
     ctx = _load_json(user_context_path)
-    proj = _load_json(current_projects_path)
 
     # Build system prompt
-    projects_block = "\n".join(
-        f"- {p['name']}: {p['description']}"
-        for p in proj.get("projects", [])
-    )
     system = _SYSTEM_TEMPLATE.format(
-        role=ctx.get("role", "ML Engineer"),
-        companies=", ".join(ctx.get("interview_target_companies", [])),
         focus_areas="\n".join(f"- {f}" for f in ctx.get("focus_areas", [])),
-        projects=projects_block or "No active projects listed.",
     )
 
     # Build articles block (include full_text, capped per article)

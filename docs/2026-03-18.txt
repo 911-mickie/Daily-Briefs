@@ -1,0 +1,63 @@
+━━━━━━━━━━━━━━━━━━━
+
+📰 <b>TOP NEWS</b>
+
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://openai.com/blog/gpt-5">OpenAI Releases GPT-5.4 mini and nano</a></b>
+
+<i>What happened:</i> OpenAI released two new models: GPT-5.4 mini targets cost-efficient inference at scale, while GPT-5.4 nano is optimised for edge deployment with sub-100ms latency. Both support 128K context and structured outputs.
+
+<i>Why it matters:</i> Smaller, faster frontier models change the economics of building RAG pipelines and agentic systems — costs drop by 10x compared to full GPT-5.
+
+<i>Interview angle:</i> Expect questions on model selection trade-offs: when do you pick a smaller model vs a larger one in a production RAG system?
+
+• <b><a href="https://simonwillison.net/2026/Mar/18/subagents">Subagents: How Codex Orchestrates Multi-Step Tasks</a></b>
+
+<i>What happened:</i> Simon Willison breaks down how OpenAI Codex spawns subagents for parallel task execution, with each subagent getting its own sandboxed environment and tool access.
+
+<i>Why it matters:</i> This is the architecture pattern behind Lexi — understanding how orchestrators delegate to subagents is directly applicable to coding agents.
+
+<i>Interview angle:</i> Interviewers at Amazon and Microsoft are asking about multi-agent coordination: how do you handle failures, retries, and shared state between agents?
+
+━━━━━━━━━━━━━━━━━━━
+
+📄 <b>PAPERS & RESEARCH</b>
+
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://arxiv.org/abs/2603.15594">OpenSeeker: Democratizing Frontier Search Agents</a></b>
+
+OpenSeeker fully open-sources the training pipeline for a search agent that matches GPT-4o on GAIA benchmarks. They release model weights, training data, and reward functions — making it one of the first fully reproducible frontier agents.
+
+This matters because most agent benchmarks are closed; having an open training pipeline lets the community study reward hacking and generalisation failures directly.
+
+<i>Interview angle:</i> Be ready to discuss RLHF vs RLAIF for training agents, and how reward shaping affects agent behaviour at deployment time.
+
+━━━━━━━━━━━━━━━━━━━
+
+💡 <b>CONCEPT REFRESHER</b>
+
+━━━━━━━━━━━━━━━━━━━
+
+<b>Retrieval-Augmented Generation (RAG)</b>
+
+RAG grounds a language model's responses by retrieving relevant documents at inference time rather than baking all knowledge into model weights. The retrieval step typically uses dense vector search (e.g. FAISS, pgvector) over chunked document embeddings, then injects the top-k results into the prompt context. The core trade-off is retrieval precision vs latency — more chunks mean better coverage but longer prompts and slower generation. A common misconception is that better embeddings always fix a RAG system; often the bottleneck is chunking strategy or reranking, not the embedding model itself.
+
+<b>Q1:</b> What is the difference between sparse and dense retrieval in RAG? → <i>Sparse (BM25) matches keywords exactly; dense retrieval uses semantic embeddings and finds conceptually similar content even with different wording.</i>
+
+<b>Q2:</b> How would you handle a RAG system that retrieves irrelevant chunks? → <i>Add a cross-encoder reranker after initial retrieval to score relevance more accurately before passing chunks to the LLM.</i>
+
+<b>Q3:</b> What are the failure modes of naive chunking strategies? → <i>Fixed-size chunks split mid-sentence or mid-concept, breaking context; prefer semantic or paragraph-aware chunking with overlap.</i>
+
+━━━━━━━━━━━━━━━━━━━
+
+🔗 <b>QUICK LINKS</b>
+
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://huyenchip.com/2026/03/18/pitfalls.html">Common pitfalls when building generative AI applications</a></b> — Chip Huyen on production GenAI failure modes, directly relevant to system design interviews.
+
+• <b><a href="https://www.deepmind.com/blog/gemini-3-1">Gemini 3.1 Flash-Lite</a></b> — DeepMind releases a new efficient model; worth knowing the competitive landscape for model selection questions.
+
+• <b><a href="https://www.latent.space/p/retrieval">Retrieval After RAG: Hybrid Search, Agents, and Database Design</a></b> — Deep dive on hybrid BM25+vector search, highly relevant to Lexi's retrieval layer.
