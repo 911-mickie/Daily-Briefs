@@ -9,91 +9,91 @@
 <body>
   <div class="page">
     <header>
-      <a class="archive-link" href="./index.html">← All Briefs</a>
+      <a class="archive-link" href="https://911-mickie.github.io/Daily-Briefs/index.html">← All Briefs</a>
       <h1>🧠 ML Daily Brief</h1>
       <p class="date">2026-03-18</p>
     </header>
 
     <main class="brief-content">
-      <hr class="divider"><br>
-📰 <b>TOP NEWS</b><br>
-<hr class="divider"><br>
-<br>
-• <b><a href="https://openai.com/index/introducing-gpt-5-4-mini-and-nano">Introducing GPT-5.4 mini and nano</a></b><br>
-<i>What happened:</i> OpenAI released two smaller, faster variants of GPT-5.4 optimized for coding, tool use, multimodal reasoning, and high-volume subagent workloads. GPT-5.4-nano is priced at $0.20/$1.25 per million input/output tokens — cheaper than Gemini 3.1 Flash-Lite — and GPT-5.4-mini is 2x faster than the previous mini while outperforming GPT-5 mini at max reasoning effort. The nano can describe 76,000 photos for ~$52 total.<br>
-<i>Why it matters:</i> Sub-cent-per-call multimodal inference changes the economics of high-volume vision pipelines like OCR preprocessing and batch document description.<br>
-<i>Interview angle:</i> Know how to reason about model tier selection in production: when nano-class models are sufficient, and where you still need full-tier models for complex reasoning chains.<br>
-<br>
-• <b><a href="https://deepmind.google/blog/gemini-3-1-pro-a-smarter-model-for-your-most-complex-tasks/">Gemini 3.1 Pro: A smarter model for your most complex tasks</a></b><br>
-<i>What happened:</i> Google DeepMind released Gemini 3.1 Pro in preview, available via Gemini API, Vertex AI, AI Studio, Gemini CLI, and Android Studio. The release explicitly targets "ambitious agentic workflows" as a key improvement area before GA, and is being integrated into NotebookLM for Pro/Ultra users.<br>
-<i>Why it matters:</i> A frontier model explicitly positioned for agentic use cases hitting developer APIs is a direct signal for what production agent infrastructure needs to handle.<br>
-<i>Interview angle:</i> At companies like Google and Microsoft, expect questions on how you'd architect multi-model routing — when to invoke a Pro-tier vs. Flash-tier model within the same agentic pipeline.<br>
-<br>
-• <b><a href="https://deepmind.google/blog/gemini-3-1-flash-lite-built-for-intelligence-at-scale/">Gemini 3.1 Flash-Lite: Built for intelligence at scale</a></b><br>
-<i>What happened:</i> Google released Gemini 3.1 Flash-Lite at $0.25/$1.50 per million input/output tokens, with 2.5x faster time-to-first-answer-token and 45% higher output speed compared to 2.5 Flash on Artificial Analysis benchmarks. It's positioned for high-frequency, real-time developer workloads requiring low latency at scale.<br>
-<i>Why it matters:</i> With GPT-5.4-nano now priced below it, the sub-$0.25 input tier is becoming a competitive battleground directly relevant to building cost-efficient RAG and document pipelines.<br>
-<i>Interview angle:</i> Be ready to discuss latency vs. cost tradeoffs in model selection for production RAG — TTFT matters for streaming retrieval-augmented responses.<br>
-<br>
-• <b><a href="https://engineering.fb.com/2025/10/17/ai-research/scaling-llm-inference-innovations-tensor-parallelism-context-parallelism-expert-parallelism/">Scaling LLM Inference: Innovations in Tensor Parallelism, Context Parallelism, and Expert Parallelism</a></b><br>
-<i>What happened:</i> Meta published a detailed technical breakdown of their parallelism stack for LLM inference at scale, targeting TTFT under 350ms and TTIT under 25ms. They distinguish prefill (compute-bound, scales quadratically with sequence length) from decoding (memory-bandwidth-bound), and apply tensor, context, and expert parallelism accordingly.<br>
-<i>Why it matters:</i> Understanding why prefill and decode have fundamentally different bottlenecks is core systems knowledge for anyone deploying LLMs in production at any scale.<br>
-<i>Interview angle:</i> Interviewers at Meta and NVIDIA will probe KV cache mechanics, why decoding is memory-bandwidth-bound, and how parallelism strategies differ between prefill and decode phases.<br>
-<br>
-• <b><a href="https://openai.com/index/rakuten">Rakuten fixes issues twice as fast with Codex</a></b><br>
-<i>What happened:</i> Rakuten deployed OpenAI's Codex coding agent to reduce mean time to resolution (MTTR) by 50%, automate CI/CD reviews, and deliver full-stack feature builds in weeks rather than months. This is a published enterprise case study validating agentic coding workflows in a large production engineering org.<br>
-<i>Why it matters:</i> Real MTTR numbers from a production coding agent deployment validate the Lexi/coding-agent direction — this is the outcome you're building toward.<br>
-<i>Interview angle:</i> When asked about impact of agentic coding tools, anchor your answer to concrete metrics like MTTR, review automation rate, and cycle time reduction.<br>
-<br>
-<hr class="divider"><br>
-📄 <b>PAPERS & RESEARCH</b><br>
-<hr class="divider"><br>
-<br>
-• <b><a href="https://simonwillison.net/guides/agentic-engineering-patterns/subagents/#atom-everything">Subagents — Agentic Engineering Patterns (Simon Willison)</a></b><br>
-Claude Code's subagent pattern dispatches a fresh model instance with a new context window to handle scoped subtasks — like repo exploration — returning only a structured summary to the parent agent. This preserves the top-level context budget while allowing arbitrarily large codebases to be explored without blowing the main window. The key insight is that subagents aren't just parallelism — they're a context management strategy: the parent never touches raw file contents, only processed summaries. This maps directly to how Lexi handles codebase ingestion: batch summarization is essentially a subagent pattern where each summary is a compressed, context-efficient representation of raw file content.<br>
-<i>Interview angle:</i> Expect questions on how you decompose large agentic tasks without exceeding context limits — the subagent/hierarchical delegation pattern is the canonical answer.<br>
-<br>
-• <b><a href="https://arxiv.org/abs/2603.16817v1">Is Conformal Factuality for RAG-based LLMs Robust? Novel Metrics and Systematic Insights</a></b><br>
-This paper examines whether conformal prediction methods — which give statistically guaranteed coverage bounds — hold up when applied to factuality evaluation in RAG systems. The core challenge is that RAG retrieval introduces distributional shifts between calibration and deployment contexts, potentially invalidating the coverage guarantees conformal methods rely on. The work proposes novel metrics to systematically stress-test robustness of factuality bounds under retrieval variation. For production RAG, this matters because most factuality scoring is done without principled uncertainty quantification — this line of work pushes toward statistically rigorous hallucination detection.<br>
-<i>Interview angle:</i> Be prepared to discuss how you'd measure and bound hallucination rates in a RAG system — interviewers at Anthropic and research-heavy teams will go deep on evaluation rigor.<br>
-<br>
-• <b><a href="https://arxiv.org/abs/2603.16862v1">Chronos: Temporal-Aware Conversational Agents with Structured Event Retrieval for Long-Term Memory</a></b><br>
-Chronos addresses the problem of temporal reasoning in long-term agent memory — specifically, that most retrieval systems treat memory as a flat vector store without encoding when events occurred or how their relevance decays over time. The system uses structured event representations with temporal metadata and a retrieval mechanism that accounts for recency and event sequencing. This is directly relevant to multi-session agentic workflows where the agent needs to reason about what it knew before versus what changed. For Lexi, this points toward a memory architecture that could track when files were last modified or summarized and prioritize fresher context during retrieval.<br>
-<i>Interview angle:</i> Interviewers will ask how you handle temporal relevance in RAG — naive cosine similarity over static embeddings ignores time, which matters for code that changes frequently.<br>
-<br>
-• <b><a href="https://medium.com/@varun.pratap.bhardwaj/superlocalmemory-v3-mathematical-foundations-for-production-grade-agent-memory-7d6441b4e53e?source=rss------machine_learning-5">SuperLocalMemory V3: Mathematical Foundations for Production-Grade Agent Memory</a></b><br>
-This work applies information geometry, algebraic topology, and stochastic dynamics to agent memory design, achieving 74.8% on the LoCoMo long-context memory benchmark while keeping all data local. The framing argues that production agent memory needs principled mathematical foundations — not just "store embeddings and retrieve by cosine sim" — to handle memory consolidation, forgetting, and interference between memories. The local-first constraint is operationally significant for enterprise deployments where data cannot leave the environment. The mathematical apparatus (manifold-based memory representations, topological structure preservation) is ambitious, though the benchmark result is the concrete anchor to evaluate the claim.<br>
-<i>Interview angle:</i> Expect questions on memory architecture trade-offs for agents — episodic vs. semantic memory, when to consolidate vs. retain raw memories, and how to prevent memory interference.<br>
-<br>
-• <b><a href="https://jack-clark.net/2026/03/16/importai-449-llms-training-other-llms-72b-distributed-training-run-computer-vision-is-harder-than-generative-text/">ImportAI 449: LLMs training other LLMs; computer vision is harder than generative text</a></b><br>
-PostTrainBench is a new benchmark from Tübingen and Max Planck that tests whether frontier coding agents (Claude Code, Codex CLI, Gemini CLI) can autonomously fine-tune smaller LLMs end-to-end — building the training pipeline, selecting data sources, and running experiments within 10 hours on a single H100. Results show agents can do it, but underperform human experts. The benchmark also surfaces a finding that computer vision tasks are harder for generative models than text, with performance gaps that don't close with scale the way text tasks do. For the Lexi extension into a full coding agent, this is a concrete benchmark to track — it defines the capability ceiling for autonomous ML engineering tasks.<br>
-<i>Interview angle:</i> Be ready to discuss the distinction between a coding assistant and a coding agent that can close the loop on training runs — PostTrainBench is the evaluation framework that draws that line.<br>
-<br>
-<hr class="divider"><br>
-💡 <b>CONCEPT REFRESHER</b><br>
-<hr class="divider"><br>
-<br>
-Today's concept: Context Window Constraints and Subagent Delegation<br>
-<br>
-<b>Context Window Constraints and Subagent Delegation</b><br>
-LLMs have a hard upper bound on tokens they can process in a single forward pass — currently around 1M tokens at the frontier, but with measurable quality degradation above ~200K tokens due to attention dilution and "lost in the middle" effects. Context is not free: filling a 1M token window incurs quadratic attention cost during prefill and holds proportional KV cache memory during decode. The subagent pattern solves this by decomposing tasks hierarchically — dispatching fresh model instances with scoped prompts, then returning only structured summaries upward, keeping the parent agent's context lean and high-signal. The critical misconception is that "more context = better results" — empirically, selective context curation outperforms raw context stuffing, which is why RAG over long documents beats shoving entire documents into the prompt.<br>
-<br>
-<b>Q1:</b> Why do benchmarks show better quality below 200K tokens even when models support 1M? → <i>Attention scores get diluted over long sequences, causing models to underweight relevant tokens far from the query — the "lost in the middle" phenomenon.</i><br>
-<b>Q2:</b> In a RAG system, when would you choose subagent delegation over retrieval? → <i>When the subtask requires multi-step reasoning or exploration over a structured artifact (like a codebase), not just lookup — retrieval returns chunks, subagents return conclusions.</i><br>
-<b>Q3:</b> How does the KV cache interact with context window size during decode, and what's the memory implication? → <i>KV cache grows linearly with sequence length and must be held in GPU HBM throughout decoding — a 1M token context at 70B scale can consume hundreds of GBs, making decode memory-bandwidth-bound and constraining batch size.</i><br>
-<br>
-<hr class="divider"><br>
-🔗 <b>QUICK LINKS</b><br>
-<hr class="divider"><br>
-<br>
-• <b><a href="https://huyenchip.com//2025/01/07/agents.html">Chip Huyen — Agents</a></b> — comprehensive framework for agent architecture, tools, and planning from <i>AI Engineering</i>; solid reference for interview prep on agent system design.<br>
-<br>
-• <b><a href="https://huyenchip.com//2024/07/25/genai-platform.html">Chip Huyen — Building A Generative AI Platform</a></b> — end-to-end GenAI platform architecture covering retrieval, guardrails, routing, caching, and observability; directly maps to production RAG system design questions.<br>
-<br>
-• <b><a href="https://huyenchip.com//2025/01/16/ai-engineering-pitfalls.html">Chip Huyen — Common Pitfalls When Building Generative AI Applications</a></b> — practitioner-level antipatterns including over-reliance on GenAI where simpler solutions suffice; useful framing for system design interviews where trade-off judgment is evaluated.<br>
-<br>
-• <b><a href="https://www.latent.space/p/ainews-context-drought">Latent.Space — Context Drought</a></b> — argues that context windows have been effectively stuck at 1M for two years due to HBM/DRAM constraints, and 100x growth predictions are unrealistic; important calibration for architectural decisions that depend on "just use a bigger context window."<br>
-<br>
-• <b><a href="https://simonwillison.net/2026/Mar/17/mini-and-nano/#atom-everything">Simon Willison — GPT-5.4 mini and nano pricing breakdown</a></b> — concrete pricing table comparing GPT-5.4 nano, mini, Claude Haiku/Sonnet/Opus, and Gemini 3.1 tiers; useful for cost modeling in document and vision pipelines.
+      <div class="section-header">📰 TOP NEWS</div>
+<div class="news-card">
+<p>• <b><a href="https://openai.com/index/introducing-gpt-5-4-mini-and-nano">Introducing GPT-5.4 mini and nano</a></b><br>
+<i>What happened:</i> OpenAI released two smaller variants of GPT-5.4 targeting high-volume API and sub-agent workloads. Pricing lands at $0.75/$4.50 per million input/output tokens for mini and $0.20/$1.25 for nano — nano undercuts Gemini 3.1 Flash-Lite on both input and output. The mini is reportedly 2x faster than its predecessor, and the nano outperforms the previous GPT-5 mini at maximum reasoning effort on OpenAI's own benchmarks.<br>
+<i>Why it matters:</i> At $0.20/M input tokens, nano makes high-throughput multimodal pipelines (e.g., describing 76k photos for ~$52) economically viable in production without reaching for a frontier model.<br>
+<i>Interview angle:</i> Expect questions on model selection strategy for cost/latency tradeoffs in multi-tier agent architectures where frontier models handle routing and smaller models handle leaf tasks.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://deepmind.google/blog/gemini-3-1-flash-lite-built-for-intelligence-at-scale/">Gemini 3.1 Flash-Lite: Built for intelligence at scale</a></b><br>
+<i>What happened:</i> Google DeepMind released Gemini 3.1 Flash-Lite in preview via the Gemini API, AI Studio, and Vertex AI. It's priced at $0.25/1M input and $1.50/1M output tokens, delivers 2.5x faster time-to-first-answer-token than 2.5 Flash, and a 45% increase in output speed per Artificial Analysis benchmarks while maintaining comparable quality.<br>
+<i>Why it matters:</i> Flash-Lite directly competes with GPT-5.4 nano in the sub-$0.25 input tier, giving practitioners a credible multi-vendor option for latency-sensitive, high-frequency inference workloads.<br>
+<i>Interview angle:</i> Be ready to discuss how you'd benchmark competing low-cost models in your specific domain rather than relying on provider-reported general benchmarks.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://engineering.fb.com/2025/10/17/ai-research/scaling-llm-inference-innovations-tensor-parallelism-context-parallelism-expert-parallelism/">Scaling LLM Inference: Innovations in Tensor Parallelism, Context Parallelism, and Expert Parallelism</a></b><br>
+<i>What happened:</i> Meta Engineering published details on their production LLM inference stack, targeting TTFT under 350ms and TTIT under 25ms. They decompose the problem by the distinct compute profiles of prefill (compute-bound, quadratic attention scaling) and decoding (memory-bandwidth-bound, dominated by KV cache I/O), then apply tensor parallelism, context parallelism, and expert parallelism as complementary strategies across these stages.<br>
+<i>Why it matters:</i> This is a rare look at how a hyperscaler actually segments inference optimization by stage rather than applying a single parallelism strategy uniformly — directly applicable to anyone designing serving infrastructure for large MoE or long-context models.<br>
+<i>Interview angle:</i> Know why prefill and decode have fundamentally different bottlenecks and why disaggregating them (separate prefill/decode workers) is increasingly standard in production systems.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/blog/nvidia/nemotron-3-nano-4b">Nemotron 3 Nano 4B: A Compact Hybrid Model for Efficient Local AI</a></b><br>
+<i>What happened:</i> NVIDIA released Nemotron 3 Nano 4B, a hybrid Mamba-Transformer model pruned and distilled from Nemotron Nano 9B v2 via the Nemotron Elastic framework. It targets edge deployment on Jetson Thor, Jetson Orin Nano, DGX Spark, and RTX GPUs, claiming the lowest VRAM footprint and lowest TTFT in its size class under high input sequence length settings (benchmarked on RTX 4070 with Q4_K_M quantization via llama.cpp).<br>
+<i>Why it matters:</i> A 4B hybrid SSM-Transformer with competitive tool-use and instruction following that fits in edge VRAM changes the calculus for on-device agentic systems where cloud round-trips are unacceptable.<br>
+<i>Interview angle:</i> Understand the architectural tradeoff between Mamba's linear-time recurrence and transformer attention — and why hybrid models are emerging as the practical middle ground for edge inference.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://www.latent.space/p/ainews-context-drought">AINews: Context Drought</a></b><br>
+<i>What happened:</i> Latent Space analyzes a structural ceiling on context window growth: despite Sam Altman's predictions of 100x longer contexts, we've been effectively stuck at ~1M tokens for two years, driven by global HBM and DRAM shortages at inference sites. Anthropic's 1M context GA with SOTA MRCR scores is celebrated, but the piece argues this is a memory supply constraint problem, not a model capability problem.<br>
+<i>Why it matters:</i> If context windows won't scale meaningfully for 5-10 years, architectural decisions around RAG, memory compression, and context management are long-term infrastructure bets, not stopgaps.<br>
+<i>Interview angle:</i> Be able to explain why KV cache memory scales linearly with sequence length and batch size, and how that creates a hard resource ceiling independent of model quality improvements.</p>
+</div>
+<div class="section-header">📄 PAPERS & RESEARCH</div>
+<div class="news-card">
+<p>• <b><a href="https://huyenchip.com//2025/01/07/agents.html">Chip Huyen — Agents (AI Engineering)</a></b><br>
+Adapted from the Agents chapter of <i>AI Engineering (2025)</i>, this piece builds a framework for defining, developing, and evaluating AI agents — covering tools, planning, and the failure modes unique to agentic operation. It aligns with Anthropic's December 2024 "Building Effective Agents" post conceptually but goes further on evaluation methodology and planning strategies. Key insight: agents have qualitatively different failure modes from standard LLM calls, requiring distinct evaluation frameworks that go beyond accuracy on static benchmarks. Particularly useful for practitioners designing multi-step workflows where intermediate failures compound.<br>
+<i>Interview angle:</i> Expect questions on how you'd design an evaluation harness for an agent that spans multiple tool calls — what ground truth looks like when intermediate steps are non-deterministic.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huyenchip.com//2024/07/25/genai-platform.html">Chip Huyen — Building A Generative AI Platform</a></b><br>
+This post reverse-engineers the common architecture across production GenAI deployments, starting from a bare model API call and progressively adding context augmentation, guardrails, model routing/gateways, caching, and write-action orchestration. It's grounded in real deployment patterns rather than toy architectures, with explicit treatment of latency/cost optimization via cache layers and the role of observability throughout. The progressive complexity model is particularly useful for scoping MVP vs. production-grade systems. Directly relevant for anyone designing a RAG pipeline or multi-agent orchestration layer.<br>
+<i>Interview angle:</i> A common system design question: "walk me through how you'd add a caching layer to a GenAI platform" — know where semantic caching fits vs. exact-match caching and what the cache invalidation strategy looks like.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://engineering.fb.com/2026/02/24/data-center-engineering/rrcclx-innovating-gpu-communications-amd-platforms-meta/">RCCLX: Innovating GPU Communications on AMD Platforms</a></b><br>
+Meta open-sourced RCCLX, an enhanced fork of AMD's RCCL collective communications library, integrating their CTran custom transport layer onto AMD platforms. Two headline features: Direct Data Access (DDA) for lightweight intra-node collectives that avoids kernel launch overhead for small messages, and Low Precision Collectives (e.g., FP8/INT8 all-reduce) that reduce communication bandwidth at the cost of precision — with benchmarked improvements on production LLM inference workloads. This matters because tensor parallelism's all-reduce operations are on the critical path for decode latency, so collective communication throughput directly impacts TTIT. Relevant for anyone building multi-GPU inference on AMD or designing hardware-agnostic distributed training/serving stacks.<br>
+<i>Interview angle:</i> Know why all-reduce is a synchronization bottleneck in tensor-parallel inference and what techniques (quantized collectives, topology-aware routing) can reduce it.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://engineering.fb.com/2025/09/30/security/llms-are-the-key-to-mutation-testing-and-better-compliance/">LLMs Are the Key to Mutation Testing and Better Compliance</a></b><br>
+Meta's Automated Compliance Hardening (ACH) tool uses LLMs to generate semantically meaningful code mutants for mutation testing at scale — a task that previously failed to scale because classical mutation operators produced too many trivially-killed or equivalent mutants. The LLM generates targeted mutants that surface gaps in compliance-critical test suites, reducing cognitive load on engineers while enabling continuous compliance verification. This is a concrete production case of LLMs augmenting software testing infrastructure rather than replacing developers. Directly applicable to anyone building AI-assisted code review, test generation, or security scanning pipelines.<br>
+<i>Interview angle:</i> Be ready to discuss what makes LLM-generated mutants higher signal than grammar-based mutation operators, and where hallucination risk in code generation intersects with test validity.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://lilianweng.github.io/posts/2024-07-07-hallucination/">Lil'Log — Extrinsic Hallucinations in LLMs</a></b><br>
+Lilian Weng draws a precise distinction between in-context hallucination (output conflicts with provided context) and extrinsic hallucination (output conflicts with world knowledge / pre-training data), arguing the latter is the harder problem because verifying against a pre-training corpus at inference time is computationally infeasible. She traces root causes to pre-training data quality issues (stale, incorrect, or missing facts memorized via MLE), fine-tuning-introduced drift, and the model's inability to reliably express calibrated uncertainty. The practical implication: RAG addresses in-context faithfulness but does not eliminate extrinsic hallucination, especially for facts not in the retrieved context. Essential reading for anyone designing document intelligence or knowledge-grounded generation pipelines.<br>
+<i>Interview angle:</i> Interviewers will probe the difference between a model confidently generating a wrong fact vs. one that's inconsistent with its own retrieved context — these require different mitigation strategies.</p>
+</div>
+<div class="section-header">💡 CONCEPT REFRESHER</div>
+<div class="news-card">
+<p>Today's concept: Perplexity</p>
+<p><b>Perplexity</b><br>
+Perplexity measures how well a probability model predicts a sample — formally it's the exponentiated average negative log-likelihood per token: <i>PPL = exp(-(1/N) * Σ log P(xᵢ | x<i))</i>. Intuitively, a perplexity of K means the model is as uncertain as if it were choosing uniformly among K options at each token. Lower perplexity means the model assigns higher probability to the actual next tokens, indicating better predictive fit on that distribution. In practice, perplexity is heavily dataset-dependent: a model with low perplexity on web text may have high perplexity on legal contracts, so cross-domain perplexity comparisons are unreliable without controlling for the evaluation corpus. A common misconception is that lower perplexity on a held-out benchmark directly implies better downstream task performance — in reality, perplexity and task accuracy can diverge significantly, especially after instruction tuning or RLHF.</p>
+<div class="qa-card"><p class="qa-question">Why can't you directly compare perplexity scores across two models evaluated on different datasets?</p><p class="qa-answer"><i>Perplexity is a function of both model quality and dataset difficulty; a lower score on dataset A vs. dataset B tells you nothing about relative model quality.</i></p></div>
+<div class="qa-card"><p class="qa-question">After RLHF fine-tuning, a model's perplexity on a standard language modeling benchmark often increases — why?</p><p class="qa-answer"><i>RLHF optimizes for human preference signals, not next-token likelihood, so the model's probability distribution shifts away from the original corpus distribution, raising perplexity even as task quality improves.</i></p></div>
+<div class="qa-card"><p class="qa-question">How would you use perplexity as a signal in a RAG pipeline?</p><p class="qa-answer"><i>High perplexity on a generated answer conditioned on retrieved context can flag low-confidence or poorly-grounded outputs for review, acting as a cheap uncertainty proxy before a more expensive verification step.</i></p></div>
+</div>
+<div class="section-header">🔗 QUICK LINKS</div>
+<div class="news-card">
+<p>• <b><a href="https://huyenchip.com//2025/01/16/ai-engineering-pitfalls.html">Common Pitfalls When Building Generative AI Applications</a></b> — Chip Huyen catalogs recurring mistakes in production AI systems, including the critical trap of reaching for LLMs when deterministic algorithms (linear programming, rule engines) are cheaper and more reliable.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://lilianweng.github.io/posts/2024-04-12-diffusion-video/">Diffusion Models for Video Generation</a></b> — Lilian Weng's technical deep-dive into extending diffusion models from image to video, covering temporal consistency constraints and noise schedule adaptations; relevant for multimodal generation pipelines.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://engineering.fb.com/2025/09/29/virtual-reality/assetgen-generating-3d-worlds-with-ai/">Meta 3D AssetGen: Generating 3D Worlds With AI</a></b> — Meta's AssetGen foundation model generates 3D assets from text prompts for VR/AR use cases, with discussion of how LLMs fit into the 3D world-building pipeline.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://deepmind.google/blog/nano-banana-2-combining-pro-capabilities-with-lightning-fast-speed/">Nano Banana 2 (Gemini 3.1 Flash Image)</a></b> — Google DeepMind's latest image generation/editing model combining Nano Banana Pro quality with faster inference speed, now rolling out across Google products.</p>
+</div>
     </main>
 
     <footer>
