@@ -14,7 +14,7 @@ def get_github_pages_url() -> str:
     if repo and "/" in repo:
         owner, name = repo.split("/", 1)
         return f"https://{owner}.github.io/{name}"
-    return ""
+    return "https://911-mickie.github.io/Daily-Briefs"
 
 
 def _env() -> Environment:
