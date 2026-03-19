@@ -1,0 +1,79 @@
+━━━━━━━━━━━━━━━━━━━
+📰 <b>TOP NEWS</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://openai.com/index/introducing-gpt-5-4-mini-and-nano">Introducing GPT-5.4 mini and nano</a></b>
+<i>What happened:</i> OpenAI released GPT-5.4 mini ($0.75/$4.50 per million input/output tokens) and GPT-5.4 nano ($0.20/$1.25), both optimized for coding, tool use, multimodal reasoning, and sub-agent workloads. The nano model reportedly outperforms the previous GPT-5 mini at maximum reasoning effort and enables bulk vision tasks at scale — describing 76,000 photos costs ~$52 at nano pricing.
+<i>Why it matters:</i> At $0.20/1M input tokens, nano undercuts Gemini 3.1 Flash-Lite on price, meaningfully shifting the economics for high-volume RAG pipelines, document processing, and multi-agent orchestration where sub-agent calls accumulate fast.
+<i>Interview angle:</i> Expect questions on how to architect cost-aware model routing — when to invoke a nano-tier model vs. a frontier model within a pipeline, and how to measure quality/cost tradeoffs in production.
+
+• <b><a href="https://deepmind.google/blog/gemini-3-1-flash-lite-built-for-intelligence-at-scale/">Gemini 3.1 Flash-Lite: Built for intelligence at scale</a></b>
+<i>What happened:</i> Google DeepMind released Gemini 3.1 Flash-Lite at $0.25/$1.50 per million input/output tokens, claiming 2.5x faster Time to First Answer Token and 45% higher output throughput versus Gemini 2.5 Flash on Artificial Analysis benchmarks, at similar or better quality.
+<i>Why it matters:</i> The sub-$0.30 input tier is now genuinely competitive for real-time retrieval-augmented generation, streaming inference, and high-frequency agentic tool calls where latency and cost both matter.
+<i>Interview angle:</i> Be ready to discuss TTFT vs. TTIT as separate optimization targets and how they map to prefill-heavy vs. decode-heavy workloads in production serving.
+
+• <b><a href="https://engineering.fb.com/2025/10/17/ai-research/scaling-llm-inference-innovations-tensor-parallelism-context-parallelism-expert-parallelism/">Scaling LLM Inference: Innovations in Tensor Parallelism, Context Parallelism, and Expert Parallelism</a></b>
+<i>What happened:</i> Meta Engineering detailed three parallelism strategies deployed for production LLM inference: tensor parallelism for layer sharding, context parallelism for long-sequence prefill distribution, and expert parallelism for MoE routing. Target SLAs are TTFT under 350ms and TTIT under 25ms.
+<i>Why it matters:</i> This is a rare ground-level look at how a hyperscaler actually combines multiple parallelism dimensions at inference time — not just training — to hit strict latency targets with massive models.
+<i>Interview angle:</i> Interviewers will probe the distinction between compute-bound prefill and memory-bandwidth-bound decoding, and when each parallelism strategy applies.
+
+• <b><a href="https://huggingface.co/blog/Hcompany/holotron-12b">Holotron-12B - High Throughput Computer Use Agent</a></b>
+<i>What happened:</i> H Company released Holotron-12B, a multimodal computer-use agent model post-trained from NVIDIA Nemotron-Nano-2 VL. It uses a hybrid SSM (State Space Model) + attention architecture that avoids quadratic KV cache growth, dramatically reducing memory footprint for long multi-image interaction histories typical in GUI agent loops.
+<i>Why it matters:</i> The hybrid SSM design directly addresses the core bottleneck in agentic computer-use workloads — long context with many screenshots — where vanilla attention's KV cache becomes prohibitive in production serving.
+<i>Interview angle:</i> Expect questions on KV cache memory scaling in transformer vs. SSM architectures and the tradeoffs when deploying long-context agents at throughput.
+
+• <b><a href="https://engineering.fb.com/2026/02/24/data-center-engineering/rrcclx-innovating-gpu-communications-amd-platforms-meta/">RCCLX: Innovating GPU Communications on AMD Platforms</a></b>
+<i>What happened:</i> Meta open-sourced RCCLX, an enhanced version of AMD's RCCL communication library integrated with Torchcomms. Key new features include Direct Data Access (DDA) for lightweight intra-node collectives and Low Precision Collectives, both targeting the distinct memory and compute profiles of LLM prefill vs. decoding stages on AMD hardware.
+<i>Why it matters:</i> As teams diversify beyond NVIDIA, production-grade collective communication primitives on AMD platforms are a real gap — RCCLX with AllToAllvDynamic GPU-resident collectives is directly relevant for MoE inference serving at scale.
+<i>Interview angle:</i> Be prepared to discuss why AllToAll collectives are central to MoE expert routing and how intra-node vs. inter-node communication patterns differ in tensor-parallel inference.
+
+━━━━━━━━━━━━━━━━━━━
+📄 <b>PAPERS & RESEARCH</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://simonwillison.net/2026/Mar/18/llm-in-a-flash/#atom-everything">Autoresearching Apple's "LLM in a Flash" to run Qwen 397B locally</a></b>
+Dan Woods applied Apple's "LLM in a Flash" technique — streaming model weights from SSD into DRAM on demand rather than holding them resident — to run Qwen3.5-397B-A17B (209GB on disk, 120GB quantized) at 5.5+ tokens/second on a 48GB MacBook Pro M3 Max. The approach exploits the MoE property that each token only activates a subset of experts, so only those expert weights need to be paged in per forward pass. Expert weights were quantized to 2-bit while non-expert components (embeddings, routing matrices) remained at full precision at 5.5GB resident in memory, and the system dropped active experts per token from 10 to 4 to reduce SSD I/O. This is a concrete, reproducible demonstration that flash-tier storage can substitute for DRAM at inference time for massive MoE models — relevant for on-device and edge deployment scenarios.
+<i>Interview angle:</i> An interviewer might probe the memory hierarchy tradeoffs in LLM inference — DRAM vs. NVMe bandwidth constraints and how MoE sparsity changes the calculus.
+
+• <b><a href="https://jack-clark.net/2026/03/16/importai-449-llms-training-other-llms-72b-distributed-training-run-computer-vision-is-harder-than-generative-text/">PostTrainBench: Can LLMs autonomously fine-tune other LLMs?</a></b>
+PostTrainBench (from University of Tübingen, MPI, and Thoughtful Lab) measures whether frontier coding agents — Claude Code, Codex CLI, Gemini CLI — can autonomously build a training pipeline from scratch, choose data sources and methods, and improve a base model against a target benchmark, all within 10 hours on a single H100. Tests ran across four base models (Qwen3-1.7B, Qwen3-4B, SmolLM3, and others) and seven benchmarks, with the constraint that agents cannot train on test data or swap the target model. Result: agents can do this, but not yet as well as human practitioners — a meaningful but not production-ready capability. This matters because automated post-training pipelines could compress the human iteration loop in fine-tuning workflows significantly.
+<i>Interview angle:</i> Interviewers may probe the evaluation integrity problem — how do you prevent an autonomous agent from gaming a benchmark it's optimizing against?
+
+• <b><a href="https://lilianweng.github.io/posts/2024-07-07-hallucination/">Extrinsic Hallucinations in LLMs</a></b>
+Lilian Weng draws a precise boundary between in-context hallucination (output inconsistent with provided context) and extrinsic hallucination (output ungrounded by world knowledge encoded during pre-training), arguing the latter is under-studied despite being the more fundamental reliability problem. Root causes span pre-training data quality issues (stale, incorrect, or missing web-crawled content) and fine-tuning pathologies where SFT and RLHF can introduce or amplify fabrication. The post outlines mitigation strategies including retrieval augmentation, factuality-targeted RLHF, and model self-calibration for uncertainty acknowledgment. For RAG system designers, this framing is directly actionable: knowing which hallucination type you're fighting determines whether retrieval, better grounding prompts, or training-time fixes are the right lever.
+<i>Interview angle:</i> Expect a question on how RAG addresses in-context vs. extrinsic hallucination differently, and what RAG cannot fix.
+
+• <b><a href="https://jack-clark.net/2026/03/09/import-ai-448-ai-rd-bytedances-cuda-writing-agent-on-device-satellite-ai/">ByteDance's CUDA-writing agent and AI R&D velocity</a></b>
+Import AI 448 covers ByteDance's agent for autonomous CUDA kernel generation, representing a class of AI-driven systems that optimize their own compute stack — a direct accelerant to ML infrastructure iteration speed. The issue also references Ajeya Cotra's updated timeline assessment, where METR results place Claude Opus 4.6 at a 12-hour autonomous task horizon, ahead of her January 2026 predictions; she now forecasts 100+ hour time horizons by end of 2026. The implication for practitioners is that agentic systems capable of writing and benchmarking their own low-level GPU code are becoming near-term rather than speculative. This closes the loop between AI R&D automation and deployment infrastructure in a way that has direct consequences for how ML platform teams plan tooling.
+<i>Interview angle:</i> An interviewer might ask how you'd design evaluation harnesses for agents operating on multi-hour autonomous tasks, where intermediate checkpointing and rollback matter.
+
+• <b><a href="https://huyenchip.com//2025/01/07/agents.html">Chip Huyen: Agents — Framework for Tools, Planning, and Evaluation</a></b>
+Adapted from <i>AI Engineering (2025)</i>, this post builds a structured framework for AI agents covering three pillars: tool use (what external capabilities an agent can invoke), planning (how the agent sequences actions toward a goal), and evaluation (how to catch agent-specific failure modes that don't surface in static benchmarks). Huyen notes conceptual alignment with Anthropic's December 2024 "Building Effective Agents" post while extending the framework to cover evaluation rigor, which Anthropic's post skips. The failure mode taxonomy is particularly useful: agents fail in qualitatively different ways from single-turn models — through compounding errors across steps, tool misuse, and planning loops. For anyone building production agentic workflows, this provides vocabulary and evaluation patterns that apply directly to systems like LangGraph, AutoGen, or custom orchestration layers.
+<i>Interview angle:</i> Be ready to discuss how you'd evaluate a multi-step agent end-to-end vs. component-by-component, and what metrics matter beyond task completion rate.
+
+━━━━━━━━━━━━━━━━━━━
+💡 <b>CONCEPT REFRESHER</b>
+━━━━━━━━━━━━━━━━━━━
+
+Today's concept: Parallelism Strategies in LLM Inference
+
+<b>Parallelism in LLM Inference</b>
+Large models can't fit on a single GPU and single-GPU throughput is often insufficient for production SLAs, so inference systems decompose computation across devices using multiple parallelism strategies simultaneously. <b>Tensor parallelism</b> shards individual weight matrices across GPUs — each GPU holds a slice of each layer and results are reduced via AllReduce after each operation, keeping all GPUs active but requiring low-latency intra-node interconnects. <b>Pipeline parallelism</b> assigns full layers to different GPUs in sequence, reducing communication volume but introducing pipeline bubbles during prefill. <b>Context parallelism</b> distributes the sequence dimension across GPUs so that long-context prefill (which is compute-bound and scales quadratically with sequence length) can be parallelized; GPUs must share partial attention outputs via AllGather. <b>Expert parallelism</b> applies specifically to Mixture-of-Experts models, routing each token's active experts to the GPU that holds those expert weights — requiring AllToAll collectives for token dispatch and collection. In practice, production systems like Meta's combine all four strategies with different configurations for prefill vs. decoding stages, since prefill is compute-bound and decoding is memory-bandwidth-bound.
+
+<b>Q1:</b> Why does decoding require a different optimization strategy than prefill in LLM inference? → <i>Decoding generates one token at a time with small compute but must read the full KV cache and model weights each step, making it memory-bandwidth-bound rather than compute-bound.</i>
+
+<b>Q2:</b> What communication primitive does expert parallelism in MoE models require, and why is it more expensive than AllReduce? → <i>AllToAll, because each token must be routed to a specific expert on a potentially different GPU — the data volume and routing irregularity make it harder to pipeline than the symmetric AllReduce used in tensor parallelism.</i>
+
+<b>Q3:</b> If you're serving a 70B dense model with tensor parallelism across 8 GPUs and latency is still too high, what would you investigate first and why? → <i>AllReduce communication overhead between GPUs — at 8-way tensor parallelism, every layer requires a synchronization barrier, and if inter-GPU bandwidth is saturated or latency is high (e.g., PCIe vs. NVLink), the communication cost dominates compute time.</i>
+
+━━━━━━━━━━━━━━━━━━━
+🔗 <b>QUICK LINKS</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://huyenchip.com//2024/07/25/genai-platform.html">Building A Generative AI Platform (Chip Huyen)</a></b> — canonical reference for GenAI system architecture covering context augmentation, guardrails, model routing, caching, and observability layers; essential reading for production system design interviews.
+
+• <b><a href="https://huyenchip.com//2025/01/16/ai-engineering-pitfalls.html">Common Pitfalls When Building Generative AI Applications (Chip Huyen)</a></b> — practical anti-patterns including over-applying generative AI where classical optimization suffices, with concrete examples useful for scoping AI projects.
+
+• <b><a href="https://deepmind.google/blog/nano-banana-2-combining-pro-capabilities-with-lightning-fast-speed/">Nano Banana 2: Gemini 3.1 Flash Image Model</a></b> — Google's latest image generation model combining Nano Banana Pro quality with Flash-tier speed, relevant for multimodal pipeline designers evaluating image generation options.
+
+• <b><a href="https://medium.com/@jbansal701/understanding-self-attention-by-implementing-it-from-scratch-8753f511c57c?source=rss------machine_learning-5">Understanding Self-Attention by Implementing It from Scratch</a></b> — foundational walkthrough of the self-attention mechanism; useful as a quick refresher before transformer architecture interviews.
