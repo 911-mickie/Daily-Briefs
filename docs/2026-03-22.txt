@@ -1,0 +1,92 @@
+━━━━━━━━━━━━━━━━━━━
+📰 <b>TOP NEWS</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://openai.com/index/introducing-gpt-5-4-mini-and-nano">Introducing GPT-5.4 mini and nano</a></b>
+<i>What happened:</i> OpenAI released GPT-5.4 mini and nano, two smaller, faster distillations of GPT-5.4 explicitly tuned for coding, tool use, multimodal reasoning, and sub-agent workloads in high-volume API settings. The nano variant targets edge cases where latency and cost dominate — think inner loops in multi-agent pipelines. Both are positioned as drop-in replacements for orchestration layers that previously relied on GPT-4o-mini.
+<i>Why it matters:</i> Sub-agent model selection is now a first-class architectural decision — these models give you a cost-performance tier specifically designed for agentic inner loops rather than general chat.
+<i>Interview angle:</i> Be ready to discuss model routing strategies and when to decompose tasks across model tiers in a multi-agent system.
+
+• <b><a href="https://openai.com/index/how-we-monitor-internal-coding-agents-misalignment">How we monitor internal coding agents for misalignment</a></b>
+<i>What happened:</i> OpenAI published details on their chain-of-thought monitoring approach for detecting misalignment in production coding agents deployed internally. They analyze reasoning traces in real-world deployments to surface risk signals before they manifest as unsafe behavior, and use findings to harden safety guardrails.
+<i>Why it matters:</i> This is one of the first detailed public accounts of applying alignment monitoring at deployment time — not just at training — directly relevant to anyone running autonomous coding agents in production.
+<i>Interview angle:</i> Expect questions on how you would instrument an agentic system to detect behavioral drift or unintended actions at runtime.
+
+• <b><a href="https://huggingface.co/blog/Hcompany/holotron-12b">Holotron-12B - High Throughput Computer Use Agent</a></b>
+<i>What happened:</i> H Company released Holotron-12B, post-trained from NVIDIA's Nemotron-Nano-2 VL on proprietary data for computer-use agent workloads. The key architectural bet is a hybrid SSM + attention design that avoids quadratic KV-cache growth, dramatically reducing memory footprint during long multi-image interaction histories. It's positioned explicitly as a production policy model for agents that must perceive, decide, and act at scale.
+<i>Why it matters:</i> SSM-based vision models hitting production-grade computer-use benchmarks signals a real alternative to transformer-only architectures for agentic, long-context multimodal workloads.
+<i>Interview angle:</i> Know the tradeoffs between SSM and attention for long-context inference — specifically KV-cache memory scaling and throughput implications.
+
+• <b><a href="https://www.latent.space/p/dreamer">Dreamer: the Personal Agent OS — David Singleton</a></b>
+<i>What happened:</i> /dev/agents emerged from stealth as Dreamer, a consumer agent platform built by ex-Stripe CTO David Singleton and Hugo Barra. The platform ships its own full stack: SDK, logging, database, prompt management, and serverless VM execution — letting builders push arbitrary code rather than being constrained to a curated tool palette. Their "Sidekick" is framed as an agent that builds agents via natural language.
+<i>Why it matters:</i> Dreamer's full-stack approach — custom infra, ecosystem incentives, and VM-level code execution — is a direct challenge to wrapper-layer agent platforms and sets a higher bar for what "agent infrastructure" means.
+<i>Interview angle:</i> Designing agent platforms requires thinking through the four-sided network effect between users, builders, tools, and the platform runtime — understand each layer's failure modes.
+
+• <b><a href="https://huggingface.co/blog/nvidia/domain-specific-embedding-finetune">Build a Domain-Specific Embedding Model in Under a Day</a></b>
+<i>What happened:</i> NVIDIA and HuggingFace published a full pipeline for fine-tuning domain-specific embedding models using synthetic training data — no manual labeling required. Using this recipe on NVIDIA's own docs yielded 10%+ improvements in Recall@10 and NDCG@10; Atlassian applied it to JIRA data and jumped Recall@60 from 0.751 to 0.951 (26% gain) on a single GPU. The pipeline integrates NeMo Data Designer, NeMo Automodel, BEIR evaluation, and ONNX/TensorRT export.
+<i>Why it matters:</i> A reproducible, single-GPU recipe that delivers double-digit retrieval gains over general embeddings removes one of the most cited blockers to production-quality domain RAG.
+<i>Interview angle:</i> Know how to evaluate embedding fine-tuning — NDCG@k vs. Recall@k, when each matters, and what synthetic data generation requires to avoid eval contamination.
+
+━━━━━━━━━━━━━━━━━━━
+📄 <b>PAPERS & RESEARCH</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://engineering.fb.com/2025/10/17/ai-research/scaling-llm-inference-innovations-tensor-parallelism-context-parallelism-expert-parallelism/">Scaling LLM Inference: Innovations in Tensor Parallelism, Context Parallelism, and Expert Parallelism</a></b>
+Meta details their production parallelism stack for large-scale LLM inference, covering three distinct strategies: tensor parallelism for weight distribution, context parallelism to split long sequences across devices, and expert parallelism for MoE routing. They target TTFT under 350ms and TTIT under 25ms, and distinguish between prefill (compute-bound, quadratic attention scaling) and decoding (memory-bandwidth-bound, KV-cache dominated) as requiring different optimization strategies. The piece is notable for making prefill/decode disaggregation explicit in their production architecture. This is the clearest public articulation of how Meta separates inference concerns at scale for a live product like Meta AI.
+<i>Interview angle:</i> Be ready to explain why prefill and decoding have fundamentally different hardware bottlenecks and how that drives disaggregated serving architectures.
+
+• <b><a href="https://jack-clark.net/2026/03/16/importai-449-llms-training-other-llms-72b-distributed-training-run-computer-vision-is-harder-than-generative-text/">ImportAI 449: LLMs training other LLMs; 72B distributed training run; computer vision is harder than generative text</a></b>
+PostTrainBench evaluates whether frontier coding agents (Claude Code, Codex CLI, Gemini CLI) can autonomously fine-tune LLMs given a base model, target benchmark, and 10 hours on a single H100. Agents must build the full training pipeline from scratch — data sourcing, method selection, experimental strategy — without touching the eval harness or test data. Results: agents can do it, but not as well as humans, with meaningful variance across the four base models (Qwen3-1.7B, Qwen3-4B, SmolLM3, and others) and seven benchmarks. This is a direct empirical stake in the AI R&D automation question.
+<i>Interview angle:</i> Understand what "end-to-end autonomous fine-tuning" actually requires — data pipeline, training config, eval loop — and where current agents break down.
+
+• <b><a href="https://jack-clark.net/2026/03/09/import-ai-448-ai-rd-bytedances-cuda-writing-agent-on-device-satellite-ai/">Import AI 448: AI R&D; Bytedance's CUDA-writing agent; on-device satellite AI</a></b>
+ByteDance built a coding agent that writes CUDA kernels — directly targeting one of the hardest, most specialized forms of code generation where correctness and performance are both required. Separately, Ajeya Cotra updated her AI timeline forecasts after METR results showed Claude Opus 4.6 achieving a 12-hour autonomous task horizon, much sooner than her January 2026 prediction of ~24 hours by end of year. She now estimates agents could reach 100+ hour task horizons by year end, at which point the "time horizon" framing may break down entirely.
+<i>Interview angle:</i> CUDA kernel generation requires verifiable correctness under performance constraints — know what makes it a harder target than general code generation.
+
+• <b><a href="https://arxiv.org/abs/2603.19209v1">Do VLMs Need Vision Transformers? Evaluating State Space Models as Vision Encoders</a></b>
+This paper directly challenges the assumption that Vision Transformers (ViTs) are the only viable vision encoder for VLMs, systematically evaluating SSM-based encoders as replacements. The core question is whether the quadratic attention cost in ViTs is necessary, or whether SSMs can match representation quality at lower compute. Given Holotron-12B's SSM design shipping the same week, this evaluation is immediately relevant to practitioners choosing vision backbone architectures for multimodal agents.
+<i>Interview angle:</i> Know the theoretical tradeoffs between ViT and SSM encoders — patch tokenization, global context modeling, and inference cost scaling.
+
+• <b><a href="https://arxiv.org/abs/2603.19166v1">Meanings and Measurements: Multi-Agent Probabilistic Grounding for Vision-Language Navigation</a></b>
+This paper addresses the grounding problem in vision-language navigation: how agents reconcile ambiguous natural language instructions with uncertain visual observations in multi-agent settings. The approach uses probabilistic grounding — distributing uncertainty across agents rather than forcing hard decisions — to improve navigation robustness. For practitioners building multi-agent systems that operate in physical or simulated environments, this is relevant to how disagreement between agents should be modeled rather than collapsed.
+<i>Interview angle:</i> Probabilistic grounding vs. hard symbolic grounding is a key design choice in multi-agent perception — understand when uncertainty propagation helps vs. adds noise.
+
+━━━━━━━━━━━━━━━━━━━
+💡 <b>CONCEPT REFRESHER</b>
+━━━━━━━━━━━━━━━━━━━
+
+Today's concept: Embedding Fine-Tuning for Retrieval
+
+<b>Embedding Fine-Tuning for Retrieval</b>
+General-purpose embedding models are trained on broad web-scale corpora using contrastive objectives (e.g., InfoNCE) that pull semantically similar pairs together and push dissimilar ones apart in vector space — but "similar" is defined by the training distribution, not your domain. When your documents use specialized terminology, internal taxonomy, or fine-grained distinctions absent from that distribution, the model's similarity surface doesn't align with actual relevance, and retrieval degrades silently. Fine-tuning with in-domain query-document pairs — even synthetic ones generated from your own corpus — re-calibrates the similarity surface for your use case without changing model architecture. The NVIDIA/HuggingFace recipe shows this can be done in under a day on a single GPU with no manual labeling, using LLM-generated synthetic pairs as supervision signal. A common misconception is that fine-tuned embeddings always require gold-labeled data — synthetic pairs from a capable generator model are often sufficient and can yield 10-26% retrieval gains depending on domain specificity.
+
+<b>Q1:</b> Why might a general embedding model fail on domain-specific retrieval even when it scores well on MTEB benchmarks? → <i>MTEB covers broad semantic similarity; domain retrieval requires fine-grained distinctions specific to your corpus vocabulary and taxonomy that the model was never trained to separate.</i>
+<b>Q2:</b> What is the contrastive loss objective used in embedding fine-tuning, and what do positive/negative pairs represent? → <i>Typically InfoNCE or a triplet loss — positives are (query, relevant doc) pairs, negatives are (query, irrelevant doc) pairs sampled from the same batch or a hard-negative miner.</i>
+<b>Q3:</b> What is the risk of using synthetically generated query-document pairs for fine-tuning, and how do you mitigate it? → <i>The generator model may produce queries that are too easy or stylistically uniform, leading to overfitting; mitigate with hard negative mining, diversity-aware sampling, and holdout eval on real user queries.</i>
+
+━━━━━━━━━━━━━━━━━━━
+🎯 <b>INTERVIEW SPOTLIGHT</b> (this week)
+━━━━━━━━━━━━━━━━━━━
+
+• <b>What was asked:</b> SWE vs. DS internship — which is better long term for someone with prior ML intern experience?
+<i>How to approach it:</i> Frame it around skill compounding: SWE builds depth in systems and debugging that transfers everywhere; DS at the wrong company means dashboard work — evaluate the role's actual scope, not the title.
+
+• <b>What was asked:</b> In interviews, does process matter more than getting the right answer?
+<i>How to approach it:</i> For ML/DS roles, yes — interviewers are evaluating how you decompose ambiguous problems, handle missing data assumptions, and validate conclusions, not just whether you land on the correct metric.
+
+• <b>What was asked:</b> AI writing code vs. AI replacing engineers — what's the actual distinction for practitioners already in the field?
+<i>How to approach it:</i> Anchor on ownership and judgment: AI accelerates code production, but system design, debugging distributed failures, and defining the right problem still require human accountability — differentiate yourself on those axes in interviews.
+
+━━━━━━━━━━━━━━━━━━━
+🔗 <b>QUICK LINKS</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://simonwillison.net/guides/agentic-engineering-patterns/using-git-with-coding-agents/#atom-everything">Using Git with coding agents</a></b> — practical guide on leveraging Git's full feature set (branches, history, diffs) as a safety and auditing layer when running coding agents.
+
+• <b><a href="https://huyenchip.com//2025/01/07/agents.html">Chip Huyen: Agents</a></b> — foundational framework for agent architecture, tools, planning, and evaluation adapted from <i>AI Engineering</i>; useful as a reference for system design interviews.
+
+• <b><a href="https://huyenchip.com//2025/01/16/ai-engineering-pitfalls.html">Common pitfalls when building generative AI applications</a></b> — Chip Huyen catalogs recurring mistakes including over-applying GenAI where classical optimization suffices, with concrete case studies.
+
+• <b><a href="https://huyenchip.com//2024/07/25/genai-platform.html">Building A Generative AI Platform</a></b> — architecture walkthrough from bare model API to full production platform covering guardrails, routing, caching, and observability.
+
+• <b><a href="https://medium.com/write-a-catalyst/i-heard-codex-5-4-could-control-the-computer-so-i-had-to-try-it-20308a623145?source=rss------machine_learning-5">I Heard Codex 5.4 Could Control the Computer, So I Had to Try It</a></b> — hands-on exploration of Codex 5.4's computer-use capabilities; useful for understanding current practical limits of GUI-driven agents.
