@@ -29,7 +29,7 @@ Tone: direct, technically precise, zero filler. Write for practitioners, not stu
 """
 
 _USER_TEMPLATE = """\
-Here are today's top articles (each has a URL — use EXACT URLs only, never invent or shorten them):
+Here are today's AI/ML articles (each has a URL — use EXACT URLs only, never invent or shorten them):
 
 {articles_block}
 
@@ -44,7 +44,7 @@ Structure exactly like this:
 📰 <b>TOP NEWS</b>
 ━━━━━━━━━━━━━━━━━━━
 
-Pick the 5 most important news/product/announcement items (not papers). For each:
+Pick the 5 most important AI/ML news/product/announcement items (not papers) from the AI/ML articles above ONLY. Do NOT include any Java, Spring Boot, or database articles here — those belong in their own dedicated sections below. For each:
 
 • <b><a href="EXACT_URL">Title</a></b>
 <i>What happened:</i> 2-3 sentences of substance — be specific, include numbers or technical details where available.
@@ -55,7 +55,7 @@ Pick the 5 most important news/product/announcement items (not papers). For each
 📄 <b>PAPERS & RESEARCH</b>
 ━━━━━━━━━━━━━━━━━━━
 
-Pick the 5 most relevant research papers or technical findings. For each:
+Pick the 5 most relevant AI/ML research papers or technical findings from the AI/ML articles above ONLY. For each:
 
 • <b><a href="EXACT_URL">Paper title</a></b>
 3-4 sentences: what problem they tackled, their approach, key result, and why it matters — in plain English.
@@ -77,7 +77,7 @@ Today's concept: {concept}
 🔗 <b>QUICK LINKS</b>
 ━━━━━━━━━━━━━━━━━━━
 
-List the remaining articles as one-line bullets with links — just title and one clause explaining relevance.
+List the remaining AI/ML articles as one-line bullets with links — just title and one clause explaining relevance. Do NOT include Java/DB articles here.
 
 {java_db_sections}Rules:
 - Only use <b>, <i>, <a href=""> tags — nothing else
