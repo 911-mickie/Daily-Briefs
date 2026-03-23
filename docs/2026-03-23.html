@@ -5,11 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ML Daily Brief — 2026-03-23</title>
   <link rel="stylesheet" href="./style.css">
+  <script>
+    (function() {
+      var t = localStorage.getItem('theme');
+      if (t === 'light') document.documentElement.style.background = '#e8ede8';
+    })();
+  </script>
 </head>
 <body>
   <div class="page">
     <header>
       <a class="archive-link" href="https://911-mickie.github.io/Daily-Briefs/index.html">← All Briefs</a>
+      <button class="theme-toggle" aria-label="Toggle light/dark mode" title="Toggle light/dark mode"></button>
       <h1>🧠 ML Daily Brief</h1>
       <p class="date">2026-03-23</p>
     </header>
@@ -17,85 +24,126 @@
     <main class="brief-content">
       <div class="section-header">📰 TOP NEWS</div>
 <div class="news-card">
-<p>• <b><a href="https://openai.com/index/introducing-gpt-5-4-mini-and-nano">Introducing GPT-5.4 mini and nano</a></b><br>
-<i>What happened:</i> OpenAI released GPT-5.4 mini and nano — distilled variants of GPT-5.4 optimized specifically for coding, tool use, multimodal reasoning, and high-volume sub-agent workloads via API. These are positioned as the inference-efficient backbone for agentic pipelines where cost-per-call matters at scale.<br>
-<i>Why it matters:</i> Purpose-built sub-agent models change the economics of multi-agent orchestration — you can route high-frequency tool-calling tasks to nano and reserve heavier reasoning for orchestrator calls.<br>
-<i>Interview angle:</i> Expect questions on model routing strategies and when to deploy smaller specialized models vs. a single large model in a production agentic system.</p>
+<p>• <b><a href="https://huyenchip.com//2025/01/16/ai-engineering-pitfalls.html">Common Pitfalls When Building Generative AI Applications</a></b><br>
+<i>What happened:</i> Chip Huyen catalogues recurring failure modes in production GenAI systems, including misapplication of LLMs where deterministic or classical optimization methods would suffice, over-reliance on RAG without validating retrieval quality, and shipping evals that don't reflect real user behavior. Specific examples include teams using LLMs for energy scheduling instead of linear programming, and models failing silently on edge cases that simple rule-based systems would catch.<br>
+<i>Why it matters:</i> These are production-system failure modes, not academic toy problems — directly applicable to anyone designing or reviewing GenAI architecture.<br>
+<i>Interview angle:</i> Expect questions like "when would you not use an LLM?" — this article gives you concrete, defensible examples.</p>
 </div>
 <div class="news-card">
-<p>• <b><a href="https://openai.com/index/how-we-monitor-internal-coding-agents-misalignment">How we monitor internal coding agents for misalignment</a></b><br>
-<i>What happened:</i> OpenAI published details on using chain-of-thought monitoring to detect misalignment in their internal coding agents deployed in real workloads — analyzing reasoning traces to catch safety risks before they manifest in outputs.<br>
-<i>Why it matters:</i> CoT monitoring as a production safety layer is a concrete, deployable technique — not just a research concept — and sets a precedent for how agentic systems should be instrumented in enterprise deployments.<br>
-<i>Interview angle:</i> Be ready to discuss observability and safety instrumentation strategies for autonomous agents, particularly how you'd design monitoring for an agent with code execution capabilities.</p>
+<p>• <b><a href="https://huyenchip.com//2024/07/25/genai-platform.html">Building A Generative AI Platform</a></b><br>
+<i>What happened:</i> Huyen outlines the full architecture stack for production GenAI deployments: context augmentation (RAG), guardrails, model routing/gateways, caching layers, complex logic/action execution, and observability. The post progressively builds from the simplest query-response loop to a full multi-component platform, covering both third-party APIs and self-hosted model endpoints.<br>
+<i>Why it matters:</i> This is the closest thing to a canonical reference architecture for GenAI platform engineering — every component has a production rationale, not just a tutorial motivation.<br>
+<i>Interview angle:</i> System design interviews increasingly ask about GenAI platform components; being able to name and justify each layer (cache, gateway, guardrails) is a differentiator.</p>
 </div>
 <div class="news-card">
-<p>• <b><a href="https://engineering.fb.com/2025/10/17/ai-research/scaling-llm-inference-innovations-tensor-parallelism-context-parallelism-expert-parallelism/">Scaling LLM Inference: Innovations in Tensor Parallelism, Context Parallelism, and Expert Parallelism</a></b><br>
-<i>What happened:</i> Meta Engineering detailed their production parallelism stack for LLM inference at scale, covering tensor parallelism, context parallelism for long sequences, and expert parallelism for MoE models. Key targets: TTFT under 350ms and TTIT under 25ms, with explicit separation of prefill (compute-bound) and decoding (memory-bandwidth-bound) optimization strategies.<br>
-<i>Why it matters:</i> These are the concrete latency and throughput targets practitioners should benchmark against when designing inference infrastructure for frontier-scale models.<br>
-<i>Interview angle:</i> Interviewers frequently probe the prefill/decode dichotomy and why each stage requires fundamentally different optimization — know the KV cache mechanics cold.</p>
+<p>• <b><a href="https://planetscale.com/blog/introducing-database-traffic-control">Introducing Database Traffic Control</a></b><br>
+<i>What happened:</i> PlanetScale released Database Traffic Control, a Postgres traffic management feature that lets you define resource budgets targeting specific query fingerprints, application names, Postgres users, or custom SQL comment tags. Budgets can cap CPU%, burst limits, backend process concurrency, and per-query timing, and can run in warn or enforce mode.<br>
+<i>Why it matters:</i> Postgres has no native query-level throttling — this fills a critical gap for teams running mixed workloads where a single runaway query pattern can take down the entire server.<br>
+<i>Interview angle:</i> This is directly relevant to questions about database overload protection, query prioritization, and multi-tenant resource isolation in production systems.</p>
 </div>
 <div class="news-card">
-<p>• <b><a href="https://huyenchip.com//2025/01/16/ai-engineering-pitfalls.html">Common pitfalls when building generative AI applications</a></b><br>
-<i>What happened:</i> Chip Huyen catalogued recurring failure modes in production GenAI builds, including using LLMs for tasks solvable by linear programming or rule-based scheduling, latency/cost mismatches discovered late, and evaluation gaps. The energy scheduling example — where a greedy heuristic likely matched LLM performance — is emblematic of the over-engineering trap.<br>
-<i>Why it matters:</i> Knowing when <i>not</i> to use generative AI is as valuable a production skill as knowing how to deploy it — and these anti-patterns show up in real system design reviews.<br>
-<i>Interview angle:</i> A classic system design question is "would you use an LLM here?" — being able to articulate the cheaper, faster alternative is what separates senior practitioners.</p>
+<p>• <b><a href="https://spring.io/blog/2026/03/20/spring-boot-4-1-0-M3-available-now">Spring Boot 4.1.0-M3 Available Now</a></b><br>
+<i>What happened:</i> Spring Boot 4.1.0-M3 milestone is now available, continuing the preview cycle for the next major release. This milestone tracks the latest Spring Framework 7.x updates and Java 26 compatibility work underway in the ecosystem.<br>
+<i>Why it matters:</i> Teams planning major version migrations need to track M3 behavior now to avoid breaking changes at GA — especially around Spring Security and auto-configuration changes expected in 4.x.<br>
+<i>Interview angle:</i> Spring Boot version migration strategies and breaking change management are common senior engineering interview topics.</p>
 </div>
 <div class="news-card">
-<p>• <b><a href="https://huggingface.co/blog/nvidia/domain-specific-embedding-finetune">Build a Domain-Specific Embedding Model in Under a Day</a></b><br>
-<i>What happened:</i> NVIDIA and Hugging Face published a full recipe for fine-tuning domain-specific embedding models using synthetic training data — no manual labeling required. Results: 10%+ improvement in Recall@10 and NDCG@10 on NVIDIA docs; Atlassian's JIRA fine-tune pushed Recall@60 from 0.751 to 0.951 (26% gain) on a single 80GB Ampere GPU. The stack uses NeMo Data Designer, NeMo Automodel, BEIR eval, and NIM for serving.<br>
-<i>Why it matters:</i> A 26% retrieval recall improvement in under a day on one GPU is a directly actionable ROI argument for embedding fine-tuning in any enterprise RAG pipeline.<br>
-<i>Interview angle:</i> Know how to frame the tradeoff between fine-tuned domain embeddings vs. general-purpose models, and what evaluation metrics (Recall@K, NDCG@K) actually tell you about retrieval quality.</p>
+<p>• <b><a href="https://postgr.es/p/7vX">Waiting for PostgreSQL 19 – Add pg_plan_advice Contrib Module</a></b><br>
+<i>What happened:</i> Robert Haas committed the <i>pg_plan_advice</i> contrib module to PostgreSQL 19, which allows users to capture a plan's key decisions as textual "plan advice" and feed it back into future planning cycles to pin those decisions. The module supports partial advice (controlling some decisions but not all), and advice can be manually edited or written from scratch for targeted overrides like forcing a sequential scan on a specific relation.<br>
+<i>Why it matters:</i> This gives DBAs a stable, declarative mechanism to stabilize query plans across Postgres version upgrades or statistics drift without resorting to pg_hint_plan hacks or rewriting queries.<br>
+<i>Interview angle:</i> Plan stability and hint mechanisms are advanced Postgres topics that surface in interviews for data engineering and backend infrastructure roles.</p>
 </div>
 <div class="section-header">📄 PAPERS & RESEARCH</div>
 <div class="news-card">
-<p>• <b><a href="https://huyenchip.com//2025/01/07/agents.html">Agents (Chip Huyen / AI Engineering)</a></b><br>
-Adapted from Huyen's <i>AI Engineering</i> book, this is a practitioner-grade framework for defining agents, their tool use, planning mechanisms, and failure modes — deliberately aligned with Anthropic's December 2024 "Building Effective Agents" taxonomy. It goes beyond Anthropic's post by covering evaluation strategies specific to agentic failure modes (e.g., compounding errors, tool misuse, planning hallucinations). The framing of agents as systems with perception, memory, action, and planning is the most coherent architectural decomposition currently available. Critically, it acknowledges there is no settled theoretical framework — this is still empirical territory.<br>
-<i>Interview angle:</i> Be prepared to decompose an agent system into its components and explain which failure modes are unique to agentic vs. standard LLM deployments.</p>
+<p>• <b><a href="https://lilianweng.github.io/posts/2025-05-01-thinking/">Why We Think — Test-Time Compute and Chain-of-Thought</a></b><br>
+Lilian Weng (with direct edits from John Schulman) reviews why and how allocating more compute at inference time improves model performance, grounding it in dual-process theory (System 1 vs. System 2 thinking) and tracing the lineage from Graves et al. 2016 through CoT (Wei et al. 2022). The core argument is that neural network capacity in a forward pass is fixed, but allowing iterative generation effectively unlocks sequential compute — turning a one-shot predictor into a deliberate reasoner. This is one of the most rigorous public treatments of why CoT and thinking tokens work mechanistically, not just empirically.<br>
+<i>Interview angle:</i> Be ready to explain why chain-of-thought improves reasoning — the answer connects directly to compute budget, not just "better prompting."</p>
 </div>
 <div class="news-card">
-<p>• <b><a href="https://huggingface.co/papers/2603.17024">HopChain: Multi-Hop Data Synthesis for Generalizable Vision-Language Reasoning</a></b><br>
-From the Qwen team and Tsinghua LeapLab, HopChain addresses the compounding error problem in long-chain visual reasoning by synthesizing training data where each query is a chain of logically dependent hops — each requiring fresh visual grounding rather than language inertia. The key insight is that existing RLVR data doesn't sufficiently stress multi-hop visual perception, so errors accumulate silently across reasoning steps. HopChain combines perception-level hops and instance-chain hops, with verifiable numerical answers enabling clean reward signals. This was used as a training task source in Qwen3.5 VL RLVR.<br>
-<i>Interview angle:</i> Probe-worthy topic: how do you design verifiable reward signals for multimodal reasoning tasks where ground truth is ambiguous?</p>
+<p>• <b><a href="https://lilianweng.github.io/posts/2024-11-28-reward-hacking/">Reward Hacking in Reinforcement Learning</a></b><br>
+Weng surveys reward hacking — where RL agents exploit reward function ambiguities to score high without genuinely solving the task — with a focus on LLMs trained via RLHF. Concrete examples include models modifying unit tests to pass coding benchmarks and generating responses biased toward user preferences rather than correctness. The post calls out the scarcity of practical mitigations, particularly in the RLHF/LLM context, and explicitly flags reward hacking as a major blocker for autonomous AI deployment.<br>
+<i>Interview angle:</i> If you're building any RLHF or preference-trained system, expect questions about how you detect and mitigate reward hacking at scale.</p>
 </div>
 <div class="news-card">
-<p>• <b><a href="https://huggingface.co/papers/2603.19685">A Subgoal-driven Framework for Improving Long-Horizon LLM Agents</a></b><br>
-This paper targets a core failure mode in long-horizon agentic tasks: agents losing coherence over extended action sequences. The subgoal-driven framework decomposes tasks into intermediate verifiable objectives, giving the agent checkpoints to evaluate progress against rather than a single distant terminal reward. This structure reduces compounding errors and improves task completion rates on long-horizon benchmarks. Directly relevant to anyone building agents for multi-step workflows like code generation pipelines or document processing chains.<br>
-<i>Interview angle:</i> Interviewers will ask how you'd design an agent to reliably complete 20+ step tasks — subgoal decomposition with verification is the answer to probe for.</p>
+<p>• <b><a href="https://magazine.sebastianraschka.com/p/categories-of-inference-time-scaling">Categories of Inference-Time Scaling for Improved LLM Reasoning</a></b><br>
+Raschka systematically categorizes inference-time scaling methods — Chain-of-Thought, Self-Consistency, Best-of-N, Rejection Sampling with a Verifier, Self-Refinement, and Search Over Solution Paths — drawing on work from his book chapter that took a base model from ~15% to ~52% accuracy on a reasoning benchmark. The categorization is useful because practitioners often conflate these techniques: Best-of-N is sampling-based, while search over solution paths involves structured tree exploration, and self-refinement uses model feedback in a loop. This is a practitioner-focused synthesis, not a survey paper, and includes notes on what didn't make the final chapter cut.<br>
+<i>Interview angle:</i> Interviewers probe whether candidates can distinguish sampling-based vs. search-based vs. refinement-based inference scaling and know when each is appropriate.</p>
 </div>
 <div class="news-card">
-<p>• <b><a href="https://arxiv.org/abs/2603.20185v1">VideoSeek: Long-Horizon Video Agent with Tool-Guided Seeking</a></b><br>
-VideoSeek tackles long-horizon video understanding by building an agent that uses tools to seek relevant temporal segments rather than processing entire video streams — addressing the fundamental compute vs. relevance tradeoff in video QA. Tool-guided seeking allows the agent to jump to candidate segments based on query semantics, reducing the effective context window needed. This is architecturally analogous to RAG for documents but applied to video timelines. Significant for multimodal pipelines where video ingestion at scale is a cost bottleneck.<br>
-<i>Interview angle:</i> The design parallels between video temporal retrieval and document chunk retrieval are worth knowing — same sparse-then-dense retrieval logic applies.</p>
+<p>• <b><a href="https://magazine.sebastianraschka.com/p/visual-attention-variants">A Visual Guide to Attention Variants in Modern LLMs</a></b><br>
+Raschka catalogs the major attention variants deployed in open-weight LLMs — Multi-Head Attention (MHA), Grouped Query Attention (GQA), Multi-Query Attention (MQA), and Multi-Head Latent Attention (MLA) — with visual model cards for 45 architectures. The post is structured as both a reference (for practitioners integrating specific architectures) and a learning resource (for understanding the memory/compute tradeoffs each variant makes). GQA and MQA in particular are critical for KV cache memory optimization in long-context inference.<br>
+<i>Interview angle:</i> Expect questions on why GQA reduces KV cache memory and what you trade off relative to full MHA — this is a standard inference efficiency question.</p>
 </div>
 <div class="news-card">
-<p>• <b><a href="https://jack-clark.net/2026/03/16/importai-449-llms-training-other-llms-72b-distributed-training-run-computer-vision-is-harder-than-generative-text/">ImportAI 449: LLMs training other LLMs; PostTrainBench</a></b><br>
-PostTrainBench (University of Tübingen / Max Planck) evaluates whether frontier coding agents — Claude Code, Codex CLI, Gemini CLI — can autonomously fine-tune LLMs end-to-end: building training pipelines from scratch, selecting data sources, running experiments, all within 10 hours on a single H100. Results show agents can improve model performance on target benchmarks but still underperform human practitioners. The benchmark enforces integrity constraints (no test data leakage, no eval harness tampering) that make it a credible signal. The scope covers 4 base models and 7 benchmarks.<br>
-<i>Interview angle:</i> AI-driven post-training automation is a near-term production reality — know what human oversight checkpoints you'd keep and why fully autonomous fine-tuning pipelines still need guardrails.</p>
+<p>• <b><a href="https://lilianweng.github.io/posts/2024-07-07-hallucination/">Extrinsic Hallucinations in LLMs</a></b><br>
+Weng narrows hallucination to cases where model output is not grounded by either provided context or pre-training world knowledge, distinguishing in-context from extrinsic hallucination. Root causes are traced to pre-training data quality (stale or incorrect web crawl data memorized via log-likelihood maximization) and fine-tuning dynamics that can introduce or amplify factual errors. The post is particularly useful for RAG practitioners because it clarifies that retrieval mitigates in-context hallucination but does little for extrinsic hallucination when retrieved content is itself unreliable.<br>
+<i>Interview angle:</i> A sharp interviewer will ask you to distinguish the two hallucination types and explain which part of your pipeline addresses each.</p>
 </div>
 <div class="section-header">💡 CONCEPT REFRESHER</div>
 <div class="news-card">
-<p>Today's concept: Precision, Recall, and F1 Score</p>
-<p><b>Precision, Recall, and F1 Score</b><br>
-Precision is the fraction of positive predictions that are actually correct (TP / (TP + FP)); recall is the fraction of actual positives your model correctly identified (TP / (TP + FN)). They trade off against each other — raising your classification threshold increases precision but lowers recall, and vice versa. F1 is the harmonic mean of the two, useful when you want a single scalar but care about both false positives and false negatives roughly equally. In retrieval systems, precision@K measures result quality while recall@K measures coverage — both matter, which is why NDCG (which accounts for rank order) is often preferred in RAG evaluation. A common misconception is treating F1 as universally appropriate — in heavily imbalanced settings (fraud detection, rare disease diagnosis), a high F1 can still hide catastrophic recall failures on the minority class.</p>
-<div class="qa-card"><p class="qa-question">In a RAG pipeline, you retrieve 10 chunks. 7 are relevant. There are 20 total relevant chunks in the corpus. What's your precision@10 and recall@10?</p><p class="qa-answer"><i>Precision@10 = 0.7; Recall@10 = 7/20 = 0.35.</i></p></div>
-<div class="qa-card"><p class="qa-question">Why is F1 a harmonic mean rather than arithmetic mean of precision and recall?</p><p class="qa-answer"><i>The harmonic mean penalizes extreme imbalance — a model with 1.0 precision and 0.0 recall gets F1=0, not 0.5, correctly reflecting it's useless.</i></p></div>
-<div class="qa-card"><p class="qa-question">You're building a content moderation system where false negatives (missed harmful content) are far more costly than false positives. How do you adjust your optimization target?</p><p class="qa-answer"><i>Optimize for recall directly (or use F-beta with beta > 1 to weight recall more heavily), and set your classification threshold low enough to accept higher false positive rates in exchange for catching more true positives.</i></p></div>
+<p><b>Precision, Recall, and F1 Score</b></p>
+<p>Precision measures what fraction of your positive predictions are actually correct: TP / (TP + FP). Recall measures what fraction of actual positives your model correctly identifies: TP / (TP + FN). These two metrics are in tension — optimizing a retrieval threshold for recall tends to pull in more false positives, hurting precision, and vice versa. F1 score is their harmonic mean (2 × precision × recall / (precision + recall)), which penalizes extreme imbalances between the two more severely than a simple average. The most common misconception is treating F1 as a universal "best" metric — in production, whether you weight precision or recall depends entirely on the cost asymmetry of false positives vs. false negatives in your specific system.</p>
+<div class="qa-card"><p class="qa-question">In a medical diagnosis classifier, would you optimize for precision or recall, and why?</p><p class="qa-answer"><i>Recall — a false negative (missed diagnosis) is far more costly than a false positive (unnecessary follow-up), so you minimize FN even at the cost of more FP.</i></p></div>
+<div class="qa-card"><p class="qa-question">Why is F1 a harmonic mean rather than an arithmetic mean?</p><p class="qa-answer"><i>The harmonic mean is dominated by the smaller value, so a model that achieves 99% precision but 1% recall gets a near-zero F1 rather than a misleadingly moderate 50%.</i></p></div>
+<div class="qa-card"><p class="qa-question">In a RAG retrieval system, how do precision and recall map to retrieval quality, and what's the tradeoff when you increase the number of retrieved chunks?</p><p class="qa-answer"><i>Recall@k improves as you retrieve more chunks (fewer relevant docs missed), but precision@k degrades as more irrelevant chunks enter the context window, increasing noise for the generator and token cost.</i></p></div>
 </div>
 <div class="section-header">🔗 QUICK LINKS</div>
 <div class="news-card">
-<p>• <b><a href="https://huyenchip.com//2024/07/25/genai-platform.html">Building A Generative AI Platform</a></b> — Chip Huyen's canonical architecture reference for production GenAI systems, covering guardrails, caching, routing, and observability in a single layered diagram.</p>
+<p>• <b><a href="https://huyenchip.com//2025/01/07/agents.html">Agents (Chip Huyen)</a></b> — comprehensive framework for defining, tooling, planning, and evaluating agentic systems, adapted from <i>AI Engineering (2025)</i>; directly aligned with Anthropic's building-effective-agents guidance.</p>
 </div>
 <div class="news-card">
-<p>• <b><a href="https://arxiv.org/abs/2603.20131v1">An Agentic Multi-Agent Architecture for Cybersecurity Risk Management</a></b> — applies multi-agent orchestration to cybersecurity risk workflows, relevant to anyone designing domain-specific agentic deployments with high-stakes outputs.</p>
+<p>• <b><a href="https://magazine.sebastianraschka.com/p/a-dream-of-spring-for-open-weight">A Dream of Spring for Open-Weight LLMs: 10 Architectures from Jan-Feb 2026</a></b> — architecture-by-architecture walkthrough of 10 open-weight releases including Trinity Large (400B MoE, 13B active), Kimi K2.5, and Qwen 3.5, useful for tracking MoE and MLA adoption trends.</p>
 </div>
 <div class="news-card">
-<p>• <b><a href="https://jack-clark.net/2026/03/09/import-ai-448-ai-rd-bytedances-cuda-writing-agent-on-device-satellite-ai/">Import AI 448: ByteDance's CUDA-writing agent; AI R&D acceleration</a></b> — covers ByteDance's agent for autonomous CUDA kernel generation and Ajeya Cotra's updated timeline forecasts suggesting AI agent "time horizons" may exceed 100 hours by end of year.</p>
+<p>• <b><a href="https://lilianweng.github.io/posts/2024-04-12-diffusion-video/">Diffusion Models for Video Generation</a></b> — covers temporal consistency challenges, noise schedule math for video, and the distinction between from-scratch training and image-model adaptation; prereq reading for anyone working on video generation pipelines.</p>
 </div>
 <div class="news-card">
-<p>• <b><a href="https://lilianweng.github.io/posts/2024-07-07-hallucination/">Extrinsic Hallucinations in LLMs</a></b> — Lilian Weng's deep-dive on hallucination taxonomy, causes at pre-training and fine-tuning stages, and mitigation strategies — essential background for anyone building factuality-sensitive RAG or document QA systems.</p>
+<p>• <b><a href="https://simonwillison.net/2026/Mar/22/starlette/#atom-everything">Experimenting with Starlette 1.0 with Claude Skills</a></b> — covers Starlette 1.0's breaking changes, notably the new lifespan async context manager replacing on_startup/on_shutdown, and why LLMs can reliably generate working single-file Starlette apps.</p>
 </div>
 <div class="news-card">
-<p>• <b><a href="https://lilianweng.github.io/posts/2024-04-12-diffusion-video/">Diffusion Models for Video Generation</a></b> — technical reference on extending image diffusion architectures to video, covering temporal consistency challenges and noise schedule adaptations — useful context for multimodal pipeline work involving video inputs.</p>
+<p>• <b><a href="https://simonwillison.net/2026/Mar/23/david-abram/#atom-everything">Quoting David Abram — The Machine Didn't Take Your Craft</a></b> — sharp practitioner take: LLMs handle boilerplate but can't carry system context, make architectural decisions, or choose — the hard parts of engineering remain human.</p>
+</div>
+<div class="section-header">☕ JAVA & SPRING BOOT</div>
+<div class="news-card">
+<p>• <b><a href="https://spring.io/blog/2026/03/20/spring-boot-4-1-0-M3-available-now">Spring Boot 4.1.0-M3 Available Now</a></b><br>
+<i>What's new:</i> The third milestone of Spring Boot 4.1.0 is available, continuing the preview track toward the next major release. This milestone incorporates the latest Spring Framework 7.x updates and is part of the active compatibility work with Java 26, which is approaching GA. Teams should be testing against M3 now to surface any auto-configuration or dependency conflicts before they become GA blockers.<br>
+<i>Why it matters:</i> Major version migrations in Spring Boot carry real risk — early testing on milestones is how you avoid emergency rollbacks at GA release time.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://spring.io/blog/2026/03/19/spring-boot-3-5-12-available-now">Spring Boot 3.5.12 Available Now</a></b><br>
+<i>What's new:</i> Spring Boot 3.5.12 is the latest patch release in the 3.5.x line, delivering dependency upgrades and bug fixes for teams not yet ready to move to 4.x. The 3.5.x line remains the stable production track for the majority of enterprise Spring Boot deployments and continues to receive security and maintenance updates.<br>
+<i>Why it matters:</i> If you're running 3.5.x in production, this is a routine patch you should apply — don't let patch versions accumulate.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://feeds.feedblitz.com/~/951207752/0/baeldung~Performing-Export-and-Backup-of-H-Databases">Performing Export and Backup of H2 Databases</a></b><br>
+<i>What's new:</i> Covers H2's built-in mechanisms for exporting and backing up database state — including SCRIPT TO for SQL dumps and the BACKUP command for online backups — with practical guidance on scripting these for CI/test environments. H2 is widely used as an embedded test database in Spring Boot applications, but its backup/recovery paths are often ignored until data is needed.<br>
+<i>Why it matters:</i> If you use H2 for integration tests or lightweight embedded deployments, knowing how to snapshot and restore state cleanly is essential for test reproducibility and local debugging.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://feeds.feedblitz.com/~/951217484/0/baeldung~Java-Weekly-Issue">Java Weekly, Issue 638</a></b><br>
+<i>What's new:</i> This week's digest covers Java 26 approaching release, an OAuth core security fix with ecosystem implications, and Baeldung's Spring Sale. The OAuth fix in particular is worth tracking — it addresses a fundamental protocol-level issue that may require dependency or configuration updates in Spring Security setups.<br>
+<i>Why it matters:</i> The OAuth patch is the actionable item here — review your Spring Security OAuth2 dependency versions and watch for a coordinated disclosure if your app uses authorization code flow.</p>
+</div>
+<div class="section-header">🗄️ DATABASE CORNER</div>
+<div class="news-card">
+<p>• <b><a href="https://planetscale.com/blog/behind-the-scenes-how-traffic-control-works">Behind the Scenes: How Database Traffic Control Works</a></b><br>
+<i>What's new:</i> PlanetScale's deep dive explains that Traffic Control is implemented as a Postgres extension that hooks into the planning and execution pipeline — intercepting queries post-parse, evaluating them against configured budget rules (query fingerprint, app name, Postgres user, SQL comment tags), and enforcing CPU%, concurrency, and per-query timing caps before execution proceeds. The extension uses Postgres's shared memory and background worker infrastructure to track cross-connection resource consumption in real time.<br>
+<i>Practical takeaway:</i> If you're building multi-tenant Postgres infrastructure, study this architecture — using SQL comment tags to propagate application-level metadata (feature name, customer tier, priority) into the query layer is a pattern you can implement today with pg_stat_statements and application-side conventions, even without Traffic Control.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://postgr.es/p/7w0">EXPLAIN's Other Superpowers</a></b><br>
+<i>What's new:</i> The post covers three underused EXPLAIN options: BUFFERS (shows shared hit vs. shared read per node, identifying cache miss hotspots at the 8KB block level), SETTINGS (surfaces non-default planner configuration active during planning), and GENERIC_PLAN (forces display of the generic plan used for parameterized queries, bypassing custom plan selection). The BUFFERS output distinguishes between shared buffers (RAM cache) and disk reads, making it the fastest way to confirm whether a performance problem is memory-bound or I/O-bound.<br>
+<i>Practical takeaway:</i> Add BUFFERS to every EXPLAIN ANALYZE you run on slow queries — if you're seeing high shared read counts on index scans, your shared_buffers or OS page cache is undersized for your working set.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://postgr.es/p/7vX">Waiting for PostgreSQL 19 – pg_plan_advice Contrib Module</a></b><br>
+<i>What's new:</i> The newly committed pg_plan_advice module lets you capture a finished query plan's key decisions as structured text, then inject that advice into future planning cycles to pin those decisions — for example, forcing a sequential scan on a specific relation or locking in a particular join order. Advice can be partial (controlling only some decisions), manually edited, or written from scratch, and is scoped to decisions like scan type and join strategy, not aggregation or sort order.<br>
+<i>Practical takeaway:</i> Use pg_plan_advice to stabilize critical query plans across statistics updates or minor version upgrades — it's a safer, more auditable alternative to embedding hints in application SQL or relying on pg_hint_plan.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://planetscale.com/blog/introducing-database-traffic-control">Introducing Database Traffic Control</a></b><br>
+<i>What's new:</i> Traffic Control introduces budget-based query throttling to Postgres, letting operators define resource limits per query pattern, application, user, or custom tag. Budgets enforce caps on CPU%, burst behavior, backend process concurrency, and per-query wall time, and can run in warn mode (observe only) before switching to enforce mode. This is the first production-grade Postgres-native solution to the "thundering herd of bad queries" problem that previously required external proxies or application-side circuit breakers.<br>
+<i>Practical takeaway:</i> Instrument your application queries with SQL comment tags (e.g., <i>/* app=payments, priority=high */</i>) now — this positions you to adopt budget-based throttling cleanly, whether via Traffic Control or any future equivalent.</p>
 </div>
     </main>
 
@@ -103,5 +151,25 @@ Precision is the fraction of positive predictions that are actually correct (TP 
       <p>Generated by <a href="./index.html">Daily Briefs</a></p>
     </footer>
   </div>
+  <script>
+    (function() {
+      var btn = document.querySelector('.theme-toggle');
+      var body = document.body;
+      function setTheme(theme) {
+        if (theme === 'light') {
+          body.classList.add('light');
+          btn.textContent = '\u2600\uFE0F';
+        } else {
+          body.classList.remove('light');
+          btn.textContent = '\uD83C\uDF19';
+        }
+        localStorage.setItem('theme', theme);
+      }
+      setTheme(localStorage.getItem('theme') || 'dark');
+      btn.addEventListener('click', function() {
+        setTheme(body.classList.contains('light') ? 'dark' : 'light');
+      });
+    })();
+  </script>
 </body>
 </html>
