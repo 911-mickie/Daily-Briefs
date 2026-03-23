@@ -11,19 +11,21 @@ from pathlib import Path
 import anthropic
 
 _MODEL = "claude-sonnet-4-6"
-_MAX_TOKENS = 8192
+_MAX_TOKENS = 10240
 
 _SYSTEM_TEMPLATE = """\
-You write a daily ML/AI morning brief for practitioners working in AI/ML. \
-The audience cares about these areas:
+You write a daily morning brief for a mixed technical audience. \
+The primary audience is an AI/ML practitioner who cares about:
 
 {focus_areas}
 
-Your job is to take today's top articles and write a brief that feels curated for someone \
-building production AI systems — not generic ML news, but content filtered and interpreted \
-for practitioners who ship real systems.
+The brief also includes sections for a Java/Spring Boot and Database practitioner.
 
-Tone: direct, technically precise, zero filler. Write for a practitioner, not a student.\
+Your job is to take today's top articles and write a brief that feels curated for \
+practitioners who ship real systems — not generic news, but content filtered and interpreted \
+for engineers who build production systems.
+
+Tone: direct, technically precise, zero filler. Write for practitioners, not students.\
 """
 
 _USER_TEMPLATE = """\
@@ -77,11 +79,42 @@ Today's concept: {concept}
 
 List the remaining articles as one-line bullets with links — just title and one clause explaining relevance.
 
-Rules:
+{java_db_sections}Rules:
 - Only use <b>, <i>, <a href=""> tags — nothing else
 - No markdown (**bold**, ## headers, [text](url))
 - Use only exact URLs from the article list — never invent or shorten URLs
 - Be specific and technical, not generic\
+"""
+
+_JAVA_DB_SECTION_TEMPLATE = """\
+━━━━━━━━━━━━━━━━━━━
+☕ <b>JAVA & SPRING BOOT</b>
+━━━━━━━━━━━━━━━━━━━
+
+Here are the latest Java/Spring Boot articles:
+
+{java_block}
+
+Pick the 3-4 most useful items. For each:
+
+• <b><a href="EXACT_URL">Title</a></b>
+<i>What's new:</i> 2-3 sentences — be specific about the feature, API change, or technique.
+<i>Why it matters:</i> One sentence on practical impact for a Spring Boot developer.
+
+━━━━━━━━━━━━━━━━━━━
+🗄️ <b>DATABASE CORNER</b>
+━━━━━━━━━━━━━━━━━━━
+
+Here are the latest database articles:
+
+{db_block}
+
+Pick the 3-4 most useful items. For each:
+
+• <b><a href="EXACT_URL">Title</a></b>
+<i>What's new:</i> 2-3 sentences — be specific about the concept, optimization, or feature.
+<i>Practical takeaway:</i> One sentence on what a developer should do differently.
+
 """
 
 _INTERVIEW_SECTION_TEMPLATE = """\
@@ -112,6 +145,8 @@ def generate(
     articles: list[dict],
     concept: str,
     interview_posts: list[dict] | None = None,
+    java_articles: list[dict] | None = None,
+    db_articles: list[dict] | None = None,
     user_context_path: str = "user_context.json",
 ) -> str:
     """Generate the brief using Claude Sonnet. Returns the formatted HTML-compatible string."""
@@ -138,10 +173,31 @@ def generate(
         )
         interview_section = _INTERVIEW_SECTION_TEMPLATE.format(posts_block=posts_block)
 
+    # Build optional Java & Database sections
+    java_db_sections = ""
+    if java_articles or db_articles:
+        java_block = "\n\n".join(
+            f"[{i+1}] [{a['source']}] {a['title']}\nURL: {a['link']}\n"
+            + (a.get("full_text") or a.get("summary", ""))[:1_500]
+            for i, a in enumerate(java_articles or [])
+        ) or "No Java articles today."
+
+        db_block = "\n\n".join(
+            f"[{i+1}] [{a['source']}] {a['title']}\nURL: {a['link']}\n"
+            + (a.get("full_text") or a.get("summary", ""))[:1_500]
+            for i, a in enumerate(db_articles or [])
+        ) or "No database articles today."
+
+        java_db_sections = _JAVA_DB_SECTION_TEMPLATE.format(
+            java_block=java_block,
+            db_block=db_block,
+        )
+
     user_msg = _USER_TEMPLATE.format(
         articles_block=articles_block,
         concept=concept,
         interview_section=interview_section,
+        java_db_sections=java_db_sections,
     )
 
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])

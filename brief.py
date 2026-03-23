@@ -7,6 +7,7 @@ from datetime import date
 import render
 from fetchers import rss_fetcher, arxiv_fetcher, content_enricher, interview_fetcher
 from pipeline import scorer, synthesizer
+import db
 
 
 # ── Pick today's concept ───────────────────────────────────────────────────────
@@ -22,16 +23,16 @@ def send_email_brief(html_content: str, date_str: str) -> None:
     gmail_password = os.environ["GMAIL_APP_PASSWORD"]
     recipients = [r.strip() for r in os.environ["GMAIL_RECIPIENTS"].split(",") if r.strip()]
 
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"🧠 ML Daily Brief — {date_str}"
-    msg["From"] = gmail_user
-    msg["To"] = ", ".join(recipients)
-    msg.attach(MIMEText(html_content, "html"))
-
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
         server.login(gmail_user, gmail_password)
-        server.sendmail(gmail_user, recipients, msg.as_string())
-    print(f"  Email sent to: {', '.join(recipients)}")
+        for recipient in recipients:
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = f"🧠 ML Daily Brief — {date_str}"
+            msg["From"] = gmail_user
+            msg["To"] = recipient
+            msg.attach(MIMEText(html_content, "html"))
+            server.sendmail(gmail_user, [recipient], msg.as_string())
+            print(f"  Email sent to: {recipient}")
 
 
 # ── Send Telegram teaser with link ────────────────────────────────────────────
@@ -58,13 +59,27 @@ def send_telegram_teaser(concept: str, brief_url: str) -> None:
 
 # ── Main ───────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
+    # ── 0. Init DB ─────────────────────────────────────────────────────────────
+    db.init_db()
+    db.purge_old()
+
     # ── 1. Ingest ──────────────────────────────────────────────────────────────
     print("Fetching RSS articles...")
-    articles = rss_fetcher.fetch_all()
-    print(f"  Got {len(articles)} RSS articles")
+    ai_articles = rss_fetcher.fetch_all(category="ai")
+    print(f"  Got {len(ai_articles)} AI/ML RSS articles")
+
+    print("Fetching Java & Database articles...")
+    java_db_articles = rss_fetcher.fetch_all(category="java") + rss_fetcher.fetch_all(category="database")
+    print(f"  Got {len(java_db_articles)} Java/DB articles")
 
     print("Fetching papers (Arxiv + HF Papers)...")
-    articles += arxiv_fetcher.fetch()
+    ai_articles += arxiv_fetcher.fetch()
+
+    # ── 1b. Deduplicate ─────────────────────────────────────────────────────────
+    print("Removing previously used articles...")
+    ai_articles = db.filter_unseen(ai_articles)
+    java_db_articles = db.filter_unseen(java_db_articles)
+    print(f"  After dedup: {len(ai_articles)} AI + {len(java_db_articles)} Java/DB articles")
 
     interview_posts = None
     if interview_fetcher.is_sunday():
@@ -72,12 +87,18 @@ if __name__ == "__main__":
         interview_posts = interview_fetcher.fetch()
 
     print("Enriching articles with full text...")
-    articles = content_enricher.enrich(articles)
-    print(f"  Total: {len(articles)} articles enriched")
+    ai_articles = content_enricher.enrich(ai_articles)
+    java_db_articles = content_enricher.enrich(java_db_articles)
+    print(f"  Total: {len(ai_articles)} AI + {len(java_db_articles)} Java/DB articles enriched")
 
     # ── 2. Filter & Score ──────────────────────────────────────────────────────
-    print("Scoring and filtering...")
-    top_articles = scorer.score_and_filter(articles, n=15)
+    print("Scoring and filtering AI articles...")
+    top_articles = scorer.score_and_filter(ai_articles, n=15)
+
+    # Java/DB articles are from curated feeds — take the most recent ones
+    java_articles = [a for a in java_db_articles if a.get("category") == "java"][:5]
+    db_articles = [a for a in java_db_articles if a.get("category") == "database"][:5]
+    print(f"  Java: {len(java_articles)}, Database: {len(db_articles)} articles selected")
 
     # ── 3. Synthesize ──────────────────────────────────────────────────────────
     concept = get_todays_concept()
@@ -88,9 +109,15 @@ if __name__ == "__main__":
         articles=top_articles,
         concept=concept,
         interview_posts=interview_posts,
+        java_articles=java_articles,
+        db_articles=db_articles,
     )
     print("  Done.\n")
     print(brief)
+
+    # ── 3b. Record used articles ─────────────────────────────────────────────
+    db.mark_used(top_articles + java_articles + db_articles)
+    print(f"  Saved {len(top_articles) + len(java_articles) + len(db_articles)} articles to content history")
 
     # ── 4. Deliver ─────────────────────────────────────────────────────────────
     date_str = date.today().strftime("%Y-%m-%d")

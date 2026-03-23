@@ -20,5 +20,12 @@
     "OpenAI",
     "Anthropic",
     "High-growth AI startups"
+  ],
+  "additional_sections": [
+    {
+      "name": "Jason",
+      "topics": ["Java", "Spring Boot", "Spring Framework", "JVM", "Database concepts", "SQL", "PostgreSQL", "NoSQL", "Database internals"],
+      "sections": ["Java & Spring Boot", "Database Corner"]
+    }
   ]
 }

@@ -23,7 +23,7 @@ def _env() -> Environment:
 
 # Matches lines like: 📰 <b>TOP NEWS</b>  or  📰 TOP NEWS
 _SECTION_HEADER_RE = re.compile(
-    r'^(?:📰|📄|💡|🔗|💼|🧠|🏆|📊|🎯)\s+(?:<b>)?[A-Z][A-Z &/()\-]+(?:</b>)?(?:\s+\([^)]+\))?$'
+    r'^(?:📰|📄|💡|🔗|💼|🧠|🏆|📊|🎯|☕|🗄️)\s+(?:<b>)?[A-Z][A-Z &/()\-]+(?:</b>)?(?:\s+\([^)]+\))?$'
 )
 
 

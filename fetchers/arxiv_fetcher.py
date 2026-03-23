@@ -9,10 +9,13 @@ _HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; DailyBriefs/2.0)"}
 
 # Arxiv categories and keywords tuned for the user's focus areas
 _ARXIV_QUERY = (
-    "(cat:cs.LG OR cat:cs.AI OR cat:cs.CL)"
+    "(cat:cs.LG OR cat:cs.AI OR cat:cs.CL OR cat:cs.IR OR cat:cs.NE OR cat:stat.ML)"
     " AND (ti:\"language model\" OR ti:RAG OR ti:\"multi-agent\""
     " OR ti:transformer OR ti:\"retrieval augmented\" OR ti:agent"
-    " OR ti:\"instruction tuning\" OR ti:\"fine-tuning\")"
+    " OR ti:\"instruction tuning\" OR ti:\"fine-tuning\""
+    " OR ti:\"knowledge graph\" OR ti:\"vector search\" OR ti:embedding"
+    " OR ti:\"chain of thought\" OR ti:reasoning OR ti:\"speculative decoding\""
+    " OR ti:quantization OR ti:\"mixture of experts\")"
 )
 
 
@@ -39,6 +42,7 @@ def _fetch_arxiv(max_results: int = 8) -> list[dict]:
                 "source":  "Arxiv",
                 "link":    entry.get("link", ""),
                 "tier":    3,
+                "category": "ai",
                 "authors": authors,
             })
         return papers
@@ -72,6 +76,7 @@ def _fetch_hf_papers(max_results: int = 5) -> list[dict]:
                 "source":  "HuggingFace Papers",
                 "link":    f"https://huggingface.co{href}",
                 "tier":    3,
+                "category": "ai",
                 "authors": "",
             })
             if len(papers) >= max_results:
