@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML Daily Brief — 2026-03-25</title>
+  <link rel="stylesheet" href="./style.css">
+  <script>
+    (function() {
+      var t = localStorage.getItem('theme');
+      if (t === 'light') document.documentElement.style.background = '#e8ede8';
+    })();
+  </script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <a class="archive-link" href="https://911-mickie.github.io/Daily-Briefs/index.html">← All Briefs</a>
+      <button class="theme-toggle" aria-label="Toggle light/dark mode" title="Toggle light/dark mode"></button>
+      <h1>🧠 ML Daily Brief</h1>
+      <p class="date">2026-03-25</p>
+    </header>
+
+    <main class="brief-content">
+      <div class="section-header">📰 TOP NEWS</div>
+<div class="news-card">
+<p>• <b><a href="https://simonwillison.net/2026/Mar/24/auto-mode-for-claude-code/#atom-everything">Claude Code Auto Mode: Classifier-Gated Permissions</a></b><br>
+<i>What happened:</i> Anthropic shipped "auto mode" for Claude Code as a safer alternative to <b>--dangerously-skip-permissions</b>. A separate Claude Sonnet 4.6 classifier reviews every action before execution, blocking scope escalation (e.g., wandering outside the repo into <b>~/</b> or <b>/etc</b>), unrecognized infrastructure targeting, and prompt injection from hostile file/web content. The default allow/block rules are fully inspectable via <b>claude auto-mode defaults</b> and customizable.<br>
+<i>Why it matters:</i> This is the first production-grade sandboxing architecture for agentic coding assistants — a classifier-as-policy-engine pattern that other agentic frameworks will need to replicate.<br>
+<i>Interview angle:</i> How would you design a permission/scope enforcement layer for a multi-step coding agent, and what failure modes does a secondary classifier model introduce?</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://simonwillison.net/2026/Mar/24/malicious-litellm/#atom-everything">LiteLLM 1.82.8 Supply Chain Attack: Credential Stealer via .pth File</a></b><br>
+<i>What happened:</i> LiteLLM versions 1.82.7 and 1.82.8 on PyPI were backdoored with a credential stealer; v1.82.8 embedded the payload in base64 inside a <b>litellm_init.pth</b> file, meaning <i>installing</i> the package triggered exfiltration without any import. Targeted secrets included <b>~/.ssh/</b>, <b>~/.aws/</b>, <b>~/.kube/</b>, <b>~/.docker/</b>, shell histories, and multiple crypto wallet directories. The attack chain traced back to a prior compromise of Trivy (a security scanner used in LiteLLM's CI), whose stolen PyPI credentials enabled direct package publishing.<br>
+<i>Why it matters:</i> If LiteLLM is in your RAG or multi-model routing stack, assume any secrets on that machine were exfiltrated during the exposure window — rotate everything immediately.<br>
+<i>Interview angle:</i> How do you harden a Python ML dependency pipeline against supply chain attacks, and what's the difference in blast radius between a <b>.pth</b>-based payload vs. an import-time payload?</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://deepmind.google/blog/gemini-3-1-flash-lite-built-for-intelligence-at-scale/">Gemini 3.1 Flash-Lite: $0.25/1M Input, 2.5x Faster TTFT</a></b><br>
+<i>What happened:</i> Google DeepMind released Gemini 3.1 Flash-Lite in preview via Gemini API and Vertex AI, priced at $0.25/1M input tokens and $1.50/1M output tokens. It claims 2.5x faster Time to First Answer Token and 45% higher output speed vs. Gemini 2.5 Flash on Artificial Analysis benchmarks, at similar or better quality.<br>
+<i>Why it matters:</i> This pricing tier competes directly with GPT-4o-mini and Claude Haiku for high-throughput RAG retrieval augmentation, re-ranking, and classification workloads where latency and cost dominate.<br>
+<i>Interview angle:</i> When designing a multi-stage RAG pipeline, how do you decide which model tier to use at each step (embedding, retrieval, generation, re-ranking)?</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/blog/nvidia/domain-specific-embedding-finetune">Fine-Tune Domain-Specific Embeddings in Under a Day — 26% Recall Improvement</a></b><br>
+<i>What happened:</i> NVIDIA and Hugging Face published a full pipeline for domain-specific embedding fine-tuning using synthetic data generation (NeMo Data Designer), training (NeMo Automodel), evaluation (BEIR), and production deployment (ONNX/TensorRT + NIM). On NVIDIA's own docs, the recipe yielded 10%+ improvement in Recall@10 and NDCG@10; Atlassian applied it to JIRA data and pushed Recall@60 from 0.751 to 0.951 — a 26% gain — on a single 80GB+ Ampere GPU with no manual labeling.<br>
+<i>Why it matters:</i> Synthetic data generation eliminates the labeling bottleneck that blocked most teams from embedding fine-tuning, making domain-adapted retrieval accessible for any RAG system with a document corpus.<br>
+<i>Interview angle:</i> What are the failure modes of using general-purpose embeddings for domain-specific RAG, and how would you evaluate whether fine-tuning is worth the investment?</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://openai.com/index/powering-product-discovery-in-chatgpt">ChatGPT Agentic Commerce Protocol: Structured Product Discovery</a></b><br>
+<i>What happened:</i> OpenAI introduced an Agentic Commerce Protocol powering shopping in ChatGPT, enabling structured product discovery with side-by-side comparisons, visual cards, and direct merchant integration — moving beyond search links toward agent-native commerce actions.<br>
+<i>Why it matters:</i> This formalizes a new agent-to-merchant API surface pattern where LLM agents negotiate structured product data rather than scraping or parsing unstructured web results, signaling where agentic tool/API design is heading.<br>
+<i>Interview angle:</i> How would you design a tool/function schema for an agent that needs to query, compare, and act on structured product data from heterogeneous merchant APIs?</p>
+</div>
+<div class="section-header">📄 PAPERS & RESEARCH</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/blog/ServiceNow-AI/eva">EVA: End-to-End Evaluation Framework for Voice Agents</a></b><br>
+ServiceNow AI identified a core gap: existing voice agent evals measure task success or conversational quality in isolation, not jointly. EVA introduces two composite scores — EVA-A (Accuracy: task completion fidelity) and EVA-X (Experience: naturalness, conciseness, spoken-interaction appropriateness) — evaluated over complete multi-turn spoken conversations using a bot-to-bot architecture. The key empirical finding across 20 cascade and audio-native systems is a consistent <b>Accuracy-Experience tradeoff</b>: agents that score higher on task completion tend to deliver worse conversational experience, and vice versa. The initial release includes 50 airline scenarios (flight rebooking, cancellations, vouchers) as a benchmark baseline.<br>
+<i>Interview angle:</i> How would you design an evaluation harness for a production voice agent that captures both task success rate and conversational quality without human annotation at scale?</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/blog/ibm-granite/granite-libraries">IBM Mellea 0.4.0 + Granite Libraries: Constrained Decoding for Verifiable Workflows</a></b><br>
+IBM Research released Mellea 0.4.0 alongside three specialized Granite model adapter libraries: <b>granitelib-rag-r1.0</b> (retrieval), <b>granitelib-core-r1.0</b>, and <b>granitelib-guardian-r1.0</b> (safety/policy). Rather than general-purpose prompting, each library is a fine-tuned adapter for a specific operation (query rewriting, hallucination detection, policy compliance), using constrained decoding to guarantee schema-correct outputs. The framework introduces an instruct-validate-repair loop via rejection sampling, replacing probabilistic prompt behavior with deterministic, maintainable pipeline structure. This addresses a real production gap: LLM workflows that produce structurally invalid outputs under distribution shift.<br>
+<i>Interview angle:</i> When would you choose constrained decoding over post-hoc output validation, and what are the tradeoffs for latency and model flexibility?</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://deepmind.google/blog/measuring-progress-toward-agi-a-cognitive-framework/">DeepMind AGI Cognitive Framework: Eval Protocol for Learning, Metacognition, Attention</a></b><br>
+DeepMind proposed a three-stage evaluation protocol mapping AI systems against a representative human baseline distribution across distinct cognitive abilities, explicitly targeting abilities where current benchmarks have the largest gaps: learning, metacognition, attention, executive functions, and social cognition. The protocol uses held-out test sets to prevent data contamination and maps model performance relative to the <i>distribution</i> of human performance rather than a single average. A Kaggle hackathon with a $200K prize pool is open through April 16 to crowdsource evaluations for these five underserved cognitive dimensions.<br>
+<i>Interview angle:</i> What are the methodological risks of benchmarking AI against human performance distributions, and how does data contamination undermine current capability evaluations?</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/blog/huggingface/state-of-os-hf-spring-2026">State of Open Source AI: HF Spring 2026 — 2M Models, Power Law Downloads</a></b><br>
+Hugging Face's Spring 2026 ecosystem report documents growth to 13M users, 2M+ public models, and 500K+ public datasets — roughly doubling year-over-year. Critically, the distribution is heavily power-law: the top 200 models (0.01%) account for 49.6% of all downloads, while ~50% of models have under 200 total downloads. The report characterizes the ecosystem as multiple overlapping sub-ecosystems rather than a unified market, with derivative artifact creation (fine-tunes, adapters, benchmarks) now outpacing consumption of base models.<br>
+<i>Interview angle:</i> What does the power-law download distribution imply for teams deciding whether to fine-tune a niche model vs. prompt-engineer a top-200 general model for a production use case?</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://deepmind.google/blog/10-years-of-alphago/">10 Years of AlphaGo: RL+Search as a Scientific Method</a></b><br>
+DeepMind's retrospective traces AlphaGo's core architecture — combining deep RL with tree search — through its descendants: AlphaFold 2 (Nobel Prize in Chemistry, 200M protein structures), AlphaProof (silver-medal IMO performance via formal math proving), AlphaGeometry 2, and ultimately Gemini's Deep Think mode achieving IMO gold-medal level in 2025. The key technical thread is that learned value/policy functions combined with search generalize far beyond games — the same reward-signal + search paradigm that solved Go now drives protein structure prediction and formal theorem proving.<br>
+<i>Interview angle:</i> How does the policy/value network + MCTS architecture from AlphaGo translate conceptually to modern reasoning models that use search or tree-of-thought at inference time?</p>
+</div>
+<div class="section-header">💡 CONCEPT REFRESHER</div>
+<div class="news-card">
+<p><b>Overfitting and Underfitting</b><br>
+Overfitting occurs when a model learns the training distribution so precisely — including noise and dataset-specific artifacts — that it fails to generalize; the model has high variance and low bias. Underfitting occurs when a model lacks the capacity or training signal to capture the true underlying pattern, yielding high bias and low variance. In practice, this matters most at inflection points: when choosing model size for a new task, deciding when to stop fine-tuning an LLM, or diagnosing why a retrieval ranker with perfect offline metrics degrades in production. A common misconception is that larger models always overfit; modern large models often exhibit double-descent, where performance improves again after an initial overfitting peak as model size or training steps continue to increase. For RAG and embedding systems specifically, overfitting to a synthetic training distribution (e.g., generated QA pairs) is a real risk if the synthetic data doesn't reflect true query diversity.</p>
+<p><b>Q1:</b> What's the practical signal that your fine-tuned embedding model is overfitting to synthetic training data? → <i>Recall improves on held-out synthetic pairs but degrades on real user queries sampled from production logs.</i><br>
+<b>Q2:</b> Why can early stopping be insufficient as an overfitting mitigation for LLM fine-tuning? → <i>Validation loss may not reflect downstream task generalization, especially when the validation set shares artifacts with the training set.</i><br>
+<b>Q3:</b> In the double-descent regime, what does "interpolation threshold" mean and why should a practitioner care? → <i>It's the model size/epoch where training loss hits zero and test loss peaks before improving again — practitioners who stop training here miss the second descent where generalization recovers.</i></p>
+</div>
+<div class="section-header">🔗 QUICK LINKS</div>
+<div class="news-card">
+<p>• <b><a href="https://simonwillison.net/2026/Mar/24/package-managers-need-to-cool-down/#atom-everything">Package Managers Need to Cool Down</a></b> — Supply chain attack context: pnpm, Yarn, Bun, Deno, uv, pip, and npm all shipped dependency cooldown/minimum release age features in 2025-2026; practical configuration patterns for ML dependency pipelines.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://simonwillison.net/2026/Mar/24/christopher-mims/#atom-everything">Quoting Christopher Mims on AI Computer Control</a></b> — WSJ columnist's skepticism on full computer-control AI agents; useful framing for evaluating agentic system risk in production.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://openai.com/index/teen-safety-policies-gpt-oss-safeguard">OpenAI Teen Safety Policies via gpt-oss-safeguard</a></b> — Prompt-based age-specific content moderation released for developers; relevant for teams building consumer-facing AI products that need policy-layer guardrails.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://deepmind.google/blog/nano-banana-2-combining-pro-capabilities-with-lightning-fast-speed/">Nano Banana 2 (Gemini 3.1 Flash Image)</a></b> — New state-of-the-art image generation/editing model combining Pro-level quality with Flash-tier speed; relevant for multimodal pipelines requiring fast image generation.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://openai.com/index/update-on-the-openai-foundation">OpenAI Foundation: $1B Commitment</a></b> — Governance/org update; $1B pledged across disease, economic opportunity, AI resilience, and community programs — light on technical detail but relevant for understanding OpenAI's nonprofit/for-profit structural direction.</p>
+</div>
+<div class="section-header">☕ JAVA & SPRING BOOT</div>
+<div class="news-card">
+<p>• <b><a href="https://inside.java/2026/03/17/the-arrival-of-java-26/">The Arrival of Java 26</a></b><br>
+<i>What's new:</i> Java 26 is officially released, incorporating 10 JEPs covering language, runtime, and API improvements. The release continues the 6-month cadence with a mix of previews and finalized features relevant to modern Spring Boot applications.<br>
+<i>Why it matters:</i> Spring Boot developers should audit which JEPs affect their stack — particularly any preview language features or API deprecations — before targeting Java 26 in production.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://inside.java/2026/03/18/jdk-26-in-2-mins/">Java 26 in Definitely Under 3 Minutes</a></b><br>
+<i>What's new:</i> Concise video walkthrough of all 10 JEPs in JDK 26, useful for quickly assessing which changes are immediately actionable vs. preview-only. Show notes provide structured links to each JEP.<br>
+<i>Why it matters:</i> Fastest way to triage JDK 26 relevance for a running Spring Boot service without reading 10 full JEP documents.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://vladmihalcea.com/emulate-left-join-fetch-using-projections/">How to Emulate LEFT JOIN FETCH Using Record-Based Projections</a></b><br>
+<i>What's new:</i> Demonstrates how to fetch a root entity (<b>Post</b>) with an optional associated entity (<b>User</b>) via an intermediate join table (<b>PostDetails</b>) using record-based projections, without loading the intermediate entity into the persistence context. This avoids the N+1 problem and the Cartesian product issue that standard <b>LEFT JOIN FETCH</b> between two root entities produces.<br>
+<i>Why it matters:</i> For Spring Data JPA applications with complex entity hierarchies, this pattern reduces memory pressure and query complexity compared to naive eager fetching or multiple round trips.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://vladmihalcea.com/replace-deprecated-genericgenerator/">The Best Way to Replace the Deprecated @GenericGenerator</a></b><br>
+<i>What's new:</i> Hibernate 7 fully deprecates <b>@GenericGenerator</b> (available since Hibernate 3.5) in favor of the <b>@IdGeneratorType</b> meta-annotation. The article covers both migration paths: custom identifier generators (e.g., TSID-based Long IDs) and supplying a pooled-lo sequence optimizer to <b>@SequenceGenerator</b>.<br>
+<i>Why it matters:</i> Any Spring Boot application upgrading to Hibernate 7 with custom ID generation strategies will hit compile warnings or breakage — this is the concrete migration path.</p>
+</div>
+<div class="section-header">🗄️ DATABASE CORNER</div>
+<div class="news-card">
+<p>• <b><a href="https://postgr.es/p/7w3">PostgreSQL HA on OCI: The VIP Failover Trap</a></b><br>
+<i>What's new:</i> On AWS and Azure, floating a virtual IP during PostgreSQL failover is handled natively by Patroni/repmgr with simple API calls. OCI's networking model doesn't support floating secondary private IPs the same way — the VIP doesn't follow a promoted standby, meaning the application continues routing to the dead node even though Patroni reports the cluster as healthy. The article details detection, OCI-specific fixes, and how to pick the right approach (DNS-based vs. load balancer vs. OCI-specific API callbacks).<br>
+<i>Practical takeaway:</i> If you're running Patroni-managed PostgreSQL on OCI, test your VIP failover path explicitly in staging — don't assume AWS/Azure behavior carries over.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://planetscale.com/blog/enhanced-tagging-in-postgres-query-insights">Enhanced Tagging in PlanetScale Postgres Query Insights</a></b><br>
+<i>What's new:</i> PlanetScale's Query Insights now propagates SQL comment-based tags (e.g., <b>/* controller='users', action='show' */</b>) into aggregated query statistics, not just individual notable query logs. This enables tag-based filtering, per-tag database-level stat breakdowns, and full tag distribution views across query patterns. Auto-injected tags include <b>application_name</b>, <b>username</b>, and <b>remote_address</b>.<br>
+<i>Practical takeaway:</i> Instrument your ORM or query layer to inject structured tags on all queries now — the aggregation payoff for production debugging and performance attribution is immediate once the data exists.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://www.percona.com/blog/rate-limiting-strategies-with-valkey-redis/">Rate Limiting Strategies with Valkey/Redis</a></b><br>
+<i>What's new:</i> Covers five rate limiting algorithms (fixed window, sliding window log, sliding window counter, token bucket, leaky bucket) with atomic Lua-based Valkey/Redis implementations, plus real-world patterns from Shopify, Stripe, and Uber at scale. Key production concern: the rate limiter must be as available as the service it protects, making "fail open" (fall back to local limits, not full block) a non-negotiable design requirement.<br>
+<i>Practical takeaway:</i> Implement rate limiter logic atomically via Lua scripts or Redis transactions to avoid race conditions at boundary intervals — INCR + TTL alone will double-count at window edges under concurrent load.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://www.percona.com/blog/what-is-in-pg_gather-version-33/">pg_gather Version 33: Deeper Wait Event Analysis</a></b><br>
+<i>What's new:</i> pg_gather v33 ships ~38 commits over v32, with the headline improvement being deeper wait event analysis — surfacing what database sessions are actually blocked on with actionable diagnostics rather than raw event dumps. Also includes UI improvements and compatibility fixes for recent PostgreSQL versions. No installation required; runs as a plain SQL script against any PostgreSQL instance.<br>
+<i>Practical takeaway:</i> Run pg_gather v33 as a first-pass diagnostic tool on any PostgreSQL performance incident — the wait event analysis alone replaces significant manual <b>pg_stat_activity</b> interrogation work.</p>
+</div>
+    </main>
+
+    <footer>
+      <p>Generated by <a href="./index.html">Daily Briefs</a></p>
+    </footer>
+  </div>
+  <script>
+    (function() {
+      var btn = document.querySelector('.theme-toggle');
+      var body = document.body;
+      function setTheme(theme) {
+        if (theme === 'light') {
+          body.classList.add('light');
+          btn.textContent = '\u2600\uFE0F';
+        } else {
+          body.classList.remove('light');
+          btn.textContent = '\uD83C\uDF19';
+        }
+        localStorage.setItem('theme', theme);
+      }
+      setTheme(localStorage.getItem('theme') || 'dark');
+      btn.addEventListener('click', function() {
+        setTheme(body.classList.contains('light') ? 'dark' : 'light');
+      });
+    })();
+  </script>
+</body>
+</html>
