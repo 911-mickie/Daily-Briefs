@@ -1,0 +1,115 @@
+━━━━━━━━━━━━━━━━━━━
+📰 <b>TOP NEWS</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://simonwillison.net/2026/Mar/25/litellm-hack/#atom-everything">LiteLLM Hack: Were You One of the 47,000?</a></b>
+<i>What happened:</i> A security breach affected approximately 47,000 LiteLLM users, exposing the risks of routing LLM traffic through a centralized proxy layer. LiteLLM is widely used in production RAG pipelines and multi-model orchestration systems as a unified interface for switching between model providers.
+<i>Why it matters:</i> Any production system routing API keys and inference traffic through LiteLLM needs an immediate audit of credential exposure and access controls.
+<i>Interview angle:</i> This is a textbook case for discussing secrets management, least-privilege API key scoping, and supply chain risk in LLM infrastructure.
+
+• <b><a href="https://www.microsoft.com/en-us/research/blog/systematic-debugging-for-ai-agents-introducing-the-agentrx-framework/">Systematic debugging for AI agents: Introducing the AgentRx framework</a></b>
+<i>What happened:</i> Microsoft Research open-sourced AgentRx, a framework that pinpoints the "critical failure step" in agent trajectories by synthesizing executable constraints from tool schemas and domain policies. Tested against 115 manually annotated failed trajectories across τ-bench, Flash, and Magentic-One, it improves failure localization by +23.6% and root-cause attribution by +22.9% over prompting baselines.
+<i>Why it matters:</i> Production multi-agent systems have had no principled debugging toolchain — AgentRx is the first systematic attempt with an open benchmark and taxonomy.
+<i>Interview angle:</i> Expect questions on how you would instrument and debug a long-horizon agent failure in a real system — AgentRx's constraint-synthesis approach is the kind of answer that signals production maturity.
+
+• <b><a href="https://openai.com/index/safety-bug-bounty">Introducing the OpenAI Safety Bug Bounty program</a></b>
+<i>What happened:</i> OpenAI launched a Safety Bug Bounty program specifically targeting AI abuse and safety risks, explicitly calling out agentic vulnerabilities, prompt injection, and data exfiltration as in-scope categories. This is distinct from their existing infrastructure bug bounty and focuses on model-level and system-level behavioral failures.
+<i>Why it matters:</i> Prompt injection and agentic exploits are now formally recognized threat classes with bounty incentives — production GenAI system designers should treat them as first-class attack surfaces.
+<i>Interview angle:</i> Be ready to discuss prompt injection defenses, tool-call sandboxing, and exfiltration prevention in agentic pipelines as security-critical design decisions.
+
+• <b><a href="https://simonwillison.net/2026/Mar/25/thoughts-on-slowing-the-fuck-down/#atom-everything">Thoughts on slowing the fuck down</a></b>
+<i>What happened:</i> Simon Willison amplifies Mario Zechner's critique (creator of the Pi agent framework behind OpenClaw) of unconstrained agentic code generation: agent mistakes compound without a human bottleneck, producing codebases that grow faster than any engineer can reason about. The core recommendation is to rate-limit agent output to what you can actually review, and to write architecture and API contracts by hand.
+<i>Why it matters:</i> Cognitive debt from agentic codegen is now a recognized engineering risk from credible practitioners who have shipped real agentic systems — not just theoretical concern.
+<i>Interview angle:</i> Questions about human-in-the-loop design, review gates, and agentic system governance are increasingly appearing in senior ML system design interviews.
+
+• <b><a href="https://www.microsoft.com/en-us/research/blog/phi-4-reasoning-vision-and-the-lessons-of-training-a-multimodal-reasoning-model/">Phi-4-reasoning-vision and the lessons of training a multimodal reasoning model</a></b>
+<i>What happened:</i> Microsoft released Phi-4-reasoning-vision-15B, an open-weight 15B parameter multimodal reasoning model available on HuggingFace, GitHub, and Azure Foundry. It targets the efficiency-accuracy Pareto frontier — claiming competitive performance vs. models requiring 10x more compute, with particular strength in math/science reasoning and UI grounding tasks.
+<i>Why it matters:</i> A 15B open-weight model that punches above its weight class on structured reasoning and screen understanding is directly deployable in document intelligence and UI automation pipelines where inference cost matters.
+<i>Interview angle:</i> Discuss the tradeoffs of using a compact reasoning model vs. a frontier model for structured extraction tasks — latency, cost, accuracy, and when fine-tuning closes the gap.
+
+━━━━━━━━━━━━━━━━━━━
+📄 <b>PAPERS & RESEARCH</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://www.microsoft.com/en-us/research/blog/systematic-debugging-for-ai-agents-introducing-the-agentrx-framework/">AgentRx: Systematic Debugging for AI Agents</a></b>
+AgentRx addresses the core problem that agent failures in long-horizon, multi-agent trajectories are hard to localize because errors propagate silently across dozens of steps. The approach synthesizes "guarded, executable constraints" from tool schemas and domain policies, then logs step-by-step violations to identify the first unrecoverable failure point. On the AgentRx Benchmark — 115 manually annotated failed trajectories across three agent frameworks — it achieves +23.6% failure localization and +22.9% root-cause attribution over prompting baselines. The nine-category failure taxonomy alone is a useful reference for anyone instrumenting production agent systems.
+<i>Interview angle:</i> How would you instrument a 50-step agent pipeline to detect and surface the earliest recoverable failure point without re-running the entire trajectory?
+
+• <b><a href="https://www.microsoft.com/en-us/research/blog/from-raw-interaction-to-reusable-knowledge-rethinking-memory-for-ai-agents/">PlugMem: Transforming raw agent interactions into reusable knowledge</a></b>
+PlugMem tackles the counterintuitive problem that giving agents more memory often degrades performance — raw interaction logs fill context windows with low-signal content, slowing retrieval and crowding out relevant information. Drawing on cognitive science distinctions between episodic memory, semantic facts, and procedural skills, PlugMem converts interaction history into structured, compact knowledge units rather than raw text chunks. A single plug-and-play module improved performance across diverse agent benchmarks while consuming fewer memory tokens. This is directly applicable to any RAG-adjacent memory layer in a long-running agent system.
+<i>Interview angle:</i> What's the difference between storing raw conversation history vs. structured knowledge in an agent memory system, and when does each degrade retrieval quality?
+
+• <b><a href="https://www.microsoft.com/en-us/research/blog/corpgen-advances-ai-agents-for-real-work/">CORPGEN: Multi-Horizon Task Environments for workplace AI agents</a></b>
+CORPGEN identifies a critical blind spot in current agent benchmarks: they evaluate one task at a time, while real workplace productivity requires managing dozens of interdependent tasks simultaneously. The paper introduces Multi-Horizon Task Environments (MHTEs), where each task requires 10–30 dependent steps within a five-hour session. Under multi-task load, leading computer-using agents drop from 16.7% to 8.7% completion rates; the CORPGEN "digital employee" architecture — with hierarchical planning, memory isolation, and experiential learning — achieves up to 3.5x higher completion rates. Crucially, the gains come from system design, not model choice, making the patterns portable.
+<i>Interview angle:</i> How would you architect memory isolation and task prioritization for an agent that must manage five concurrent, interdependent long-horizon tasks without context bleed?
+
+• <b><a href="https://www.microsoft.com/en-us/research/blog/phi-4-reasoning-vision-and-the-lessons-of-training-a-multimodal-reasoning-model/">Phi-4-reasoning-vision-15B: Lessons from training a multimodal reasoning model</a></b>
+The paper shares training lessons for Phi-4-reasoning-vision-15B, focusing on architecture choices, data curation, and the benefit of mixing reasoning and non-reasoning training data. The model demonstrates strong performance on math, science reasoning, and UI grounding — with competitive accuracy vs. models requiring 10x more compute. Key findings highlight that careful data curation and architecture choices matter more than scale for hitting the efficiency-accuracy frontier in multimodal reasoning. The model's strength in reading documents, receipts, and screen elements makes it relevant for document intelligence pipelines.
+<i>Interview angle:</i> Why might mixing reasoning and non-reasoning training data improve a multimodal model, and what risk does it mitigate during inference on general vision-language tasks?
+
+• <b><a href="https://openai.com/index/our-approach-to-the-model-spec">Inside our approach to the Model Spec</a></b>
+OpenAI's Model Spec is a public framework governing model behavior across safety, helpfulness, and user autonomy — intended to serve as an auditable, versioned contract between model behavior and user expectations. The spec explicitly addresses how models should handle competing instructions from operators vs. end users, a directly relevant design problem for anyone building multi-tenant GenAI applications. It frames model alignment not as a binary constraint but as a layered policy system with explicit principal hierarchies. Understanding this framework is increasingly important for teams building on top of OpenAI models who need predictable behavioral contracts.
+<i>Interview angle:</i> How does an operator-user-model principal hierarchy affect system prompt design and instruction conflict resolution in a production GenAI product?
+
+━━━━━━━━━━━━━━━━━━━
+💡 <b>CONCEPT REFRESHER</b>
+━━━━━━━━━━━━━━━━━━━
+
+Today's concept: Agentic Memory Architecture
+
+<b>Agentic Memory Architecture</b>
+Memory in AI agents refers to how an agent stores, retrieves, and applies past experience to current decisions. The dominant naive approach — appending raw interaction history to the context window — fails at scale because context fills with low-signal content, retrieval precision degrades, and inference cost balloons. The more principled approach, as demonstrated by PlugMem, mirrors cognitive science: separate episodic records (what happened) from semantic facts (what is true) and procedural knowledge (how to do things), storing each in a form optimized for its retrieval pattern. In production RAG and agentic systems, this translates to choosing between dense vector retrieval, structured key-value stores, and summarization pipelines depending on what type of memory is being accessed. A common misconception is that longer context windows solve the memory problem — they reduce the urgency, but retrieval precision and reasoning over noisy long contexts remain fundamentally hard.
+
+<b>Q1:</b> Why does appending raw conversation history to an agent's context degrade performance over time? → <i>Low-signal historical content crowds out relevant context, increases retrieval noise, and fills the context window, reducing the agent's effective reasoning space.</i>
+<b>Q2:</b> What is the difference between episodic and semantic memory in the context of an LLM agent, and how would you store each? → <i>Episodic memory is event-specific (raw logs, past dialogues) best stored in a vector DB for similarity retrieval; semantic memory is distilled facts best stored in a structured KV store or summary index for exact or keyword lookup.</i>
+<b>Q3:</b> In a multi-task agent managing five concurrent long-horizon tasks, how would you prevent memory bleed between tasks while still enabling cross-task learning? → <i>Use per-task memory isolation with separate namespaced retrieval indices, and periodically distill cross-task generalizations into a shared procedural memory layer that is read-only during task execution.</i>
+
+━━━━━━━━━━━━━━━━━━━
+🔗 <b>QUICK LINKS</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://simonwillison.net/2026/Mar/25/datasette-llm/#atom-everything">datasette-llm 0.1a1</a></b> — New plugin architecture lets Datasette assign different LLM models to different purposes (enrichment vs. SQL assistance) via a unified config layer, useful for multi-model orchestration patterns.
+
+• <b><a href="https://simonwillison.net/2026/Mar/25/datasette-files-s3/#atom-everything">datasette-files-s3 0.1a1</a></b> — Adds S3-backed file storage to Datasette with time-limited IAM credentials fetched periodically from a URL, a clean pattern for short-lived credential rotation in production.
+
+• <b><a href="https://blog.google/innovation-and-ai/technology/developers-tools/lyria-3-developers/">Build with Lyria 3, our newest music generation model</a></b> — Google releases Lyria 3 via Gemini API with two variants (Pro for full tracks up to ~3 min, Clip for 30-second high-volume generation), multimodal image-to-music input, and tempo/lyrics conditioning — relevant for developers building multimodal creative pipelines.
+
+• <b><a href="https://blog.google/innovation-and-ai/technology/safety-security/ai-powered-open-source-security/">Google's latest investment in open source security for the AI era</a></b> — Google, Amazon, Anthropic, Microsoft, and OpenAI pledge $12.5M to the Linux Foundation Alpha-Omega Project, with Google extending Sec-Gemini and CodeMender AI tools to open source maintainers — directly relevant to AI-assisted vulnerability detection pipelines.
+
+• <b><a href="https://blog.google/products-and-platforms/products/search/personal-intelligence-expansion/">Bringing the power of Personal Intelligence to more people</a></b> — Google expands Gemini's Personal Intelligence (Gmail/Photos integration) to free-tier users in AI Mode and Chrome, with explicit confirmation that model training does not use Gmail/Photos content directly — a reference architecture note for privacy-sensitive RAG system design.
+
+━━━━━━━━━━━━━━━━━━━
+☕ <b>JAVA & SPRING BOOT</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://feeds.feedblitz.com/~/951832256/0/baeldung~Testing-Model-Context-Protocol-MCP-Tools-in-Spring-AI">Testing Model Context Protocol (MCP) Tools in Spring AI</a></b>
+<i>What's new:</i> Covers test strategies for MCP tool integrations in Spring AI, addressing the challenge of verifying tool registration, invocation, and response handling within an MCP server context. As MCP becomes a standard interface for connecting LLM agents to external tools, having a reliable test harness for MCP server behavior is non-trivial — this article walks through concrete approaches.
+<i>Why it matters:</i> Teams building Spring AI-based agentic systems need repeatable, isolated tests for MCP tool behavior before those tools are wired into production agent workflows.
+
+• <b><a href="https://vladmihalcea.com/clean-up-test-data-spring/">The best way to clean up test data with Spring and Hibernate</a></b>
+<i>What's new:</i> Argues against using <b>@DataJpaTest</b> for integration tests, specifically calling out its transactional rollback approach as masking real persistence behavior. Recommends DataSource-Proxy for SQL logging (captures bind parameters and detects N+1 queries) over <b>spring.jpa.show-sql</b>, and advocates for explicit test data teardown over rollback-based cleanup.
+<i>Why it matters:</i> Rollback-based test cleanup silently skips flush/commit behavior, meaning your tests can pass while your production persistence logic is broken.
+
+• <b><a href="https://thorben-janssen.com/ai-glossary-for-java-developers/">AI Glossary for Java Developers</a></b>
+<i>What's new:</i> A practical reference mapping AI/ML terminology (LLMs, RAG, embeddings, vector stores, agents, prompt engineering) to concepts Java developers encounter when integrating Spring AI, LangChain4J, or similar libraries. Covers foundational terms through to production integration patterns, including pgvector for embedding storage.
+<i>Why it matters:</i> Reduces the conceptual friction for Java backend developers onboarding to AI-integrated systems, particularly when working alongside ML practitioners on shared infrastructure.
+
+• <b><a href="https://inside.java/2026/03/25/javaone-javafx/">JavaFX 26 Today</a></b>
+<i>What's new:</i> JavaFX 26 ships new UI controls, RichTextArea improvements, and enhanced 2D/3D rendering capabilities, with a session from JavaOne 2026 demonstrating new features and a roadmap preview. Seamless Swing interoperability remains a key architectural feature for teams migrating or bridging legacy desktop applications.
+<i>Why it matters:</i> Teams building desktop tooling for data annotation, ML experiment management, or document review pipelines now have a more capable open-source Java UI framework as an alternative to Electron-based stacks.
+
+━━━━━━━━━━━━━━━━━━━
+🗄️ <b>DATABASE CORNER</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://vladmihalcea.com/book-review-just-use-postgres/">Book Review – Just Use Postgres!</a></b>
+<i>What's new:</i> Vlad Mihalcea reviews Denis Magda's 402-page book covering PostgreSQL from indexing fundamentals (B+Tree, hash, partial, multi-column, function indexes) through JSON and full-text search, up to the extensions ecosystem including pgvector for ML/GenAI embedding storage and TimescaleDB for time series. The book explicitly bridges relational PostgreSQL and its non-relational and vector capabilities, making it a rare reference that covers both transactional and AI-adjacent use cases in one place.
+<i>Practical takeaway:</i> If your team is already on PostgreSQL and evaluating whether to add a separate vector database, this is the reference to understand what pgvector can handle natively before adding infrastructure complexity.
+
+• <b><a href="https://www.percona.com/blog/how-to-customize-pagerduty-custom-details-in-grafana-the-hidden-override-method/">How to Customize PagerDuty Custom Details in Grafana: The Hidden Override Method</a></b>
+<i>What's new:</i> Documents a non-obvious Grafana Alerting override mechanism that controls which labels and annotations get surfaced in PagerDuty incident details, preventing the default behavior of dumping every label into the incident payload. The default output is a wall of low-signal metadata (agent IDs, machine IDs, service IDs) that buries the actionable alert context for on-call engineers.
+<i>Practical takeaway:</i> Apply the override method to filter PagerDuty custom details down to actionable fields — cluster, environment, summary, and value — to reduce mean time to triage on database alerts.
+
+• <b><a href="https://postgr.es/p/7wg">From Triggers to Training: Automating Network Design in Three Levels</a></b>
+<i>What's new:</i> Walks through a three-level progression from PostgreSQL trigger-based automation through rules-based logic up to ML-assisted network design decision-making, using PostgreSQL as the data backbone throughout. This pattern — using Postgres as both the operational store and the feature/training data source — is increasingly common in organizations that want to avoid separate ML infrastructure for moderate-scale use cases.
+<i>Practical takeaway:</i> Before standing up a separate feature store or training pipeline, evaluate whether your existing Postgres schema and trigger infrastructure can serve as a lightweight automation and ML data layer for domain-specific automation tasks.
