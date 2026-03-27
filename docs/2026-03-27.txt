@@ -1,0 +1,119 @@
+━━━━━━━━━━━━━━━━━━━
+📰 <b>TOP NEWS</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://engineering.fb.com/2025/10/17/ai-research/scaling-llm-inference-innovations-tensor-parallelism-context-parallelism-expert-parallelism/">Scaling LLM Inference: Innovations in Tensor Parallelism, Context Parallelism, and Expert Parallelism</a></b>
+<i>What happened:</i> Meta Engineering details how they decompose LLM inference across tensor parallelism (splitting weight matrices), context parallelism (splitting KV cache across sequence dimension), and expert parallelism (routing MoE experts across devices) to hit TTFT under 350ms and TTIT under 25ms. They explicitly separate prefill (compute-bound) from decoding (memory-bandwidth-bound) and apply different parallelism strategies to each stage. The post covers the real tradeoffs between world size, communication overhead, and hardware utilization at Meta-scale.
+<i>Why it matters:</i> This is a rare, first-party production account of parallelism decisions for serving frontier-scale models — directly applicable to anyone designing multi-GPU inference infrastructure.
+<i>Interview angle:</i> Expect questions on why prefill and decode have fundamentally different bottlenecks, and when you'd choose context parallelism over tensor parallelism.
+
+• <b><a href="https://developer.nvidia.com/blog/maximize-ai-infrastructure-throughput-by-consolidating-underutilized-gpu-workloads/">Maximize AI Infrastructure Throughput by Consolidating Underutilized GPU Workloads</a></b>
+<i>What happened:</i> NVIDIA walks through MIG (hardware partitioning) and time-slicing (software scheduling) strategies on Kubernetes to break the 1:1 pod-to-GPU mapping. The post benchmarks a voice AI pipeline where ASR/TTS models consume only 10 GB VRAM yet occupy a full GPU, showing how MIG + co-scheduling achieves >99% reliability while cutting cluster sprawl significantly.
+<i>Why it matters:</i> In production GenAI pipelines, support models (embeddings, ASR, guardrails) routinely waste 80-90% of GPU compute — this gives concrete tooling to fix that without sacrificing SLAs.
+<i>Interview angle:</i> Be ready to discuss GPU resource fragmentation in multi-model serving and the operational tradeoffs between MIG isolation vs. time-slicing latency jitter.
+
+• <b><a href="https://www.amazon.science/blog/how-agentic-ai-helps-heal-the-systems-we-cant-replace">How Agentic AI Helps Heal the Systems We Can't Replace</a></b>
+<i>What happened:</i> Amazon's AGI Lab describes training agents on high-fidelity simulations of legacy systems (COBOL mainframes, 1990s databases, 2000s portals) so the agent learns real quirks — error states, invisible dependencies, required click sequences — rather than idealized interfaces. The agent effectively becomes a universal API abstraction layer over brittle multi-decade stacks.
+<i>Why it matters:</i> This is a concrete architecture for agentic systems where the environment is not an API but a stateful, unpredictable legacy UI — a class of problems most agent frameworks currently ignore.
+<i>Interview angle:</i> Connects directly to questions about environment modeling, simulation fidelity, and how agents handle partial observability in production workflows.
+
+• <b><a href="https://www.amazon.science/blog/designing-ai-agents-that-know-when-to-step-back">Designing AI Agents That Know When to Step Back</a></b>
+<i>What happened:</i> Amazon Research introduces a UX framework for human-AI coordination along three axes: human involvement, AI salience, and task context. The post argues agentic AI requires fundamentally different design patterns than traditional software, particularly around trust calibration, proactive action transparency, and knowing when to interrupt vs. proceed autonomously.
+<i>Why it matters:</i> For practitioners building production agentic systems, the failure mode is rarely capability — it's coordination: agents that act too autonomously on irreversible decisions or that are too passive on routine tasks.
+<i>Interview angle:</i> System design questions for agentic products increasingly probe how you'd implement interruption policies, confidence thresholds, and rollback mechanisms.
+
+• <b><a href="https://aws.amazon.com/blogs/machine-learning/accelerating-llm-fine-tuning-with-unstructured-data-using-sagemaker-unified-studio-and-s3/">Accelerating LLM Fine-Tuning with Unstructured Data Using SageMaker Unified Studio and S3</a></b>
+<i>What happened:</i> AWS walks through fine-tuning Llama 3.2 11B Vision Instruct on DocVQA (up to 10,000 images) using SageMaker Unified Studio with S3 general purpose buckets as the data layer, tracking experiments via serverless MLflow. The baseline ANLS score of 85.3% on DocVQA improves measurably across three dataset-size ablations (1K, 5K, 10K), demonstrating data-scaling effects on a document visual question answering task.
+<i>Why it matters:</i> This is a practical end-to-end reference for multimodal fine-tuning pipelines on unstructured document data — directly relevant to anyone building document intelligence or VQA production systems on AWS.
+<i>Interview angle:</i> ANLS as an evaluation metric for VQA, and the data pipeline architecture for unstructured multimodal fine-tuning, are both fair game in ML system design rounds.
+
+━━━━━━━━━━━━━━━━━━━
+📄 <b>PAPERS & RESEARCH</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://huggingface.co/papers/2603.23516">MSA: Memory Sparse Attention for Efficient End-to-End Memory Model Scaling to 100M Tokens</a></b>
+MSA addresses the fundamental tension between full attention's quadratic cost and existing approximations (linear attention, RNNs, RAG) that either degrade at scale or lack end-to-end differentiability. The approach combines top-k sparse attention with document-wise RoPE and a KV cache compression engine to achieve near-linear complexity, running 100M token contexts on just 2×A800 GPUs. On NIAH and long-context QA benchmarks, MSA shows less than 9% degradation scaling from 16K to 100M tokens — outperforming same-backbone RAG stacks. For RAG and retrieval practitioners, this represents a credible architectural alternative: an end-to-end trainable memory mechanism that doesn't require chunking, indexing, or retrieval pipelines.
+<i>Interview angle:</i> Expect probes on the architectural tradeoffs between sparse attention, RAG, and RNN-based memory — and specifically why end-to-end differentiability matters for memory maintenance.
+
+• <b><a href="https://huggingface.co/papers/2603.24755">SlopCodeBench: Benchmarking How Coding Agents Degrade Over Long-Horizon Iterative Tasks</a></b>
+SlopCodeBench attacks a blind spot in coding agent evaluation: existing benchmarks measure pass/fail on isolated tasks but ignore how code quality degrades over iterative, multi-step extension. Agents were required to extend their own solutions across multiple steps without prescribed structure — and every tested model failed to complete any problem end-to-end. Agent-generated code was 2.2x more verbose than comparable open-source projects and exhibited faster complexity growth than human code over time. The benchmark ships with 20 problems and is actively soliciting contributions for multi-step coding challenges.
+<i>Interview angle:</i> When discussing code generation systems, interviewers may now probe how you'd evaluate long-horizon quality degradation, not just unit test pass rates.
+
+• <b><a href="https://machinelearning.apple.com/research/latent-lookahead">Thinking into the Future: Latent Lookahead Training for Transformers</a></b>
+Latent lookahead targets the hard constraint in autoregressive LMs: every token gets exactly one forward pass, regardless of difficulty, and the model cannot explore alternative continuations before committing. The approach inserts multi-step lookahead at selected positions by recursively feeding hidden states back into context for τ steps, each supervised against the next τ ground-truth tokens — investing more compute where it matters. On planning tasks (maze solving, Sudoku, ProsQA), latent lookahead substantially outperforms both autoregressive and non-autoregressive baselines. This is a clean alternative to chain-of-thought that operates entirely in continuous latent space rather than discrete token space.
+<i>Interview angle:</i> A sharp interviewer might ask how this compares to chain-of-thought in terms of compute budget, discrete vs. continuous reasoning, and training vs. inference cost.
+
+• <b><a href="https://machinelearning.apple.com/research/exclusive-self-attention">Exclusive Self Attention</a></b>
+Exclusive Self Attention (XSA) is a minimal modification to standard self-attention that constrains each token to attend only to information orthogonal to its own value vector — explicitly excluding self-position information from the attention context. The motivation is that standard SA conflates a token's own representation with contextual information, potentially limiting context modeling quality. XSA consistently outperforms standard SA across model sizes up to 2.7B parameters, with gains increasing as sequence length grows — suggesting the fix becomes more impactful at longer contexts.
+<i>Interview angle:</i> Be ready to discuss how self-attention aggregates information and why a token attending strongly to itself could crowd out relevant contextual signal.
+
+• <b><a href="https://simonwillison.net/2026/Mar/26/quantization-from-the-ground-up/#atom-everything">Quantization from the Ground Up</a></b>
+Sam Rose's interactive essay covers LLM quantization end-to-end: floating point binary representation, block quantization mechanics, outlier values ("super weights"), and how their preservation is handled in real quantization schemes. The key empirical finding, validated with llama.cpp perplexity and GPQA benchmarks on Qwen 3.5 9B: 16-bit to 8-bit carries almost no quality penalty; 16-bit to 4-bit retains roughly 90% of quality depending on metric. The super-weight finding is notable — removing even a single outlier weight can cause a model to output gibberish, which is why production quantization schemes often store these in a separate table.
+<i>Interview angle:</i> Interviewers probing model compression will expect you to explain block quantization, the outlier problem, and the practical quality/size tradeoff curve.
+
+━━━━━━━━━━━━━━━━━━━
+💡 <b>CONCEPT REFRESHER</b>
+━━━━━━━━━━━━━━━━━━━
+
+<b>Learning Rate Scheduling</b>
+Learning rate scheduling is the practice of varying the learning rate during training rather than holding it fixed — starting high to escape poor initializations quickly, then decaying to converge precisely without overshooting loss minima. The intuition: a large LR early covers ground fast; a small LR late makes fine-grained adjustments that a large LR would blow past. In practice, the schedule choice (cosine decay, linear warmup + decay, OneCycle, etc.) can be as impactful as architecture changes, especially for LLMs and fine-tuning runs where gradient dynamics shift significantly between phases. A common misconception is that warmup is optional for small models — in reality, warmup is critical whenever using adaptive optimizers like Adam on transformers, because early gradient estimates are noisy and a large initial LR causes unstable updates that can permanently damage convergence. Cosine annealing with restarts is often preferred in production because it naturally escapes local minima at restart boundaries while still converging.
+
+<b>Q1:</b> Why is a linear warmup phase typically used at the start of LLM training? → <i>Early Adam gradient moment estimates are unreliable, so a large initial LR causes unstable parameter updates; warmup gives the optimizer time to accumulate reliable statistics before stepping aggressively.</i>
+
+<b>Q2:</b> What is the key difference between cosine annealing and step decay? → <i>Cosine annealing decays smoothly and continuously, reducing sharp loss spikes at decay boundaries; step decay drops the LR abruptly at fixed intervals, which can cause sudden gradient magnitude changes.</i>
+
+<b>Q3:</b> In fine-tuning a pretrained LLM, how would you adjust the learning rate schedule compared to pretraining from scratch? → <i>Use a much smaller peak LR (often 10x–100x lower), shorter or no warmup, and aggressive decay — because pretrained weights are already near a good optimum and large updates risk catastrophic forgetting.</i>
+
+━━━━━━━━━━━━━━━━━━━
+🔗 <b>QUICK LINKS</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://www.microsoft.com/en-us/research/blog/asgardbench-a-benchmark-for-visually-grounded-interactive-planning/">AsgardBench</a></b> — Microsoft's 108-task benchmark for embodied AI agents that isolates whether visual observations actually update planning decisions, built on AI2-THOR.
+
+• <b><a href="https://www.microsoft.com/en-us/research/blog/groundedplanbench-spatially-grounded-long-horizon-task-planning-for-robot-manipulation/">GroundedPlanBench</a></b> — Evaluates VLMs on joint action + spatial location planning for robot manipulation; includes V2GP, a framework for converting robot demo videos into spatially grounded training data.
+
+• <b><a href="https://huggingface.co/papers/2603.25040">Intern-S1-Pro: Scientific Multimodal Foundation Model at Trillion Scale</a></b> — Trillion-scale scientific multimodal foundation model targeting cross-modal scientific reasoning.
+
+• <b><a href="https://huggingface.co/papers/2603.25744">MuRF: Unlocking the Multi-Scale Potential of Vision Foundation Models</a></b> — Training-free multi-resolution fusion strategy for frozen VFMs (DINOv2, SigLIP2) that improves representations by fusing features across scales at inference time.
+
+• <b><a href="https://aws.amazon.com/blogs/machine-learning/run-generative-ai-inference-with-amazon-bedrock-in-asia-pacific-new-zealand/">Amazon Bedrock Now Available in Asia Pacific (New Zealand)</a></b> — Bedrock launches in ap-southeast-6 with Claude Opus/Sonnet/Haiku 4.x and Nova 2 Lite, using ANZ geographic cross-region routing across Auckland, Sydney, and Melbourne.
+
+━━━━━━━━━━━━━━━━━━━
+☕ <b>JAVA & SPRING BOOT</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://spring.io/blog/2026/03/26/spring-ai-2-0-0-M4-and-1-1-4-and-1-0-5-available">Spring AI 2.0.0-M4, 1.1.4 and 1.0.5 Available Now</a></b>
+<i>What's new:</i> Three simultaneous releases totaling 51 combined improvements: 1.0.5 patches 8 vector store and streaming bugs; 1.1.4 adds dynamic structured output control and fixes 11 bugs across vector stores, model integrations, and caching; 2.0.0-M4 ships 28 improvements including 2 new features and formally deprecates Vertex AI model integration classes, signaling a provider migration is required before GA. The deprecation of Vertex AI in M4 is the most operationally significant change — any Spring AI workloads using Vertex AI need a migration plan now.
+<i>Why it matters:</i> Teams running Spring AI on vector stores or streaming pipelines should patch immediately; anyone on 2.0.0 snapshots must audit Vertex AI usage before the removal lands.
+
+• <b><a href="https://spring.io/blog/2026/03/26/spring-boot-4-0-5-available-now">Spring Boot 4.0.5 Available Now</a></b>
+<i>What's new:</i> Patch release for the Spring Boot 4.x line — while changelog details are sparse in the summary, 4.x patch releases typically address dependency CVEs, auto-configuration regressions, and compatibility fixes for Jakarta EE 11. This is the current generation release stream for teams fully migrated off Spring Boot 3.x.
+<i>Why it matters:</i> Stay current on 4.x patch releases — security and compatibility fixes in the auto-configuration layer can have silent production impact.
+
+• <b><a href="https://inside.java/2026/03/26/podcast-052/">Episode 52 "Carrier Classes & Discussing Syntax" [AtA]</a></b>
+<i>What's new:</i> Brian Goetz discusses Project Amber's carrier classes concept — an extension of records' benefits (specifically deconstruction for pattern matching and reconstruction) to regular classes without requiring full record semantics. Two recent Amber mailing list proposals are analyzed, showing the evolution of the idea toward what Goetz suggests will likely be the next Project Amber language feature to land.
+<i>Why it matters:</i> Carrier classes will expand where pattern matching can be used in Java codebases — understanding the design intent now prepares you for the API and syntax changes when they ship.
+
+• <b><a href="https://thorben-janssen.com/offset-and-keyset-pagination-with-spring-data-jpa/">Offset and Keyset Pagination with Spring Data JPA</a></b>
+<i>What's new:</i> Thorben Janssen contrasts offset pagination (Spring Data JPA's built-in Pageable abstraction, trivial to implement but degrades with large offsets due to full scans) against keyset pagination (cursor-based, using WHERE id > last_seen_id ORDER BY id, which is O(log n) but requires manual implementation in Spring Data JPA). The article shows concretely why offset pagination on page 500 of a 1M-row table performs badly and how to build a keyset alternative without framework support.
+<i>Why it matters:</i> Default Spring Data pagination will silently degrade at scale — switch to keyset pagination for any high-volume, user-facing paginated queries.
+
+━━━━━━━━━━━━━━━━━━━
+🗄️ <b>DATABASE CORNER</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://postgr.es/p/7wk">Oracle & SQL Server to PostgreSQL – Migration Tooling Gotchas No One Warns You About</a></b>
+<i>What's new:</i> Covers four underappreciated migration hazards: Oracle NUMBER without precision/scale silently maps to NUMERIC or DOUBLE PRECISION, introducing implicit casting in procedural blocks and long-term performance problems; tooling (Ora2pg, AWS SCT, Google Cloud DMS, Ispirer) handles DDL and procedural logic passably but produces output that becomes your PostgreSQL foundation — cracks in that output become permanent technical debt. The post emphasizes that default tool output is never production-ready without deliberate review and tuning passes.
+<i>Practical takeaway:</i> Audit every NUMBER-without-precision column in Oracle source schemas before migration and explicitly define precision/scale in the target PostgreSQL schema.
+
+• <b><a href="https://postgr.es/p/7wi">Waiting for PostgreSQL 19 – EXCEPT TABLE Support in ALTER PUBLICATION</a></b>
+<i>What's new:</i> PostgreSQL 19 extends ALTER PUBLICATION to support EXCEPT TABLE syntax, allowing modification of the exclusion list on ALL TABLES publications — complementing the CREATE PUBLICATION EXCEPT TABLE support added previously. The new syntax replaces the entire exclusion list on SET, and omitting the EXCEPT clause clears existing exclusions; only root partitioned tables or standard tables are valid in the EXCEPT list (partition children cause an error).
+<i>Practical takeaway:</i> Teams using logical replication for selective table sync can now dynamically manage exclusion lists without dropping and recreating publications.
+
+• <b><a href="https://www.percona.com/blog/2026-mysql-ecosystem-performance-benchmark-report/">2026 MySQL Ecosystem Performance Benchmark Report</a></b>
+<i>What's new:</i> Percona's lab benchmarked 10 InnoDB-compatible engine versions (MySQL, MariaDB, Percona Server — three generations each) across 700+ data points: three buffer pool sizes (2/12/32 GB), eight concurrency levels (1–512 threads), and three sysbench OLTP scenarios including a 10Gb/s network read-write test. The data exposes where each engine family hits its concurrency saturation point and how throughput scales under memory pressure — directly applicable to capacity planning.
+<i>Practical takeaway:</i> Use the interactive dataset to identify the specific concurrency and buffer pool tier where your target engine version saturates, and right-size instances accordingly rather than defaulting to vendor recommendations.
+
+• <b><a href="https://planetscale.com/blog/planetscale-stripe-projects-partnership">Stripe Projects Partnership: Provision PlanetScale Postgres and MySQL from the Stripe CLI</a></b>
+<i>What's new:</i> PlanetScale is a launch partner for Stripe Projects, a developer preview that lets you provision and pay for fully managed MySQL or Postgres databases directly from the Stripe CLI via stripe projects add planetscale/postgresql — no dashboard, no manual credential copying. The integration also addresses a gap that AI coding agents expose: the lack of a standardized provisioning and credential handoff protocol across dev tool providers.
+<i>Practical takeaway:</i> For teams or agents automating environment provisioning, this CLI-first flow eliminates the manual dashboard step that breaks scripted infrastructure setup.
