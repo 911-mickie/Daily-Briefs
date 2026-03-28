@@ -1,0 +1,118 @@
+━━━━━━━━━━━━━━━━━━━
+📰 <b>TOP NEWS</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://www.amazon.science/blog/optimizing-lora-target-module-selection-for-efficient-fine-tuning">Optimizing LoRA Target Module Selection for Efficient Fine-Tuning</a></b>
+<i>What happened:</i> Amazon ran ablation studies on Nova 2.0 Lite to identify which transformer sublayers yield the best efficiency-accuracy tradeoff when inserting LoRA adapters. They found <b>o_proj</b> — the attention output projection that mixes multi-head representations — to be the single best module for adapter insertion across the majority of customer use cases. The work aims to standardize a small set of target-module configurations rather than requiring per-task sweeps.
+<i>Why it matters:</i> Knowing that o_proj dominates the efficiency frontier lets you cut LoRA search space dramatically and ship adapters faster without a full ablation on your own hardware.
+<i>Interview angle:</i> Expect questions on which transformer weight matrices are typically targeted by LoRA (Q, K, V, O projections, MLP layers) and why rank and target selection jointly determine adapter cost.
+
+• <b><a href="https://engineering.fb.com/2025/09/30/security/llms-are-the-key-to-mutation-testing-and-better-compliance/">LLMs Are the Key to Mutation Testing and Better Compliance</a></b>
+<i>What happened:</i> Meta's Automated Compliance Hardening (ACH) tool uses LLMs to generate semantically relevant code mutants at scale — something classical mutation testing tools failed to do economically. The system combines automated test generation with LLM-driven mutant synthesis to continuously validate compliance controls as code changes, cutting manual review burden for developers.
+<i>Why it matters:</i> This is a concrete production deployment of LLMs in the software testing loop, not a demo — it's running at Meta's scale with measurable compliance outcomes.
+<i>Interview angle:</i> Understand how LLMs can be embedded in CI/CD pipelines for test generation and what makes mutation testing a better signal than line coverage for compliance-critical code.
+
+• <b><a href="https://aws.amazon.com/blogs/machine-learning/building-age-responsive-context-aware-ai-with-amazon-bedrock-guardrails/">Building Age-Responsive, Context-Aware AI with Amazon Bedrock Guardrails</a></b>
+<i>What happened:</i> AWS published a serverless architecture for dynamic guardrail selection on Bedrock — user context (age, role, domain expertise) is passed at request time to route to different guardrail configurations, enforcing content policies centrally rather than in application logic. The approach sidesteps the fragility of prompt-only safety controls, which can be bypassed through adversarial manipulation.
+<i>Why it matters:</i> Production GenAI systems serving mixed user populations (education, healthcare) need enforceable, auditable policy layers that don't live in prompt strings.
+<i>Interview angle:</i> Be ready to discuss the architectural tradeoffs between prompt-level vs. infrastructure-level safety controls and why centralized guardrail enforcement reduces compliance risk.
+
+• <b><a href="https://machinelearning.apple.com/research/athena">Athena: Intermediate Representations for Iterative Scaffolded App Generation with an LLM</a></b>
+<i>What happened:</i> Apple Research built Athena, a prototype that uses shared intermediate representations — app storyboard, data model, and GUI skeletons — to scaffold LLM-driven UI code generation across multiple interdependent files. A user study showed 75% of participants preferred Athena over a chatbot-style baseline for app prototyping, with the scaffolding significantly reducing single-file monolith outputs and generation errors.
+<i>Why it matters:</i> Structured intermediate representations are a practical lever for improving multi-file code generation quality — directly applicable to agentic coding systems and developer productivity tooling.
+<i>Interview angle:</i> Expect questions on how decomposing generation into stages (plan → schema → skeleton → code) reduces LLM error rates compared to single-shot full-file generation.
+
+• <b><a href="https://engineering.fb.com/2026/02/24/data-center-engineering/rrcclx-innovating-gpu-communications-amd-platforms-meta/">RCCLX: Innovating GPU Communications on AMD Platforms</a></b>
+<i>What happened:</i> Meta open-sourced RCCLX, an enhanced fork of AMD's RCCL collective communications library, integrating their CTran transport layer and adding two key features: Direct Data Access (DDA) for lightweight intra-node collectives and Low Precision Collectives for reduced bandwidth overhead. DDA targets the memory-bound decoding stage of LLM inference, where KV cache I/O dominates latency during tensor-parallel execution.
+<i>Why it matters:</i> For teams running distributed LLM training or inference on AMD GPUs, RCCLX provides production-grade collective primitives that were previously NVIDIA-only.
+<i>Interview angle:</i> Know the distinction between compute-bound prefill and memory-bound decoding in LLM inference, and why tensor parallelism communication overhead matters differently in each phase.
+
+━━━━━━━━━━━━━━━━━━━
+📄 <b>PAPERS & RESEARCH</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://machinelearning.apple.com/research/to-infinity">To Infinity and Beyond: Tool-Use Unlocks Length Generalization in State Space Models</a></b>
+Apple Research proves a theoretical result that SSMs <i>cannot</i> accurately solve "truly long-form" generation problems due to their fixed-size memory constraint — directly undermining their claimed advantage over Transformers in long-context settings. The fix: give SSMs interactive access to external tools. With the right tool set and problem-specific training data, tool-augmented SSMs achieve length generalization on arithmetic, reasoning, and coding tasks that pure SSMs fail on. This reframes SSMs as viable Transformer alternatives specifically in agentic and tool-use settings, not raw long-context sequence modeling.
+<i>Interview angle:</i> Be ready to explain why fixed-size recurrent state is a hard ceiling for SSMs on long-form tasks, and how tool access effectively offloads unbounded memory to external systems.
+
+• <b><a href="https://machinelearning.apple.com/research/downstream-metrics">Revisiting the Scaling Properties of Downstream Metrics in Large Language Model Training</a></b>
+Apple challenges the conventional wisdom that downstream task performance can't be reliably predicted from training budget. They show that for a fixed token-to-parameter ratio, a simple power law accurately describes scaling of log accuracy across multiple benchmarks — validated on models up to 17B parameters trained on up to 350B tokens. The direct power-law approach outperforms the two-stage proxy-metric method, which suffers from compounding errors. They also extend the framework to cover accuracy across token-to-parameter ratios and inference-time repeated sampling.
+<i>Interview angle:</i> Understand the difference between predicting pretraining loss vs. predicting downstream accuracy from compute budget, and why the two-stage approach introduces compounding error.
+
+• <b><a href="http://bair.berkeley.edu/blog/2026/03/13/spex/">Identifying Interactions at Scale for LLMs</a></b>
+BAIR introduces SPEX and ProxySPEX, algorithms for identifying high-order feature, data, and component interactions in LLMs at scale — addressing the exponential blowup that makes exhaustive interaction analysis intractable. The core idea is ablation-based attribution: mask or remove components and measure output delta, then efficiently approximate interaction terms without enumerating all subsets. This enables interpretability analysis that captures emergent behavior from component combinations, not just individual feature contributions.
+<i>Interview angle:</i> Know why single-feature attribution methods (SHAP, LIME) miss interaction effects, and how ablation-based approaches scale to the token and layer level in transformers.
+
+• <b><a href="https://arxiv.org/abs/2603.25720v1">R-C2: Cycle-Consistent Reinforcement Learning Improves Multimodal Reasoning</a></b>
+This paper applies cycle-consistency as a reward signal in RL-based training for multimodal reasoning — the model must be able to reconstruct inputs from its own reasoning outputs and vice versa, enforcing internal coherence across modalities. Cycle-consistent RL serves as a self-supervised training signal that doesn't require dense human annotation of reasoning chains. The approach targets the reliability gap in multimodal chain-of-thought, where models generate plausible-looking but logically inconsistent intermediate steps.
+<i>Interview angle:</i> Understand how cycle-consistency constraints can act as unsupervised training signals in multimodal systems, and how RL reward shaping differs from supervised fine-tuning for reasoning tasks.
+
+• <b><a href="https://arxiv.org/abs/2603.25681v1">Self-Improvement of Large Language Models: A Technical Overview and Future Outlook</a></b>
+A comprehensive technical survey of LLM self-improvement methods — covering iterative self-refinement, self-play, constitutional AI, and model-as-judge pipelines — with analysis of where each approach succeeds and breaks down. The paper maps the landscape of post-training techniques that don't require human labels at every step, including synthetic data generation loops and RL from model feedback. Directly relevant given the PostTrainBench findings (Import AI 449) showing frontier coding agents can autonomously fine-tune smaller models, though not yet at human-expert level.
+<i>Interview angle:</i> Be able to articulate the bootstrapping problem in self-improvement (the model can't reliably judge outputs it can't yet generate correctly) and how Constitutional AI approaches address it.
+
+━━━━━━━━━━━━━━━━━━━
+💡 <b>CONCEPT REFRESHER</b>
+━━━━━━━━━━━━━━━━━━━
+
+<b>Mixture of Experts (MoE)</b>
+
+In an MoE model, the feed-forward layer (or sometimes the full transformer block) is replaced by a set of <b>N expert networks</b>, with a learned router that selects a sparse subset — typically top-2 — of experts to process each token. Only the selected experts run during a given forward pass, meaning total model parameters can scale without proportionally scaling compute per token. This is why models like Mixtral 8x7B have ~47B total parameters but only ~13B active per token. In practice, MoE introduces load-balancing challenges: without an auxiliary loss term forcing even expert utilization, a few experts get overtrained and the rest collapse. The common misconception is that MoE simply speeds up inference — in reality, serving MoE models requires all experts resident in memory, making memory bandwidth the bottleneck, not FLOPS.
+
+<b>Q1:</b> Why does MoE reduce compute per token without reducing total model capacity? → <i>Only the top-K routed experts execute per token; the rest of the parameters exist in memory but don't contribute to that forward pass.</i>
+<b>Q2:</b> What is the load-balancing problem in MoE and how is it typically addressed? → <i>Without regularization, the router collapses to always selecting the same experts; an auxiliary load-balancing loss penalizes uneven expert selection frequency during training.</i>
+<b>Q3:</b> How does MoE interact with tensor parallelism in multi-GPU inference, and what's the key communication overhead? → <i>Expert parallelism routes tokens across GPUs where different experts live, requiring All-to-All collectives per MoE layer — a fundamentally different communication pattern than tensor parallelism's All-Reduce.</i>
+
+━━━━━━━━━━━━━━━━━━━
+🔗 <b>QUICK LINKS</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://arxiv.org/abs/2603.25723v1">Natural-Language Agent Harnesses</a></b> — explores structured frameworks for defining and constraining agent behavior via natural language specifications; relevant for agentic workflow design.
+
+• <b><a href="https://arxiv.org/abs/2603.25719v1">Agent Factories for High Level Synthesis</a></b> — evaluates how far general-purpose coding agents (LLM-based) can go on hardware optimization tasks (HLS), a useful benchmark for code-generation capability limits.
+
+• <b><a href="https://jack-clark.net/2026/03/16/importai-449-llms-training-other-llms-72b-distributed-training-run-computer-vision-is-harder-than-generative-text/">Import AI 449: LLMs Training Other LLMs</a></b> — covers PostTrainBench (autonomous fine-tuning agents), a 72B distributed training run, and evidence that computer vision generalization remains harder than generative text at scale.
+
+• <b><a href="https://lastweekin.ai/p/lwiai-podcast-237-nemotron-3-super">LWiAI Podcast #237</a></b> — Nvidia's Nemotron 3 Super 120B hybrid Transformer-Mamba MoE trained natively at 4-bit for Blackwell GPUs; also covers Anthropic GitHub PR review pricing and Cursor Automations.
+
+• <b><a href="https://venturebeat.com/infrastructure/railway-secures-usd100-million-to-challenge-aws-with-ai-native-cloud">Railway Secures $100M to Challenge AWS</a></b> — AI-native cloud infra play targeting developer-first deployment experience; relevant context for production GenAI deployment platform choices.
+
+━━━━━━━━━━━━━━━━━━━
+☕ <b>JAVA & SPRING BOOT</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://thorben-janssen.com/spring-ai-mapping-llm-responses/">Spring AI: Mapping LLM Responses to Java Objects</a></b>
+<i>What's new:</i> Spring AI's structured output feature auto-generates a JSON Schema from a Java class or record, injects it into the prompt, and maps the model response back to a typed Java object — all via a single method call with a type reference. This eliminates manual JSON parsing and reduces the brittleness of free-text LLM output in business logic pipelines. Works with both classes and records, making it compatible with modern immutable Java design patterns.
+<i>Why it matters:</i> If you're integrating LLMs into Spring Boot services, structured output is the correct abstraction layer — don't parse raw strings in production.
+
+• <b><a href="https://feeds.feedblitz.com/~/951988322/0/baeldung~Distributed-Transaction-Management-Using-Apache-Seata">Distributed Transaction Management Using Apache Seata</a></b>
+<i>What's new:</i> Deep dive into using Apache Seata to coordinate distributed transactions across multiple Spring Boot applications, covering the AT (Automatic Transaction) mode which uses undo logs for rollback without XA protocol overhead. Seata's transaction coordinator (TC) manages global transaction state while each service's resource manager participates via local JDBC interceptors. The approach handles the two-phase commit problem without requiring application-level saga choreography.
+<i>Why it matters:</i> For microservice architectures where you need ACID guarantees across service boundaries without full XA, Seata's AT mode is the practical middle ground.
+
+• <b><a href="https://spring.io/blog/2026/03/27/spring-modulith-2-1-m4-2-0-5-and-1-4-10-released">Spring Modulith 2.1 M4, 2.0.5, and 1.4.10 Released</a></b>
+<i>What's new:</i> Spring Modulith 2.1 M4 adds event externalization support via JobRunr (alongside the existing Namastack integration from M2) and allows explicit annotation-based triggering of Event Publication Registry entries. The release also ships improved AOT support for MomentsJacksonModule and better package-based named interface merging, aligned with Spring Boot 4.1 M4.
+<i>Why it matters:</i> JobRunr-based event externalization gives teams a lightweight alternative to full message broker infrastructure for durable event publication in modular monoliths.
+
+• <b><a href="https://thorben-janssen.com/custom-enum-mappings-with-enumeratedvalue/">How to Customize Enum Mappings with @EnumeratedValue</a></b>
+<i>What's new:</i> Jakarta Persistence 3.2 and Hibernate 7.0+ introduce <b>@EnumeratedValue</b>, which lets you annotate a specific enum field as the database-mapped value — bypassing the fragility of ordinal-based and name-based mappings that break on reordering or renaming. The annotation makes the mapping self-contained in the enum definition itself, eliminating the need for a separate AttributeConverter per enum. Currently supported for CHECK and FOREIGN KEY constraints in PostgreSQL 18.
+<i>Why it matters:</i> Eliminates a whole class of silent data migration bugs in long-lived projects where enum values evolve with business rules.
+
+━━━━━━━━━━━━━━━━━━━
+🗄️ <b>DATABASE CORNER</b>
+━━━━━━━━━━━━━━━━━━━
+
+• <b><a href="https://postgr.es/p/7wl">PG Phriday: Absorbing the Load</a></b>
+<i>What's new:</i> Detailed analysis of a high-concurrency PostgreSQL performance problem where a fully optimized 2-second query saturated all CPU threads at 40 concurrent sessions. The author walks through the math: at 4000 users/60-second window, you get ~67 concurrent executions, which is irreducible if execution time is already at floor. The solution space shifts from query optimization to caching, materialized views, or result substitution — not indexing.
+<i>Practical takeaway:</i> When query execution time is already optimal, concurrency bottlenecks require architectural solutions (caching layers, read replicas, pre-aggregation) not query tuning.
+
+• <b><a href="https://www.percona.com/blog/postgresql-bye-bye-md5-authentication-whats-next/">PostgreSQL: Bye-Bye MD5 Authentication. What's Next?</a></b>
+<i>What's new:</i> The PostgreSQL community is phasing out MD5 authentication on a structured timeline: deprecated with warnings in v18, new MD5 passwords disallowed in v19, and full removal targeted for v20. The replacement is <b>scram-sha-256</b>, which is salted, iterated, and not vulnerable to the preimage and collision attacks that make MD5 cryptographically broken for password storage.
+<i>Practical takeaway:</i> Audit your pg_hba.conf now and migrate all <b>md5</b> entries to <b>scram-sha-256</b> before upgrading to Postgres 18 to avoid authentication failures in production.
+
+• <b><a href="https://enterprisedb.com/blog/subtle-shift-understanding-not-valid-vs-not-enforced-constraints-postgresql-0">NOT VALID vs. NOT ENFORCED Constraints in PostgreSQL</a></b>
+<i>What's new:</i> PostgreSQL 18 adds <b>NOT ENFORCED</b> constraint state (from SQL:2023), distinct from the existing <b>NOT VALID</b>. NOT VALID is a temporary migration state — it skips historical data validation but enforces on new rows immediately, with the expectation you'll run VALIDATE CONSTRAINT later. NOT ENFORCED is permanent documentation-only: PostgreSQL will never enforce it, making it useful for query planner hints and schema documentation without runtime overhead. Currently scoped to CHECK and FOREIGN KEY constraints.
+<i>Practical takeaway:</i> Use NOT VALID for safe zero-downtime constraint additions on large tables; use NOT ENFORCED only when you need the planner to see a constraint it can exploit for optimization without paying enforcement cost.
+
+• <b><a href="https://enterprisedb.com/blog/running-gpu-accelerated-queries-edb-postgresr-ai-nvidia-rapids-accelerator-apache-spark">Running GPU-Accelerated Queries on EDB Postgres AI with NVIDIA RAPIDS Accelerator for Apache Spark</a></b>
+<i>What's new:</i> Hands-on tutorial integrating EDB Postgres AI with NVIDIA RAPIDS Accelerator for Apache Spark, using L40S GPUs for GPU-accelerated query execution on TPC-DS datasets. The setup uses Docker Compose for local CPU-only baseline validation before deploying to NVIDIA Brev, and the Spark configurations are portable to any CUDA-capable environment. RAPIDS offloads Spark SQL operators to GPU, bypassing JVM serialization overhead for analytic workloads.
+<i>Practical takeaway:</i> If you're running heavy analytic queries against Postgres at scale, the EDB + Spark RAPIDS integration is now a concrete, reproducible path to GPU acceleration without rewriting your SQL layer.
