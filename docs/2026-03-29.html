@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML Daily Brief — 2026-03-29</title>
+  <link rel="stylesheet" href="./style.css">
+  <script>
+    (function() {
+      var t = localStorage.getItem('theme');
+      if (t === 'light') document.documentElement.style.background = '#e8ede8';
+    })();
+  </script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <a class="archive-link" href="https://911-mickie.github.io/Daily-Briefs/index.html">← All Briefs</a>
+      <button class="theme-toggle" aria-label="Toggle light/dark mode" title="Toggle light/dark mode"></button>
+      <h1>🧠 ML Daily Brief</h1>
+      <p class="date">2026-03-29</p>
+    </header>
+
+    <main class="brief-content">
+      <div class="section-header">📰 TOP NEWS</div>
+<div class="news-card">
+<p>• <b><a href="https://www.latent.space/p/ainews-the-biggest-claude-launch">The Biggest Claude Launch of All Time</a></b><br>
+<i>What happened:</i> Anthropic's Claude Code with Computer Use launched following the Vercept acquisition, generating the highest social engagement of any Claude release ever — measurably outpacing all prior model launches by tweet volume from company accounts. The Computer Use capability lets Claude operate desktops autonomously, extending agentic coding beyond the terminal.<br>
+<i>Why it matters:</i> Computer Use + agentic coding in a single product is the clearest signal yet that the boundary between "code generation" and "autonomous software agent" has collapsed in production tooling.<br>
+<i>Interview angle:</i> Expect questions on how you'd architect guardrails and observability for an agent that can both write and execute code against live systems.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://venturebeat.com/infrastructure/claude-code-costs-up-to-usd200-a-month-goose-does-the-same-thing-for-free">Claude Code costs up to $200 a month. Goose does the same thing for free.</a></b><br>
+<i>What happened:</i> Claude Code's pricing spans $20–$200/month depending on usage tier, prompting engineers to evaluate open alternatives like Block's Goose — a terminal-based agentic coding tool that wraps any LLM backend and costs nothing. The comparison highlights that the core agentic loop (write, run, debug, iterate) is now commoditized; the differentiation lives in the underlying model quality.<br>
+<i>Why it matters:</i> For teams running high-volume agentic coding workloads, backend-agnostic open agents will become the default, with model choice decoupled from the orchestration layer.<br>
+<i>Interview angle:</i> A classic build-vs-buy framing: be ready to discuss how you'd evaluate total cost of ownership for agentic coding infra at team or org scale.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://www.latent.space/p/ainews-everything-is-cli">Everything is CLI</a></b><br>
+<i>What happened:</i> Stripe launched Projects.dev, a CLI that lets agents provision third-party services (PostHog, Sendblue, etc.) with a single command — no UI signup, no OAuth dance. The same week saw CLI launches from Ramp, ElevenLabs, Visa, Resend, and Google Workspace, signaling a broad shift toward agent-native service interfaces.<br>
+<i>Why it matters:</i> CLIs are emerging as the de facto MCP alternative for agentic service integration — simpler protocol surface, no spec dependency, and easier to shell out from any agent runtime.<br>
+<i>Interview angle:</i> If asked about multi-agent tool use or service orchestration, be specific about how agents authenticate and provision external dependencies without human-in-the-loop steps.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://deepmind.google/blog/gemini-3-1-flash-live-making-audio-ai-more-natural-and-reliable/">Gemini 3.1 Flash Live: Making audio AI more natural and reliable</a></b><br>
+<i>What happened:</i> Google DeepMind released Gemini 3.1 Flash Live, their highest-quality real-time audio/voice model, scoring 90.8% on ComplexFuncBench Audio — a benchmark for multi-step function calling with constraints over voice. It's positioned for voice-first agents that need reliable task execution, not just transcription.<br>
+<i>Why it matters:</i> A voice model that can handle multi-step function calls at 90%+ accuracy unlocks a new class of production voice agents where the bottleneck was reliability, not latency.<br>
+<i>Interview angle:</i> Multi-step function calling over audio introduces ordering and state management challenges — be ready to discuss how you'd handle partial failures in a voice agent tool-use chain.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://jack-clark.net/2026/03/09/import-ai-448-ai-rd-bytedances-cuda-writing-agent-on-device-satellite-ai/">Import AI 448: AI R&D; Bytedance's CUDA-writing agent; on-device satellite AI</a></b><br>
+<i>What happened:</i> Ajeya Cotra revised her AI capability timelines upward after METR benchmarks placed Claude Opus 4.6 at a 12-hour autonomous task horizon — a milestone she had not expected until end of 2026. She now projects agents will exceed 100-hour task horizons by year-end, at which point "time horizon" as a metric may break down entirely. ByteDance's CUDA-writing agent is separately highlighted as a concrete example of AI accelerating its own infrastructure development.<br>
+<i>Why it matters:</i> Agents operating at 100+ hour task horizons represent a qualitative shift — not just faster code completion, but systems capable of multi-week engineering projects with minimal supervision.<br>
+<i>Interview angle:</i> Evaluating agent capability benchmarks (METR-style time horizons vs. pass@k on HumanEval) is increasingly relevant for ML system design interviews focused on autonomous pipelines.</p>
+</div>
+<div class="section-header">📄 PAPERS & RESEARCH</div>
+<div class="news-card">
+<p>• <b><a href="https://machinelearning.apple.com/research/less-gaussians-texture-more">Less Gaussians, Texture More: 4K Feed-Forward Textured Splatting</a></b><br>
+Existing feed-forward 3D Gaussian Splatting methods tie primitive count to pixel count, causing quadratic growth that makes 4K synthesis intractable. LGTM decouples this by predicting compact Gaussian primitives with per-primitive textures — geometric complexity no longer scales with rendering resolution. The result is high-fidelity 4K novel view synthesis without per-scene optimization, using significantly fewer primitives than prior methods. This is directly relevant for any production pipeline doing real-time 3D reconstruction or AR/VR rendering at high resolution.<br>
+<i>Interview angle:</i> An interviewer might probe the trade-off between primitive count and texture resolution in Gaussian Splatting, and how decoupling geometry from rendering resolution changes scalability characteristics.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="http://bair.berkeley.edu/blog/2026/01/10/information-driven-imaging/">Information-Driven Design of Imaging Systems</a></b><br>
+Traditional imaging system evaluation uses resolution and SNR independently, which fails when systems trade one for the other — and conflates hardware quality with algorithm quality when neural networks are used for evaluation. This BAIR/NeurIPS 2025 work proposes mutual information between measurements and objects as a single unified metric: two systems with equal MI are equivalent in distinguishing objects regardless of how measurements look. Optimizing for MI directly produces imaging system designs that match state-of-the-art end-to-end methods while requiring less memory, less compute, and no task-specific decoder. Directly applicable to multimodal sensor pipelines where you're choosing between hardware configurations.<br>
+<i>Interview angle:</i> Mutual information as an evaluation metric is a strong concept to discuss when asked how you'd compare two feature extraction or sensor pipelines without training a full downstream model.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://engineering.fb.com/2025/09/29/virtual-reality/assetgen-generating-3d-worlds-with-ai/">Meta 3D AssetGen: Generating 3D Worlds With AI</a></b><br>
+Meta's AssetGen is a foundation model for 3D asset generation that takes text prompts and produces full 3D assets, targeting the pipeline for populating VR/AR worlds in Meta Horizon Studio. The model integrates LLM-based semantic understanding to bridge natural language descriptions and 3D geometry generation. The broader goal is scaling from single asset generation to entire procedurally generated 3D world creation. This represents a multimodal generation frontier where text, geometry, and spatial reasoning must be jointly modeled.<br>
+<i>Interview angle:</i> Interviewers building multimodal systems may ask how you'd structure a pipeline that uses LLMs for semantic grounding while delegating geometry synthesis to a specialized generative model.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://developer.nvidia.com/blog/how-centralized-radar-processing-on-nvidia-drive-enables-safer-smarter-level-4-autonomy/">Centralized Radar Processing on NVIDIA DRIVE for Level 4 Autonomy</a></b><br>
+Current automotive radar architectures run signal processing (CFAR) at the edge device, giving ML models only object-level outputs analogous to Canny edge detection rather than raw signal data. NVIDIA DRIVE's centralized architecture moves raw ADC samples to a central compute platform, giving ML models ~100x more bits of information per frame. This also cuts radar unit cost by over 30% and reduces power consumption by ~20% by eliminating the DSP/MCU at the edge. The pattern — move raw data closer to powerful compute rather than pre-processing at the edge — generalizes to any sensor fusion pipeline.<br>
+<i>Interview angle:</i> The edge-vs-central compute trade-off in sensor pipelines is a common ML system design question — be ready to quantify what information is lost at each preprocessing stage.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://developer.nvidia.com/blog/scaling-token-factory-revenue-and-ai-efficiency-by-maximizing-performance-per-watt/">Scaling Token Factory Revenue and AI Efficiency by Maximizing Performance per Watt</a></b><br>
+NVIDIA frames modern AI data centers as "token factories" where revenue is directly proportional to tokens per megawatt, and shows a 1,000,000x improvement in inference throughput per megawatt across six GPU architecture generations. Key architectural contributors include the Hopper Transformer Engine (FP8 + fourth-gen Tensor Cores) and Blackwell's NVFP4-enabled Tensor Cores with NVLink fabric at rack scale. The piece walks the full five-layer stack from silicon to software, making the case that efficiency gains compound multiplicatively. Relevant for anyone sizing inference infrastructure or making GPU procurement decisions.<br>
+<i>Interview angle:</i> Production ML system design interviews increasingly ask about inference cost optimization — be precise about how quantization (FP16 → FP8 → FP4) impacts throughput, accuracy, and memory bandwidth simultaneously.</p>
+</div>
+<div class="section-header">💡 CONCEPT REFRESHER</div>
+<div class="news-card">
+<p><b>Retrieval-Augmented Generation (RAG)</b><br>
+RAG augments an LLM's response by retrieving relevant documents from an external knowledge store at inference time and injecting them into the prompt context, rather than relying solely on parametric knowledge baked into model weights. The intuition is simple: models have a knowledge cutoff and finite context, but your retrieval index can be updated continuously and queried selectively. In practice, RAG shines when you need factual grounding, attribution, or domain-specific knowledge that changes faster than you can fine-tune. The most common misconception is that better embeddings alone fix retrieval quality — in production, chunking strategy, metadata filtering, reranking, and query rewriting often matter more than the embedding model choice. RAG is not a silver bullet for hallucination either; if the retrieved chunk is wrong or irrelevant, the model will confidently use it.</p>
+<div class="qa-card"><p class="qa-question">What's the difference between sparse retrieval (BM25) and dense retrieval (embedding-based), and when would you use each?</p><p class="qa-answer"><i>BM25 excels on keyword-heavy or out-of-domain queries with no training data; dense retrieval wins on semantic similarity — hybrid approaches combining both typically outperform either alone in production.</i></p></div>
+<div class="qa-card"><p class="qa-question">Why does chunk size matter in RAG, and how do you choose it?</p><p class="qa-answer"><i>Chunks too large dilute relevance signals and waste context; chunks too small lose surrounding context needed for coherent answers — the right size depends on your query granularity and the embedding model's effective context window.</i></p></div>
+<div class="qa-card"><p class="qa-question">How would you evaluate a RAG pipeline end-to-end in production, beyond retrieval recall metrics?</p><p class="qa-answer"><i>Measure faithfulness (does the answer contradict the retrieved chunk?), answer relevance, and context precision using frameworks like RAGAS, while tracking retrieval latency P95 and fallback rates separately from generation quality.</i></p></div>
+</div>
+<div class="section-header">🎯 INTERVIEW SPOTLIGHT (this week)</div>
+<div class="news-card">
+<p>• <b>What was asked:</b> How do you verify a candidate actually designed and ran A/B tests vs. reciting an interview framework?<br>
+<i>How to approach it:</i> Go deep on the specifics — ask what the actual metric moved by, how they handled novelty effects or network interference, what the p-value was, and what they'd do differently — scripted answers collapse under implementation-level follow-ups.</p>
+</div>
+<div class="news-card">
+<p>• <b>What was asked:</b> How often do working MLEs write models from scratch in PyTorch/TF, and what does interview prep actually need to reflect?<br>
+<i>How to approach it:</i> Be honest in interviews that production MLE work is mostly integration, fine-tuning, and evaluation — but demonstrate you can implement core components (attention, custom loss, training loop) from scratch when asked, because interviewers use it to probe depth even if it's not daily work.</p>
+</div>
+<div class="news-card">
+<p>• <b>What was asked:</b> DS interview formats are wildly inconsistent across companies — how do you prep efficiently?<br>
+<i>How to approach it:</i> Research the specific company's DS role definition first (analytics-heavy like Meta/Google vs. modeling-heavy), then treat SQL + experimentation + metrics as the universal floor, and add ML system design only where the role demands it.</p>
+</div>
+<div class="section-header">🔗 QUICK LINKS</div>
+<div class="news-card">
+<p>• <b><a href="https://simonwillison.net/2026/Mar/28/matt-webb/#atom-everything">Quoting Matt Webb on agentic coding and architecture</a></b> — Matt Webb argues that as agentic coding matures, architectural thinking becomes more valuable than line-level code review, with well-designed library interfaces being the true leverage point.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://simonwillison.net/2026/Mar/27/vibe-coding-swiftui/#atom-everything">Vibe coding SwiftUI apps with Claude Opus 4.6 and GPT-5.4</a></b> — Simon Willison built two production-quality macOS menu bar apps (network bandwidth monitor, GPU monitor) using only prompt-driven SwiftUI generation on an M5 MacBook Pro running local LLMs.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://lastweekin.ai/p/last-week-in-ai-339-dlss-5-openai-superapp-minimax-m2.7">Last Week in AI #339 — DLSS 5, OpenAI Superapp, MiniMax M2.7</a></b> — NVIDIA's DLSS 5 fuses structured 3D scene data with a generative model to synthesize new frame detail rather than upscale, effectively replacing parts of the rasterization pipeline with probabilistic generation.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://aws.amazon.com/blogs/machine-learning/introducing-amazon-polly-bidirectional-streaming-real-time-speech-synthesis-for-conversational-ai/">Amazon Polly Bidirectional Streaming API for conversational AI</a></b> — New HTTP/2-based API lets you stream text tokens to Polly and receive audio back simultaneously, eliminating the wait-for-full-LLM-response bottleneck in real-time voice agent pipelines.</p>
+</div>
+<div class="section-header">☕ JAVA & SPRING BOOT</div>
+<div class="news-card">
+<p>• <b><a href="https://piotrminkowski.com/2026/03/27/deep-dive-into-kafka-offset-commit-with-spring-boot/">Deep Dive into Kafka Offset Commit with Spring Boot</a></b><br>
+<i>What's new:</i> Detailed walkthrough of how Spring Kafka's default BATCH commit mode can cause message loss or duplicate processing — specifically, the offset is committed only after the entire batch is processed by a single thread, meaning any mid-batch failure can result in reprocessing or skipping depending on your error handler configuration. The article maps out exactly which scenarios trigger each failure mode with concrete Spring Boot examples.<br>
+<i>Why it matters:</i> If you're building event-driven services on Kafka, the default commit behavior is not safe for at-least-once semantics without explicit configuration — this is a frequent source of subtle production bugs.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://piotrminkowski.com/2026/03/24/claude-code-template-for-spring-boot/">Claude Code Template for Spring Boot</a></b><br>
+<i>What's new:</i> A GitHub repository template specifically structured for Claude Code to generate idiomatic Spring Boot applications — following Anthropic's documented best practices for code generation to ensure outputs meet production expectations rather than generic scaffolding. The template is actively iterated based on community feedback and includes guidance for Kubernetes-targeted deployments.<br>
+<i>Why it matters:</i> Using a well-structured CLAUDE.md and project template dramatically improves agentic code generation quality for Spring Boot — this is the practical bridge between "vibe coding" and production-ready Java output.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://piotrminkowski.com/2026/03/19/speed-up-java-startup-with-spring-boot-and-project-leyden/">Speed up Java Startup with Spring Boot and Project Leyden</a></b><br>
+<i>What's new:</i> Project Leyden (OpenJDK experimental, EA2 build based on JDK 26) extends Class Data Sharing with Ahead-of-Time optimizations that move work out of runtime — the article shows how to apply this to Spring Boot apps to reduce startup time and memory footprint. EA2 differs significantly from EA1 in JVM flags and behavior, so the article explicitly targets EA2.<br>
+<i>Why it matters:</i> Faster cold starts directly impact Kubernetes pod scheduling, serverless deployments, and horizontal scaling responsiveness — worth watching even though it's not yet production-ready.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://piotrminkowski.com/2026/03/16/local-ai-models-with-lm-studio-and-spring-ai/">Local AI Models with LM Studio and Spring AI</a></b><br>
+<i>What's new:</i> Shows how to connect LM Studio's OpenAI-compatible local server to Spring Boot applications via Spring AI, with a specific callout for Mac users that MLX model support in LM Studio provides meaningful memory and performance improvements on Apple Silicon. The integration uses Spring AI's OpenAI compatibility layer, so no LM Studio-specific client code is needed.<br>
+<i>Why it matters:</i> For Java teams that need local LLM inference for development or air-gapped environments, LM Studio + Spring AI is now a viable zero-cost alternative to cloud API calls.</p>
+</div>
+<div class="section-header">🗄️ DATABASE CORNER</div>
+<div class="news-card">
+<p>• <b><a href="https://postgr.es/p/7wn">pg_duckpipe: What's New in March 2026</a></b><br>
+<i>What's new:</i> pg_duckpipe now ships transparent query routing via a planner hook that automatically rewrites SELECTs on heap tables to their DuckLake columnar counterparts — no query changes needed, with three modes (off/on/auto) where auto routes analytical scans to columnar while keeping PK lookups on heap. A new append sync mode turns CDC changes into an immutable SCD Type-2 changelog rather than maintaining a live copy, useful for audit and event sourcing patterns.<br>
+<i>Practical takeaway:</i> If you're running HTAP workloads in PostgreSQL today with external Kafka/Debezium pipelines, pg_duckpipe's auto routing mode is worth evaluating as a zero-orchestration alternative that keeps analytical and transactional workloads in one database.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="http://highscalability.com/blog/2023/8/16/the-swedbank-outage-shows-that-change-controls-dont-work.html">The Swedbank Outage shows that Change Controls don't work</a></b><br>
+<i>What's new:</i> Analysis of the Swedish FSA judgment on Swedbank's April 2022 outage, where an unapproved change to a core banking IT system temporarily gave nearly a million customers incorrect balances — resulting in an SEK850M (~$85M USD) regulatory fine. The key finding: none of Swedbank's layered control mechanisms caught the deviation, demonstrating that process-based change controls fail when not enforced at the technical level.<br>
+<i>Practical takeaway:</i> Change management controls must be enforced programmatically (deployment gates, automated compliance checks, immutable audit logs) — paper processes alone will not catch deviations in high-velocity engineering organizations.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="http://highscalability.com/blog/2023/7/16/lessons-learned-running-presto-at-meta-scale.html">Lessons Learned Running Presto at Meta Scale</a></b><br>
+<i>What's new:</i> Meta's decade of operating Presto across global data centers distilled into operational lessons — the central one being that a Gateway load balancer in front of all clusters enables zero-downtime version rollouts by routing queries away from clusters mid-upgrade. This architecture also enables cluster-level isolation for interactive vs. batch workloads, preventing long-running batch queries from degrading interactive latency.<br>
+<i>Practical takeaway:</i> Any distributed query engine deployment at scale needs a routing layer in front of compute clusters from day one — retrofitting it later under production load is significantly harder.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="http://highscalability.com/blog/2023/7/16/gossip-protocol-explained.html">Gossip Protocol Explained</a></b><br>
+<i>What's new:</i> Clear walkthrough of gossip (epidemic) protocol mechanics as a peer-to-peer alternative to centralized state management services like ZooKeeper — each node periodically shares state with a random subset of peers, propagating updates exponentially without a single coordination point. The article covers failure detection, eventual consistency guarantees, and why gossip scales where ZooKeeper-style strong consistency becomes a bottleneck.<br>
+<i>Practical takeaway:</i> When designing distributed databases or service meshes where node liveness tracking must survive partial network partitions, gossip-based membership (as used in Cassandra, Consul, and DynamoDB) is the right default over centralized coordinators.</p>
+</div>
+    </main>
+
+    <footer>
+      <p>Generated by <a href="./index.html">Daily Briefs</a></p>
+    </footer>
+  </div>
+  <script>
+    (function() {
+      var btn = document.querySelector('.theme-toggle');
+      var body = document.body;
+      function setTheme(theme) {
+        if (theme === 'light') {
+          body.classList.add('light');
+          btn.textContent = '\u2600\uFE0F';
+        } else {
+          body.classList.remove('light');
+          btn.textContent = '\uD83C\uDF19';
+        }
+        localStorage.setItem('theme', theme);
+      }
+      setTheme(localStorage.getItem('theme') || 'dark');
+      btn.addEventListener('click', function() {
+        setTheme(body.classList.contains('light') ? 'dark' : 'light');
+      });
+    })();
+  </script>
+</body>
+</html>
