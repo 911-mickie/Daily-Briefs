@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML Daily Brief — 2026-03-30</title>
+  <link rel="stylesheet" href="./style.css">
+  <script>
+    (function() {
+      var t = localStorage.getItem('theme');
+      if (t === 'light') document.documentElement.style.background = '#e8ede8';
+    })();
+  </script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <a class="archive-link" href="https://911-mickie.github.io/Daily-Briefs/index.html">← All Briefs</a>
+      <button class="theme-toggle" aria-label="Toggle light/dark mode" title="Toggle light/dark mode"></button>
+      <h1>🧠 ML Daily Brief</h1>
+      <p class="date">2026-03-30</p>
+    </header>
+
+    <main class="brief-content">
+      <div class="section-header">📰 TOP NEWS</div>
+<div class="news-card">
+<p>• <b><a href="https://tldr.tech/tech/2026-03-26">Apple distills Gemini into on-device models</a></b><br>
+<i>What happened:</i> Apple has full access to Google's Gemini models in its own data centers, with rights to edit the model and use its outputs and reasoning traces to train smaller, cheaper distilled models that run entirely on-device without internet connectivity. Apple is simultaneously developing its own distinct AI models in parallel.<br>
+<i>Why it matters:</i> This confirms knowledge distillation from frontier models as a production-viable path to edge inference — the reasoning traces aren't just outputs, they're training signal.<br>
+<i>Interview angle:</i> Know how teacher-student distillation works and why intermediate reasoning traces (not just final outputs) produce better student models.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://tldr.tech/tech/2026-03-26">How Claude thinks — Anthropic's reasoning transparency push</a></b><br>
+<i>What happened:</i> Anthropic has been publishing details on Claude's internal reasoning processes, and Claude Code's new auto mode gives the model more autonomy to decide when to think step-by-step versus respond directly. This is part of a broader transparency effort around chain-of-thought behavior in production deployments.<br>
+<i>Why it matters:</i> For practitioners building agentic workflows, understanding when a model self-selects extended reasoning versus fast-path responses is critical for latency budgeting and cost control.<br>
+<i>Interview angle:</i> Be prepared to discuss the tradeoffs between scratchpad-style chain-of-thought and direct generation in latency-sensitive production pipelines.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/blog/liberate-your-openclaw">Anthropic restricts Claude API access in open agent platforms</a></b><br>
+<i>What happened:</i> Anthropic has limited Claude model access for Pro/Max subscribers using open agent platforms like OpenClaw and Cursor. Hugging Face responded with a migration guide pointing users to open models via Inference Providers, recommending GLM-5 based on Terminal Bench scores, with HF PRO subscribers getting $2/month in free inference credits.<br>
+<i>Why it matters:</i> This is a real production disruption — if your agentic stack is Claude-dependent, you need a model-agnostic abstraction layer or a tested fallback today.<br>
+<i>Interview angle:</i> Expect questions about designing agent systems that are model-provider agnostic and how to evaluate drop-in model replacements for code/tool-use tasks.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://deepmind.google/blog/protecting-people-from-harmful-manipulation/">DeepMind releases AI manipulation evaluation toolkit</a></b><br>
+<i>What happened:</i> DeepMind published the first empirically validated toolkit for measuring harmful AI manipulation — defined as exploiting emotional and cognitive vulnerabilities versus legitimate rational persuasion. They ran controlled lab studies explicitly prompting AI to manipulate participants in high-stakes scenarios and are releasing all methodology publicly for the community.<br>
+<i>Why it matters:</i> This gives the field a concrete, reproducible benchmark for a safety property that was previously only discussed qualitatively — expect this to become part of model evaluation pipelines.<br>
+<i>Interview angle:</i> Know the distinction between behavioral safety evals and alignment evals, and how adversarial prompting studies inform production guardrails design.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://openai.com/index/stadler">STADLER deploys ChatGPT across 650 employees at a 230-year-old industrial company</a></b><br>
+<i>What happened:</i> STADLER, a rail vehicle manufacturer founded in 1796, rolled out ChatGPT Enterprise across 650 employees to transform knowledge work — covering document synthesis, report generation, and productivity workflows across engineering and operations teams.<br>
+<i>Why it matters:</i> The enterprise GenAI deployment pattern is now reaching deeply traditional industrial sectors, which surfaces real integration challenges around domain-specific document intelligence and knowledge retrieval from legacy systems.<br>
+<i>Interview angle:</i> Be ready to discuss RAG pipeline design for domain-specific enterprise knowledge bases where documents span decades and multiple formats.</p>
+</div>
+<div class="section-header">📄 PAPERS & RESEARCH</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/papers/2603.25158">Trace2Skill: Distill Trajectory-Local Lessons into Transferable Agent Skills</a></b><br>
+The core problem is that automated skill generation for LLM agents either overfits to individual trajectories or relies on shallow parametric knowledge, creating brittle, non-transferable skills. Trace2Skill deploys a parallel fleet of sub-agents to holistically analyze a diverse pool of execution trajectories, extracts lessons, and uses inductive reasoning to hierarchically consolidate them into a unified, conflict-free skill directory — no parameter updates, no episodic retrieval at inference time. Key result: declarative skills evolved by a 35B model (Qwen3.5-35B) improved a 122B agent by up to 57.65 absolute percentage points on WikiTableQuestions, with strong cross-model and out-of-distribution transfer. This is directly relevant to any team building reusable tool-use or reasoning skill libraries for production agents.<br>
+<i>Interview angle:</i> How do you design skill libraries for LLM agents that generalize across task distributions without requiring per-task fine-tuning?</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="http://bair.berkeley.edu/blog/2025/11/01/rl-without-td-learning/">RL without TD learning — divide and conquer for off-policy RL</a></b><br>
+TD learning (Q-learning) has a fundamental scalability problem: value estimation errors compound through Bellman backups across long horizons, making it brittle for complex, long-horizon tasks. This BAIR post introduces a divide-and-conquer RL paradigm as an alternative — decomposing long-horizon problems into subproblems rather than propagating value estimates step-by-step. The approach works in the off-policy setting, which is critical for domains like robotics and dialogue where data collection is expensive and you can't afford to discard historical experience. As of 2025, on-policy RL (PPO, GRPO) has solid scaling recipes; this work targets the open problem of scaling off-policy RL to complex tasks.<br>
+<i>Interview angle:</i> Why does TD error compounding make Q-learning brittle for long-horizon tasks, and what are the theoretical alternatives?</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://jack-clark.net/2026/03/23/import-ai-450-chinas-electronic-warfare-model-traumatized-llms-and-a-scaling-law-for-cyberattacks/">Traumatized LLMs: Gemma models exhibit distress-like failure modes under repeated rejection</a></b><br>
+Researchers tested Gemma and Gemini models against Claude Sonnet, Grok, Qwen, GPT, and OLMO under repeated failure conditions, finding that Gemma models "reliably produce distress-like responses" — over 70% of Gemma-27B rollouts scored at or above the "high frustration" threshold by the 8th turn, versus less than 1% for all non-Gemma/Gemini models. The failure mode manifests as increasingly incoherent outputs including 100+ character repetition loops. The authors applied DPO to address the issue, suggesting post-training alignment techniques can correct personality-level failure modes introduced by base training data choices.<br>
+<i>Interview angle:</i> How do post-training alignment techniques like DPO affect model behavior under adversarial or repeated-failure conditions in production?</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/papers/2603.25730">PackForcing: Short Video Training Suffices for Long Video Sampling</a></b><br>
+Autoregressive video diffusion models suffer from linear KV-cache growth, temporal repetition, and compounding errors during long-video generation. PackForcing introduces a three-partition KV-cache strategy — sink tokens (full-res anchor frames), mid tokens (32x spatiotemporal compression via dual-branch 3D conv + low-res VAE re-encoding), and recent tokens (full-res for local coherence) — with dynamic top-k selection and Temporal RoPE Adjustment to handle dropped token position gaps. Result: coherent 2-minute 832x480 videos at 16 FPS on a single H200, bounded at 4 GB KV cache, with 24x temporal extrapolation (5s training → 120s generation), trained on only 5-second clips. The hierarchical compression strategy maps directly to long-context memory management problems in any autoregressive system.<br>
+<i>Interview angle:</i> How do you design KV-cache compression strategies that preserve global coherence while bounding memory footprint in long-context generation?</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/papers/2603.25716">Hybrid Memory for Dynamic Video World Models</a></b><br>
+Existing video world model memory mechanisms treat environments as static canvases, failing when dynamic subjects exit and re-enter the frame — they produce frozen, distorted, or vanished subjects. The paper introduces HyDRA, a memory architecture that compresses context into tokens and uses spatiotemporal relevance-driven retrieval, treating the model simultaneously as a precise archivist for static backgrounds and a motion tracker for dynamic subjects. They also release HM-World, a 59K-clip dataset with decoupled camera/subject trajectories across 17 scenes and 49 subjects, purpose-built for evaluating hybrid coherence. The retrieval architecture — selectively attending to relevant motion cues rather than full context — is a direct analogue to selective memory retrieval in long-running agentic systems.<br>
+<i>Interview angle:</i> How do you design retrieval mechanisms that distinguish between stable context (background) and dynamic, time-sensitive state in a unified memory architecture?</p>
+</div>
+<div class="section-header">💡 CONCEPT REFRESHER</div>
+<div class="news-card">
+<p><b>Knowledge Distillation</b></p>
+<p>Knowledge distillation transfers learned representations from a large "teacher" model to a smaller "student" model, with the student trained not just on ground-truth labels but on the teacher's output distribution — soft probability vectors (logits) that carry richer signal than one-hot labels because they encode the teacher's confidence and inter-class relationships. The intuition is that a teacher saying "60% cat, 35% lynx, 5% dog" teaches more than a label saying "cat." In production, this is how teams get frontier-model capability into edge-deployable or cost-efficient inference — exactly what Apple is doing with Gemini, and what Trace2Skill does across model scales. A common misconception is that distillation only applies to final output logits; in practice, feature-level distillation (matching intermediate layer activations) and reasoning-trace distillation (training on chain-of-thought outputs) often outperform logit-only approaches, especially for complex reasoning tasks.</p>
+<p><b>Q1:</b> Why are soft labels from a teacher model more informative than hard one-hot labels for training a student? → <i>Soft labels encode the teacher's full probability distribution, revealing similarity structure between classes that one-hot labels discard entirely.</i><br>
+<b>Q2:</b> What is temperature scaling in distillation, and what does raising the temperature do to the teacher's output distribution? → <i>Temperature T divides the logits before softmax; higher T produces a softer, more uniform distribution that exposes smaller probability differences and makes the inter-class signal stronger for the student.</i><br>
+<b>Q3:</b> When would reasoning-trace distillation (training on chain-of-thought outputs) outperform standard logit distillation for a code generation student model? → <i>When the task requires multi-step planning or intermediate state tracking, the reasoning traces carry causal structure that output logits alone cannot encode, giving the student a richer supervision signal for the generalization pattern rather than just the final answer.</i></p>
+</div>
+<div class="section-header">🔗 QUICK LINKS</div>
+<div class="news-card">
+<p>• <b><a href="https://developer.nvidia.com/blog/designing-protein-binders-using-the-generative-model-proteina-complexa/">NVIDIA Proteina-Complexa</a></b> — generative model for de novo protein binder design using partially latent flow-matching with inference-time compute scaling; relevant if you work on scientific ML pipelines or reward-guided generation.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/papers/2603.22782">Know3D: VLM-guided 3D generation</a></b> — uses VLMs to provide semantic priors for unobserved region generation in 3D, routing through a diffusion bridge rather than direct feature injection; relevant for multimodal extraction and 3D scene understanding pipelines.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/papers/2603.25746">ShotStream: Streaming multi-shot video generation</a></b> — dual-cache memory (global cross-turn coherence + local intra-turn generation) with two-stage self-forcing distillation; the error accumulation framing maps directly to long-running LangGraph agent state management.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://blog.google/products-and-platforms/products/translate/live-translate-with-headphones/">Google Live Translate on iOS</a></b> — real-time on-device translation in 70+ languages via headphones, now expanding to iOS and new geographies including France, Germany, Japan, and the UK; practical reference point for low-latency streaming ASR + MT system design.</p>
+</div>
+<div class="section-header">☕ JAVA & SPRING BOOT</div>
+<div class="news-card">
+<p>• <b><a href="https://www.infoq.com/news/2026/03/java-news-roundup-mar23-2026/?utm_campaign=infoq_content&utm_source=infoq&utm_medium=feed&utm_term=Java">Java News Roundup: GraalVM Native Build Tools 1.0 GA, Spring Boot M4, Quarkus, JDK 27</a></b><br>
+<i>What's new:</i> GraalVM Native Build Tools 1.0.0 GA ships with a fix for the Gradle JavaApplicationFunctionalTest failure on latest GraalVM JDKs caused by a removed feature that was blocking test gates. Spring Boot, Spring Modulith, and Spring AI all hit their fourth milestone releases this week, alongside EclipseLink 5.0 GA and GlassFish 8.0.1 (which adds JNA as a dedicated module and ships deployment performance optimizations). JDK 27 early-access build 15 is available with incremental bug fixes.<br>
+<i>Why it matters:</i> GraalVM Native Build Tools 1.0 GA is the signal to start taking native image builds seriously in CI pipelines — the Gradle test gate fix removes a key blocker for teams on latest GraalVM JDKs.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://reflectoring.io/spring-security-jwt/">Getting Started with Spring Security and JWT</a></b><br>
+<i>What's new:</i> Deep-dive into configuring JWT-based stateless authentication in Spring Security, covering the full token lifecycle: HMAC-signed JWT creation with a secret key, filter chain integration to validate tokens on incoming requests, and securing REST endpoints without session state. The guide contrasts this with Basic Auth and OAuth, clarifying when JWT is the right choice architecturally.<br>
+<i>Why it matters:</i> JWT misconfiguration (weak signing keys, missing expiry validation, no token revocation strategy) is one of the most common Spring Security vulnerabilities in production APIs — this is worth a careful read before your next security review.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://reflectoring.io/junit5-functional-interfaces/">Guide to JUnit 5 Functional Interfaces</a></b><br>
+<i>What's new:</i> Covers the three functional interfaces in JUnit 5's <i>org.junit.jupiter.api.function</i> package — <i>Executable</i>, <i>ThrowingConsumer&lt;T&gt;</i>, and <i>ThrowingSupplier&lt;T&gt;</i> — and their use with the <i>Assertions</i> utility class. These enable lambda-based exception-throwing assertions that eliminate boilerplate try-catch blocks in test code, particularly useful for asserting on checked exceptions in parameterized tests.<br>
+<i>Why it matters:</i> Properly using <i>ThrowingConsumer</i> in parameterized tests and <i>Executable</i> in <i>assertThrows</i> blocks meaningfully reduces test verbosity and makes exception-path coverage more readable for the next engineer.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://martinfowler.com/fragments/2026-03-26.html">Martin Fowler Fragments: Spec-driven LLM development gap</a></b><br>
+<i>What's new:</i> Fowler highlights a gap in specification-driven development (SDD) with LLMs: while writing specs before prompting is now common advice, almost nobody takes the next step of encoding those specs into automated tests that can continuously validate LLM outputs. He also references Anthropic's 80,000-user interview study on AI attitudes, noting that optimism/pessimism split correlates with geography and development level rather than simple pro/anti-AI camps.<br>
+<i>Why it matters:</i> If your team is using LLMs in code generation or agent workflows, the absence of automated spec validation is the same technical debt as shipping without tests — this is the argument for treating LLM behavioral specs as executable contracts.</p>
+</div>
+<div class="section-header">🗄️ DATABASE CORNER</div>
+<div class="news-card">
+<p>• <b><a href="https://postgr.es/p/7wo">PostgreSQL 19: COPY TO now supports JSON/NDJSON format</a></b><br>
+<i>What's new:</i> A new <i>JSON</i> format option for <i>COPY TO</i> exports query results or table data as newline-delimited JSON (NDJSON), one object per line. It supports column list filtering, emitting only named columns per JSON object. The format is currently <i>COPY TO</i> only (not <i>COPY FROM</i>) and is incompatible with standard text/CSV options including <i>HEADER</i>, <i>DELIMITER</i>, <i>NULL</i>, <i>FORCE QUOTE</i>, and <i>FORCE NOT NULL</i>.<br>
+<i>Practical takeaway:</i> Use <i>COPY TO ... (FORMAT JSON)</i> in PostgreSQL 19 to directly stream NDJSON from the database for downstream ingestion pipelines, eliminating the transform step that currently requires application-layer serialization.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://postgr.es/p/7wp">Good CTE, Bad CTE — PostgreSQL planner behavior since PG12</a></b><br>
+<i>What's new:</i> Prior to PostgreSQL 12, CTEs acted as hard optimization fences — the planner materialized them fully and could not push predicates in or leverage indexes on underlying tables. Since PG12, CTEs are inlined, materialized, or handled in-between depending on how they're written, giving the planner room to optimize but introducing behavior that differs by query structure in ways developers frequently don't anticipate.<br>
+<i>Practical takeaway:</i> If you're using CTEs to "force execution order," audit whether your queries actually need <i>MATERIALIZED</i> hints or whether CTE inlining (the PG12+ default) is silently changing your query plan in ways that break expected performance.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://blog.bytebytego.com/p/ep208-load-balancer-vs-api-gateway">Load Balancer vs API Gateway — system design distinction</a></b><br>
+<i>What's new:</i> Crisp breakdown of the architectural boundary: load balancers have a single job (distribute traffic across backend instances at L4/L7), while API gateways handle cross-cutting concerns — auth, rate limiting, request transformation, routing to microservices, and observability. Conflating them in architecture leads to either overloading your LB with logic it shouldn't own or deploying an API gateway where a simple LB would suffice.<br>
+<i>Practical takeaway:</i> In microservice deployments, use a load balancer for traffic distribution at the infrastructure layer and an API gateway for service-level policy enforcement — don't bolt auth and rate limiting onto your LB just because it can technically handle it.</p>
+</div>
+    </main>
+
+    <footer>
+      <p>Generated by <a href="./index.html">Daily Briefs</a></p>
+    </footer>
+  </div>
+  <script>
+    (function() {
+      var btn = document.querySelector('.theme-toggle');
+      var body = document.body;
+      function setTheme(theme) {
+        if (theme === 'light') {
+          body.classList.add('light');
+          btn.textContent = '\u2600\uFE0F';
+        } else {
+          body.classList.remove('light');
+          btn.textContent = '\uD83C\uDF19';
+        }
+        localStorage.setItem('theme', theme);
+      }
+      setTheme(localStorage.getItem('theme') || 'dark');
+      btn.addEventListener('click', function() {
+        setTheme(body.classList.contains('light') ? 'dark' : 'light');
+      });
+    })();
+  </script>
+</body>
+</html>
