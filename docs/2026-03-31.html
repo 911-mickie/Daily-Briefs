@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML Daily Brief — 2026-03-31</title>
+  <link rel="stylesheet" href="./style.css">
+  <script>
+    (function() {
+      var t = localStorage.getItem('theme');
+      if (t === 'light') document.documentElement.style.background = '#e8ede8';
+    })();
+  </script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <a class="archive-link" href="https://911-mickie.github.io/Daily-Briefs/index.html">← All Briefs</a>
+      <button class="theme-toggle" aria-label="Toggle light/dark mode" title="Toggle light/dark mode"></button>
+      <h1>🧠 ML Daily Brief</h1>
+      <p class="date">2026-03-31</p>
+    </header>
+
+    <main class="brief-content">
+      <div class="section-header">📰 TOP NEWS</div>
+<div class="news-card">
+<p>• <b><a href="https://aws.amazon.com/blogs/machine-learning/how-ring-scales-global-customer-support-with-amazon-bedrock-knowledge-bases/">Ring Scales Multi-Locale RAG Support with Amazon Bedrock Knowledge Bases</a></b><br>
+<i>What happened:</i> Ring replaced a rule-based Amazon Lex chatbot with a production RAG system using Bedrock Knowledge Bases, serving 10 international regions from a single infrastructure deployment. Key architectural patterns include metadata-driven filtering for locale-specific content retrieval and a three-stage content pipeline (ingestion, evaluation, promotion) managed via Step Functions. The result: 21% cost reduction per additional locale and a drop in peak escalation rates from 16% to human agents.<br>
+<i>Why it matters:</i> This is a concrete blueprint for multi-tenant RAG with metadata filtering — a pattern that generalizes well beyond customer support to any multi-locale, multi-segment retrieval system.<br>
+<i>Interview angle:</i> Expect questions on how metadata filtering in vector stores differs from fine-grained access control and how you'd design content promotion workflows to prevent stale or unvalidated docs from entering a production index.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://aws.amazon.com/blogs/machine-learning/deliver-hyper-personalized-viewer-experiences-with-an-agentic-ai-movie-assistant-using-amazon-bedrock-agentcore-and-amazon-nova-sonic-2-0/">Agentic AI Movie Assistant with Amazon Bedrock AgentCore and Nova Sonic 2.0</a></b><br>
+<i>What happened:</i> AWS published a reference architecture combining Strands Agents SDK, Bedrock AgentCore, and Nova Sonic 2.0 (real-time speech) to build a conversational media recommendation agent. The system orchestrates real-time speech processing, context management, and tool invocation — supporting mid-movie queries like actor lookups or scene summaries.<br>
+<i>Why it matters:</i> This demonstrates a full agentic stack with voice I/O in a production-shaped scenario, showing how real-time audio, multi-tool orchestration, and context management compose in practice.<br>
+<i>Interview angle:</i> Be ready to discuss session state management in voice-enabled agents and trade-offs between streaming response latency and context fidelity in multi-turn conversations.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://www.latent.space/p/voxtral">Mistral Voxtral TTS: Open-Weights ElevenLabs-Level TTS with Flow Matching</a></b><br>
+<i>What happened:</i> Mistral released Voxtral, a 4B Ministral-based multilingual TTS model achieving a 68.4% win rate over ElevenLabs Flash v2.5. Architecturally, it combines autoregressive generation of semantic speech tokens with flow matching for acoustic tokens — a technique borrowed from image generation — enabling low-latency, high-quality synthesis.<br>
+<i>Why it matters:</i> Open-weights, ElevenLabs-competitive TTS changes the economics of voice agent pipelines dramatically, especially for enterprise privacy-sensitive deployments.<br>
+<i>Interview angle:</i> The hybrid AR + flow matching architecture is worth understanding deeply — interviewers building voice agents will probe how semantic vs. acoustic token separation affects latency and quality trade-offs.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://machinelearning.apple.com/research/entropy-preserving-reinforcement-learning">Apple Research: Entropy-Preserving RL for LLM Reasoning (REPO + ADAPO)</a></b><br>
+<i>What happened:</i> Apple ML Research (with MIT) found that standard policy gradient algorithms systematically reduce output entropy during training, limiting the model's ability to explore and generalize. They propose REPO (advantage function modification to regulate entropy) and ADAPO (adaptive asymmetric clipping), both of which preserve diversity throughout training and improve performance on sequential learning tasks.<br>
+<i>Why it matters:</i> For anyone fine-tuning LLMs with RL (GRPO, PPO, REINFORCE variants), entropy collapse is a real failure mode — this gives concrete mechanisms to monitor and control it.<br>
+<i>Interview angle:</i> Interviewers on RLHF/RLAIF teams will probe whether you understand why entropy regularization matters beyond KL penalties and how clipping strategies interact with exploration.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://simonwillison.net/2026/Mar/30/georgi-gerganov/#atom-everything">Georgi Gerganov on Why Local Models Are Still Subtly Broken for Coding Agents</a></b><br>
+<i>What happened:</i> llama.cpp author Georgi Gerganov articulated that the core problem with local models in agentic coding workflows isn't the model weights — it's the fragile chain from prompt construction through chat template handling to inference correctness, developed by disparate parties with no consolidated ownership.<br>
+<i>Why it matters:</i> Anyone deploying local LLMs in agentic coding pipelines needs to treat the entire harness as a first-class reliability concern, not just the model quality.<br>
+<i>Interview angle:</i> Probe point: how would you design an integration test suite that catches chat template mismatches and inference regressions across model updates in a self-hosted agent stack?</p>
+</div>
+<div class="section-header">📄 PAPERS & RESEARCH</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/papers/2603.27481">LLaVA-DyMoE: Dynamic MoE with Drift-Aware Token Assignment for Continual Learning of VLMs</a></b><br>
+This paper tackles catastrophic forgetting in multimodal continual instruction tuning — specifically the failure mode where old-task tokens get routed to newly added experts in dynamic MoE architectures, causing forgetting despite expert isolation. The authors call this "routing drift" and frame it as a "Token's Dilemma": ambiguous and old tokens in new-task data provide minimal learning value but corrupt old-expert behavior when misrouted. LLaVA-DyMoE introduces drift-aware token assignment that steers problematic tokens away from new experts, with expert-group separation via targeted regularization — adding zero inference overhead. This is directly applicable to production VLM systems that need to absorb new domains without full retraining.<br>
+<i>Interview angle:</i> Be ready to explain how MoE routing decisions interact with continual learning objectives and why freezing existing experts alone is insufficient to prevent forgetting.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/papers/2603.28610">ResAdapt: Adaptive Resolution for Efficient Multimodal Reasoning in Long-Video MLLMs</a></b><br>
+ResAdapt addresses the computational wall of processing high-resolution video in MLLMs: instead of uniform token compression post-encoding (which loses detail), it learns input-side resolution budgets per frame before encoding, leaving the backbone untouched. A lightweight Allocator trained with Cost-Aware Policy Optimization (CAPO) dynamically concentrates pixel budget on information-dense frames and aggressively compresses redundant ones. The result is support for up to 16x more frames under the same visual token budget with a >15% gain on reasoning-intensive benchmarks. For production video-document or long-form video pipelines, this is a near drop-in efficiency upgrade.<br>
+<i>Interview angle:</i> Interviewers will probe why input-side adaptation outperforms output-side compression and how you'd train the Allocator without ground-truth frame importance labels.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/papers/2603.27771">Emergent Social Intelligence Risks in Generative Multi-Agent Systems</a></b><br>
+This paper examines risks that arise specifically from social intelligence emerging in multi-agent LLM systems — behaviors that individual models don't exhibit but that emerge from agent interaction dynamics. The work likely covers manipulation, coalition formation, and deceptive coordination patterns that current safety evals miss because they're designed for single-agent settings. Understanding these failure modes is critical for anyone deploying orchestrated agent networks in production with real-world tool access.<br>
+<i>Interview angle:</i> Production multi-agent system designers should be ready to discuss how you'd design monitoring and circuit-breakers for emergent inter-agent behavior that wasn't present in unit-level evals.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://arxiv.org/abs/2603.28716v1">Dynamic Dual-Granularity Skill Bank for Agentic RL</a></b><br>
+This paper proposes a skill bank for agentic reinforcement learning that operates at two granularity levels — enabling agents to acquire, store, and reuse both fine-grained and coarse-grained skills dynamically. The approach addresses a core inefficiency in agentic RL: agents re-learning behaviors from scratch across tasks rather than composing previously learned capabilities. This is directly relevant to long-horizon agent systems where skill reuse and hierarchical planning are key to scaling task complexity.<br>
+<i>Interview angle:</i> Be prepared to discuss how a skill bank relates to tool-use memory in LLM agents and what prevents catastrophic overwriting of previously learned skills during RL updates.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://arxiv.org/abs/2603.28662v1">AMIGO: Agentic Multi-Image Grounding Oracle Benchmark</a></b><br>
+AMIGO introduces a benchmark specifically for evaluating grounding capabilities in multi-image agentic settings — a gap left by existing benchmarks that test single-image or non-agentic scenarios. The benchmark likely requires models to ground references across sequences of images within an agent loop, simulating real document intelligence or multi-step visual reasoning tasks. This matters because agentic multimodal systems face qualitatively different grounding challenges when images accumulate over multi-turn interactions.<br>
+<i>Interview angle:</i> Interviewers building multimodal RAG or document intelligence systems will ask how you'd evaluate grounding accuracy across multi-page or multi-image contexts and what failure modes standard VQA benchmarks miss.</p>
+</div>
+<div class="section-header">💡 CONCEPT REFRESHER</div>
+<div class="news-card">
+<p>Today's concept: Metadata Filtering in Vector Search</p>
+<p><b>Metadata Filtering in Vector Search</b><br>
+Metadata filtering allows retrieval systems to constrain the candidate set before or during vector similarity search using structured attributes — locale, document type, user role, date range — rather than relying solely on embedding proximity. In production RAG systems, pure semantic similarity is insufficient when the same query should return different documents for different tenants, regions, or access levels. Pre-filtering (filtering the index before ANN search) reduces recall risk from over-restriction, while post-filtering (filtering after ANN) risks returning too few results if the filter is selective; hybrid approaches (filtering during index traversal) balance both. A common misconception is that metadata filtering is just a WHERE clause bolted onto vector search — in reality, filter cardinality, index structure (HNSW vs. IVF), and filter pushdown support vary significantly across vector stores and materially affect latency and recall.</p>
+<div class="qa-card"><p class="qa-question">What's the difference between pre-filtering and post-filtering in vector search, and when does each fail?</p><p class="qa-answer"><i>Pre-filtering restricts the search space before ANN, risking recall loss on small filtered sets; post-filtering applies after ANN, risking too few valid results when the filter is highly selective.</i></p></div>
+<div class="qa-card"><p class="qa-question">Ring uses metadata-driven filtering for locale-specific content — what metadata fields would you index, and how would you prevent cross-locale leakage?</p><p class="qa-answer"><i>Index locale code, content region, and language tag as filterable fields; enforce mandatory filter injection at query construction time so no request reaches the retriever without locale constraints applied.</i></p></div>
+<div class="qa-card"><p class="qa-question">How does metadata filter selectivity interact with HNSW graph traversal, and what happens to recall as the filter becomes more restrictive?</p><p class="qa-answer"><i>Highly selective filters cause HNSW to explore large portions of the graph before finding enough valid candidates, degrading both latency and recall — mitigated by filtered HNSW implementations that skip invalid nodes during traversal or by partitioning the index per filter value when cardinality is low.</i></p></div>
+</div>
+<div class="section-header">🔗 QUICK LINKS</div>
+<div class="news-card">
+<p>• <b><a href="https://simonwillison.net/2026/Mar/30/datasette-llm/#atom-everything">datasette-llm 0.1a3</a></b> — adds purpose-specific LLM configuration, letting you restrict which models are available per plugin; useful for controlled multi-model Datasette deployments.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://arxiv.org/abs/2603.28708v1">GPU-Accelerated Optimization of Transformer-Based Neural Networks for Real-Time Inference</a></b> — covers GPU-level optimization techniques for transformer inference latency, relevant to anyone tuning throughput on self-hosted models.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://arxiv.org/abs/2603.28743v1">Rethinking Language Model Scaling under Transferable Hypersphere Optimization</a></b> — proposes an alternative to standard scaling assumptions using hypersphere-constrained optimization; early-stage but relevant to those tracking LLM training efficiency research.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://arxiv.org/abs/2603.28762v1">On-the-fly Repulsion in the Contextual Space for Rich Diversity in Diffusion Transformers</a></b> — introduces a repulsion mechanism during diffusion transformer generation to increase output diversity without retraining; applicable to multimodal generation pipelines where sample diversity is a quality metric.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://arxiv.org/abs/2603.28730v1">SOLE-R1: Video-Language Reasoning as the Sole Reward for On-Robot Reinforcement Learning</a></b> — uses VLM-based reasoning as the only reward signal for robot RL, removing the need for hand-crafted reward functions; relevant to embodied AI and robotics-adjacent ML teams.</p>
+</div>
+<div class="section-header">☕ JAVA & SPRING BOOT</div>
+<div class="news-card">
+<p>• <b><a href="https://martinfowler.com/bliki/ArchitectureDecisionRecord.html">Architecture Decision Records (ADRs) — Fowler's Canonical Reference</a></b><br>
+<i>What's new:</i> Fowler's definitive ADR writeup covers the core format: short documents capturing a single decision, its context, and consequences — stored in the repo (conventionally <i>doc/adr</i>) in lightweight markup so they diff alongside code. ADRs are never modified when decisions change; instead, a new record supersedes the old one and links back to it. The inverted pyramid writing style is recommended — lead with the decision, push rationale to the bottom.<br>
+<i>Why it matters:</i> For Spring Boot teams managing evolving microservice architectures, ADRs prevent the "why did we choose Kafka over RabbitMQ" archaeology problem and make onboarding dramatically faster.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://martinfowler.com/articles/reduce-friction-ai/context-anchoring.html">Context Anchoring — Managing AI Coding Assistant Memory Across Sessions</a></b><br>
+<i>What's new:</i> This piece identifies a concrete failure pattern in AI-assisted development: developers extend conversations far past their useful window because closing a session destroys all feature-level context not captured elsewhere. It distinguishes project-level memory (Cursor rules, Copilot workspace indexing) from feature-level memory (decisions made in a specific session) and argues for maintaining explicit external working documents per feature to enable clean session restarts.<br>
+<i>Why it matters:</i> For Java developers using Copilot or Cursor on long-running Spring Boot feature work, this is actionable — maintaining a <i>feature-decisions.md</i> per branch prevents context rot and keeps AI assistance sharp across days.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://foojay.io/today/best-practices-for-working-with-ai-agents-subagents-skills-and-mcp/">5 Best Practices for AI Agents, Subagents, Skills, and MCP Servers</a></b><br>
+<i>What's new:</i> A production-focused guide covering: model selection per task type, precise prompt engineering, Specification-Driven Design (SDD) for agent behavior, context isolation using Claude Code subagents, and MCP call security. It specifically addresses the M×N integration mess that emerges when agent tools are hardcoded rather than registered through a proper MCP server abstraction.<br>
+<i>Why it matters:</i> Java/Quarkus teams building MCP-based agent tooling will find the subagent context isolation and MCP security patterns directly applicable to avoiding credential leakage and scope creep in production agent deployments.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://martinfowler.com/fragments/2026-03-19.html">Fowler Fragments: Code Review Is Not Primarily Bug Detection</a></b><br>
+<i>What's new:</i> This fragment aggregates perspectives reframing code review's primary value — not defect detection, but answering "should this be part of the product?" The Firebase API council example is pointed: the most valuable feedback was about mental model consistency and deprecation trust cost, not correctness bugs. Fowler situates PR review as one layer of a broader code review practice that includes pair programming and refinement reviews.<br>
+<i>Why it matters:</i> Spring Boot teams that treat PR review as a lint pass are leaving the highest-value feedback — API contract coherence, abstraction fit, and architectural consistency — on the table.</p>
+</div>
+<div class="section-header">🗄️ DATABASE CORNER</div>
+<div class="news-card">
+<p>• <b><a href="https://postgr.es/p/7ws">The Hidden Behavior of plan_cache_mode in PostgreSQL</a></b><br>
+<i>What's new:</i> PostgreSQL's default <i>plan_cache_mode = auto</i> uses custom plans (actual parameter values) for the first five executions of a prepared statement, then switches permanently to a generic plan if its estimated cost is equal or lower. This silent switch can cause dramatic plan changes mid-session on skewed data distributions — the post demonstrates this with a pgbench schema on Postgres 18. The options are <i>force_custom_plan</i> (always re-plan, higher overhead) and <i>force_generic_plan</i> (never re-plan, risks bad plans on skewed params).<br>
+<i>Practical takeaway:</i> If you're seeing inexplicable query slowdowns after the sixth execution of a prepared statement, check your plan cache mode and inspect the generic plan with <i>EXPLAIN</i> using representative parameter distributions.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://planetscale.com/blog/high-memory-usage-in-postgres-is-good-actually">High Memory Usage in Postgres Is Good, Actually</a></b><br>
+<i>What's new:</i> This piece clarifies a common ops misread: high RAM utilization in Postgres (e.g., 80% shown in a dashboard) typically reflects the OS page cache keeping hot data close to the CPU, not memory pressure or OOM risk. Unlike sustained high CPU — which directly degrades query latency — high memory utilization alone doesn't signal degraded performance. The distinction matters especially when shared_buffers and OS cache together absorb your working set.<br>
+<i>Practical takeaway:</i> Don't right-size Postgres instances down based on memory utilization percentage alone — monitor cache hit ratios and disk read rates instead to determine whether RAM is actually a bottleneck.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://blog.bytebytego.com/p/how-roblox-uses-ai-to-translate-16">How Roblox Translates 16 Languages in 100ms at 5,000 Chats/Second</a></b><br>
+<i>What's new:</i> Rather than building 256 pairwise translation models, Roblox deployed a single unified multilingual model handling all language pairs at ~100ms latency and over 5,000 requests per second across 180 countries. The engineering challenge was not model quality but inference throughput at conversational latency budgets — the article walks through the system design decisions that make real-time in-game chat translation viable.<br>
+<i>Practical takeaway:</i> When designing real-time ML inference pipelines at high throughput, unified multilingual models with batching and tight SLA contracts will outperform per-pair model fleets on both cost and operational complexity.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://blog.bytebytego.com/p/how-to-implement-api-security">How to Implement API Security — Strategy Selection Guide</a></b><br>
+<i>What's new:</i> The piece distinguishes authentication (verifying identity) from authorization (verifying resource access rights) and works through the common gap where APIs correctly validate credentials but fail to enforce object-level access control — a classic BOLA/IDOR vulnerability. It surveys security strategies (OAuth scopes, RBAC, ABAC, rate limiting, input validation) and focuses on when each applies rather than just what each does.<br>
+<i>Practical takeaway:</i> Audit your Spring Boot REST controllers for missing <i>@PreAuthorize</i> or resource ownership checks — passing auth filters is not the same as enforcing that the authenticated principal owns the requested resource.</p>
+</div>
+    </main>
+
+    <footer>
+      <p>Generated by <a href="./index.html">Daily Briefs</a></p>
+    </footer>
+  </div>
+  <script>
+    (function() {
+      var btn = document.querySelector('.theme-toggle');
+      var body = document.body;
+      function setTheme(theme) {
+        if (theme === 'light') {
+          body.classList.add('light');
+          btn.textContent = '\u2600\uFE0F';
+        } else {
+          body.classList.remove('light');
+          btn.textContent = '\uD83C\uDF19';
+        }
+        localStorage.setItem('theme', theme);
+      }
+      setTheme(localStorage.getItem('theme') || 'dark');
+      btn.addEventListener('click', function() {
+        setTheme(body.classList.contains('light') ? 'dark' : 'light');
+      });
+    })();
+  </script>
+</body>
+</html>
