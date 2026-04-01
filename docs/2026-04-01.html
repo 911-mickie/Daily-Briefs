@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML Daily Brief — 2026-04-01</title>
+  <link rel="stylesheet" href="./style.css">
+  <script>
+    (function() {
+      var t = localStorage.getItem('theme');
+      if (t === 'light') document.documentElement.style.background = '#e8ede8';
+    })();
+  </script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <a class="archive-link" href="https://911-mickie.github.io/Daily-Briefs/index.html">← All Briefs</a>
+      <button class="theme-toggle" aria-label="Toggle light/dark mode" title="Toggle light/dark mode"></button>
+      <h1>🧠 ML Daily Brief</h1>
+      <p class="date">2026-04-01</p>
+    </header>
+
+    <main class="brief-content">
+      <div class="section-header">📰 TOP NEWS</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/blog/ibm-granite/granite-4-vision">Granite 4.0 3B Vision: Compact Multimodal Intelligence for Enterprise Documents</a></b><br>
+<i>What happened:</i> IBM released Granite 4.0 3B Vision, a vision-language model targeting enterprise document workflows — specifically table extraction, chart-to-structured-format conversion, and semantic key-value pair extraction across complex layouts. The model ships as a LoRA adapter on top of Granite 4.0 Micro, keeping vision and language modular so text-only fallbacks stay intact. It integrates natively with Docling and uses a novel DeepStack architecture variant for high-detail visual feature injection, trained on a code-guided synthetic chart dataset (ChartNet).<br>
+<i>Why it matters:</i> A 3B-parameter modular VLM purpose-built for document intelligence is directly deployable in multimodal RAG pipelines where OCR+LLM chains are currently the norm — with structured extraction baked in rather than bolted on.<br>
+<i>Interview angle:</i> Be ready to discuss tradeoffs between LoRA adapter-based VLMs vs. fully fine-tuned multimodal models in production document pipelines, and how modularity affects serving infrastructure.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/blog/trl-v1">TRL v1.0: Post-Training Library Built to Move with the Field</a></b><br>
+<i>What happened:</i> Hugging Face shipped TRL v1.0, marking its transition from research codebase to production-grade post-training library with explicit stability guarantees. The release covers 75+ post-training methods including PPO, DPO, ORPO, and KTO, with a design philosophy that prioritizes adaptability over fixed abstractions — a direct response to the field repeatedly invalidating its own assumptions.<br>
+<i>Why it matters:</i> If you're running RLHF, preference optimization, or any fine-tuning workflow, TRL v1.0 is now the stable foundation worth building on rather than around.<br>
+<i>Interview angle:</i> Expect questions on the architectural differences between PPO-style (policy + reward model + RL loop) and DPO-style (offline preference optimization without a reward model) and when to choose each.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://aws.amazon.com/blogs/machine-learning/build-reliable-ai-agents-with-amazon-bedrock-agentcore-evaluations/">Build reliable AI agents with Amazon Bedrock AgentCore Evaluations</a></b><br>
+<i>What happened:</i> AWS introduced Amazon Bedrock AgentCore Evaluations, a managed service for systematic agent performance assessment that addresses the non-determinism problem in LLM-based agents — where single test runs are insufficient because the same query can produce different tool selections and reasoning paths across runs. The service provides multi-dimensional quality measurement across tool selection accuracy, parameter correctness, and response synthesis, with separate evaluation modes for development and production.<br>
+<i>Why it matters:</i> Moving agents from demo to production requires statistical confidence over behavior distributions, not pass/fail on individual runs — this is the first managed service targeting that gap directly.<br>
+<i>Interview angle:</i> Be prepared to discuss how you'd design an agent evaluation harness that accounts for non-determinism, including how many runs per scenario are statistically meaningful.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://aws.amazon.com/blogs/machine-learning/build-a-finops-agent-using-amazon-bedrock-agentcore/">Build a FinOps agent using Amazon Bedrock AgentCore</a></b><br>
+<i>What happened:</i> AWS published a reference architecture for a FinOps agent using AgentCore Runtime, Strands Agent SDK, and MCP, integrating Cost Explorer, AWS Budgets, and Compute Optimizer into a single conversational interface. The agent uses Amazon Cognito for auth, retains 30 days of conversation memory, and exposes 20+ specialized cost management tools — all deployed via CDK with Claude Sonnet 4.5 as the backbone model.<br>
+<i>Why it matters:</i> This is a concrete production-pattern reference for multi-tool agentic systems with persistent memory, authentication, and MCP integration — components that most agent tutorials hand-wave past.<br>
+<i>Interview angle:</i> Interviewers may probe how conversation memory scoping (30-day window) and tool selection at scale interact — and how you'd handle tool call failures gracefully in a financial context.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://www.oneusefulthing.org/p/claude-dispatch-and-the-power-of">Claude Dispatch and the Power of Interfaces</a></b><br>
+<i>What happened:</i> A new analysis drawing on recent research argues that chatbot interfaces impose measurable cognitive overhead that offsets AI productivity gains — a study with financial professionals showed GPT-4o improved task performance but generated cognitive load through wall-of-text responses, disorganized context accumulation, and compounding conversational entropy. The conclusion: task-specific interfaces, not general chatbots, are the correct abstraction for real work.<br>
+<i>Why it matters:</i> For practitioners building GenAI applications, this reframes the design question from "which model?" to "which interface?" — and suggests purpose-built UX is a first-class engineering concern, not a product afterthought.<br>
+<i>Interview angle:</i> System design interviews increasingly include agent/LLM product design; be ready to articulate why interface design affects output quality independent of model capability.</p>
+</div>
+<div class="section-header">📄 PAPERS & RESEARCH</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/papers/2603.19835">FIPO: Eliciting Deep Reasoning with Future-KL Influenced Policy Optimization</a></b><br>
+FIPO replaces sparse trajectory-end binary rewards in RL-based reasoning training with a token-level mechanism called Future-KL, which quantifies each token's causal influence on the downstream reasoning path in real time. This enables fine-grained reinforcement or suppression at the token level rather than waiting until rollout completion. The result: 58.0% on AIME 2024, outperforming DAPO, o1-mini, and DeepSeek-Zero-MATH at equivalent scale, and reasoning chains scaling to 10k+ tokens with length correlated to accuracy rather than verbosity. This directly addresses the reward sparsity problem that limits RL fine-tuning for reasoning tasks.<br>
+<i>Interview angle:</i> Know how reward sparsity in RLHF/RL reasoning training degrades gradient signal quality and why token-level credit assignment is fundamentally harder than sequence-level.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://arxiv.org/abs/2603.30016v1">Architecting Secure AI Agents: Perspectives on System-Level Defenses Against Indirect Prompt Injection Attacks</a></b><br>
+Indirect prompt injection — where malicious instructions are embedded in external content an agent retrieves or processes — is one of the most practical security threats to production agentic systems. This paper takes a system-level view rather than a prompt-level one, proposing architectural defenses that treat injection resistance as a design property of the overall system rather than a model capability. The focus is on isolation boundaries, privilege separation, and trust hierarchies across agent components. For engineers shipping RAG-augmented agents or browser-use agents, this is directly applicable threat modeling.<br>
+<i>Interview angle:</i> Interviewers building agentic systems may ask how you'd prevent a malicious document in a RAG corpus from hijacking tool calls — architectural answers score better than prompt-filtering answers.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://arxiv.org/abs/2603.30040v1">Automatic Identification of Parallelizable Loops Using Transformer-Based Source Code Representations</a></b><br>
+The paper applies DistilBERT with subword tokenization to classify whether source code loops are safe to parallelize — a problem where traditional dependence analysis and polyhedral models break down on irregular or dynamically structured code. Evaluated on a balanced dataset of synthetic and real-world annotated loops using 10-fold cross-validation, the approach achieves >99% mean accuracy with low false positive rates. The key practical advantage is eliminating hand-crafted features while improving generalization over prior token-based methods. This is a strong result for LLM-assisted compiler optimization and developer tooling.<br>
+<i>Interview angle:</i> Be ready to discuss why subword tokenization on code differs from AST-based representations and what tradeoffs each makes in code understanding tasks.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://arxiv.org/abs/2603.29902v1">ATP-Bench: Towards Agentic Tool Planning for MLLM Interleaved Generation</a></b><br>
+ATP-Bench introduces a benchmark specifically targeting tool planning in multimodal LLMs where tool calls and generation steps are interleaved — a pattern common in real agentic workflows but poorly covered by existing evals. The benchmark tests whether MLLMs can correctly sequence tool invocations and generated content across multi-step tasks requiring both vision and language reasoning. This is distinct from benchmarks that evaluate single tool calls or purely sequential pipelines. It provides a more realistic stress test for production multimodal agents.<br>
+<i>Interview angle:</i> Know the difference between evaluating individual tool call accuracy vs. evaluating full planning trajectory correctness, and why the latter is a harder and more production-relevant metric.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://arxiv.org/abs/2603.30036v1">Aligned, Orthogonal or In-conflict: When can we safely optimize Chain-of-Thought?</a></b><br>
+This paper investigates whether optimizing chain-of-thought (CoT) reasoning — through compression, distillation, or reward shaping — helps, hurts, or is orthogonal to final task performance. The framing of "aligned vs. in-conflict" optimization is important: some CoT optimization objectives point in the same direction as accuracy, others actively degrade it. Understanding this relationship is critical for practitioners trying to reduce inference costs by shortening reasoning chains without sacrificing output quality. The findings have direct implications for reasoning model fine-tuning and token budget management.<br>
+<i>Interview angle:</i> Expect questions on why shorter CoT doesn't always mean worse accuracy, and when process supervision vs. outcome supervision in reasoning training produces divergent results.</p>
+</div>
+<div class="section-header">💡 CONCEPT REFRESHER</div>
+<div class="news-card">
+<p>Today's concept: LoRA (Low-Rank Adaptation)</p>
+<p><b>LoRA (Low-Rank Adaptation)</b><br>
+LoRA is a parameter-efficient fine-tuning technique that freezes pre-trained model weights and injects trainable low-rank decomposition matrices into specific layers — typically attention weight matrices — so that the weight update ΔW is approximated as a product of two low-rank matrices A and B (ΔW = BA, where rank r ≪ d). This reduces trainable parameters from millions to thousands while preserving the base model's general capabilities, enabling fine-tuning on consumer-grade hardware. In production, LoRA adapters can be swapped or merged at inference time, making them ideal for multi-task serving from a single base model — exactly the architecture Granite 4.0 3B Vision uses to keep vision and language modular. A common misconception is that LoRA always underperforms full fine-tuning; in practice, with the right rank and target modules, LoRA often matches or exceeds full fine-tuning quality at a fraction of the compute cost, particularly in data-limited regimes.</p>
+<div class="qa-card"><p class="qa-question">Why does LoRA decompose weight updates into two matrices A and B rather than directly learning ΔW?</p><p class="qa-answer"><i>Because constraining ΔW = BA where rank(B·A) = r forces the update to live in a low-dimensional subspace, drastically reducing trainable parameters while preserving expressive capacity for the target task.</i></p></div>
+<div class="qa-card"><p class="qa-question">How do you choose which layers to apply LoRA to, and what's the typical default?</p><p class="qa-answer"><i>Typically applied to query and value projection matrices in attention layers; including more layers (MLP, output projections) increases expressivity but also parameter count — the right choice depends on task complexity and compute budget.</i></p></div>
+<div class="qa-card"><p class="qa-question">If you have multiple LoRA adapters fine-tuned for different tasks, how do you serve them efficiently without running separate model replicas?</p><p class="qa-answer"><i>Merge adapters into the base model weights at load time for single-task serving, or use dynamic adapter loading (e.g., via PEFT's hot-swap) to share a single base model across requests — at the cost of adapter loading latency per switch.</i></p></div>
+</div>
+<div class="section-header">🔗 QUICK LINKS</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/papers/2603.28088">GEMS: Agent-Native Multimodal Generation with Memory and Skills</a></b> — proposes an agent-native framework with explicit Agent Loop, Memory, and Skills components; relevant to practitioners designing modular agentic architectures.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://huggingface.co/papers/2603.29620">Unify-Agent: A Unified Multimodal Agent for World-Grounded Image Synthesis</a></b> — tackles grounded image generation via a unified agent approach; useful context for multimodal generation pipelines.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://arxiv.org/abs/2603.29846v1">SNEAK: Evaluating Strategic Communication and Information Leakage in Large Language Models</a></b> — benchmarks whether LLMs strategically withhold or leak information, relevant to safety evaluation in agentic deployments.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://aws.amazon.com/blogs/machine-learning/building-an-ai-powered-system-for-compliance-evidence-collection/">Building an AI powered system for compliance evidence collection</a></b> — AWS pattern using Nova 2 Lite + browser automation for automated audit screenshot workflows; practical reference for document capture pipelines.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://aws.amazon.com/blogs/machine-learning/accelerating-software-delivery-with-agentic-qa-automation-using-amazon-nova-act/">Accelerating software delivery with agentic QA automation using Amazon Nova Act</a></b> — Amazon Nova Act reference architecture for natural-language-driven, selector-free UI test automation at scale.</p>
+</div>
+<div class="section-header">☕ JAVA & SPRING BOOT</div>
+<div class="news-card">
+<p>• <b><a href="https://spring.io/blog/2026/03/31/this-week-in-spring-march-31st-2026">This Week in Spring - March 31st, 2026</a></b><br>
+<i>What's new:</i> Multiple Spring releases dropped simultaneously: Spring AI 2.0.0 M4 / 1.1.4 / 1.0.5, Spring Boot 4.0.5 and 4.1.0 M4, Spring Modulith 2.1 M4, and Spring Cloud Config 5.0.2 (which patches CVE-2026-22739). Spring AI 2.0.0 M4 ships alongside Embabel 0.3.4, with a new video covering both releases.<br>
+<i>Why it matters:</i> The Spring Cloud Config CVE fix makes the 5.0.2/4.3.2/4.2.6 patches mandatory for any team with externalized config in production.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://martinfowler.com/articles/reduce-friction-ai/encoding-team-standards.html">Encoding Team Standards</a></b><br>
+<i>What's new:</i> Fowler's team argues that the real gap in AI-assisted development isn't model capability or project context — it's that two engineers on the same team using the same AI tool produce materially different outputs because tacit team knowledge (error handling conventions, abstraction boundaries, naming rules) isn't encoded anywhere the AI can consume it. The piece advocates for externalizing implicit standards into explicit AI-consumable instructions, treating team conventions as first-class artifacts alongside code.<br>
+<i>Why it matters:</i> For engineering leads adopting AI coding tools at the team level, this is the missing layer between individual prompt engineering and consistent, reviewable AI-generated code across a codebase.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://feeds.feedblitz.com/~/952480355/0/baeldung~Configure-Spring-Boot-to-Redirect-to-a-Single-Page-Application">Configure Spring Boot to Redirect 404 to a Single Page Application</a></b><br>
+<i>What's new:</i> Covers the correct Spring Boot configuration to forward all unmatched routes to the SPA's index.html, avoiding the common pitfall where Spring MVC's default 404 handling intercepts client-side routes before the frontend router can process them. The pattern applies to both embedded servlet containers and externalized deployments.<br>
+<i>Why it matters:</i> This is a recurring misconfiguration when deploying React/Angular SPAs behind a Spring Boot backend — getting it wrong silently breaks deep-link navigation in production.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://feeds.feedblitz.com/~/952480358/0/baeldung~Fix-Sonars-Make-Transient-or-Serializable-Warning-in-Java">Fix Sonar's "Make Transient or Serializable" Warning in Java</a></b><br>
+<i>What's new:</i> Explains the root cause of SonarQube's serialization warning — non-serializable fields inside Serializable classes — and the two resolution paths: marking fields <i>transient</i> to exclude them from serialization, or implementing Serializable on the field's type. Covers when each choice is semantically correct vs. a lazy suppression.<br>
+<i>Why it matters:</i> Mishandling this in JPA entities or session-scoped beans can cause silent data loss or ClassCastException in distributed caching and session replication scenarios.</p>
+</div>
+<div class="section-header">🗄️ DATABASE CORNER</div>
+<div class="news-card">
+<p>• <b><a href="https://planetscale.com/blog/graceful-degradation-in-postgres">Graceful degradation in Postgres</a></b><br>
+<i>What's new:</i> PlanetScale's Traffic Control introduces resource budgets at the database level — per-traffic-slice limits that let high-priority queries (authentication, content fetch) continue executing during load spikes while low-priority workloads (impression counts, trending topic aggregations) are shed. This is enforced at the DB layer rather than the application layer, meaning it works even when upstream services can't shed load fast enough.<br>
+<i>Practical takeaway:</i> Model your query traffic by priority class now, before a spike forces you to — retrofitting query prioritization after an outage is much harder than designing it in.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://postgr.es/p/7wu">Deepak Mahto: Why Ora2Pg Should Be Your First Stop for PostgreSQL Conversion</a></b><br>
+<i>What's new:</i> A practitioner breakdown of Ora2Pg's DDL conversion capabilities for Oracle-to-PostgreSQL migrations, focusing specifically on the configuration model (ora2pg.conf) that controls constraint translation, type mapping, and schema transformation — distinct from PL/SQL or data export concerns. The author argues that the tool's granular control over transformation knobs is unmatched by commercial or cloud-native alternatives for complex enterprise schemas.<br>
+<i>Practical takeaway:</i> Scope your Ora2Pg engagement to DDL first as a standalone phase — mixing DDL conversion with data migration or PL/SQL porting in the same pass is where Oracle migrations go sideways.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://enterprisedb.com/blog/agentic-confusion-why-i-keep-my-postgres-control-plane-deterministic">The Agentic Confusion: Why I Keep My Postgres Control Plane Deterministic</a></b><br>
+<i>What's new:</i> An EDB engineer documents why a fully agentic architecture for Postgres cluster scaling — where an LLM agent autonomously calls Hybrid Manager APIs based on metric reasoning — was rejected in favor of a policy-first, agent-assisted model. The core argument: LLM non-determinism is acceptable for analysis and recommendation, but infrastructure mutation (scaling, config changes) requires deterministic, auditable policy execution with the agent only surfacing decisions for human or rule-based confirmation.<br>
+<i>Practical takeaway:</i> Keep your LLM agent in the read/recommend path for database operations and enforce a deterministic policy engine as the only entity authorized to execute infrastructure mutations.</p>
+</div>
+<div class="news-card">
+<p>• <b><a href="https://postgr.es/p/7ww">pg_service.conf: the spell your team forgot to learn</a></b><br>
+<i>What's new:</i> pg_service.conf is a named connection profile system for PostgreSQL (INI format, lives at ~/.pg_service.conf or system-wide) that maps human-readable service names to full connection parameters — eliminating the host/port/dbname/user mental mapping that causes connection errors and credential sprawl across team members. Works with psql, libpq-based clients, and most Postgres drivers via the service= connection parameter.<br>
+<i>Practical takeaway:</i> Add a shared pg_service.conf to your team's repo or onboarding docs so connection strings are standardized across local dev, staging, and CI environments rather than scattered across individual IDE configs.</p>
+</div>
+    </main>
+
+    <footer>
+      <p>Generated by <a href="./index.html">Daily Briefs</a></p>
+    </footer>
+  </div>
+  <script>
+    (function() {
+      var btn = document.querySelector('.theme-toggle');
+      var body = document.body;
+      function setTheme(theme) {
+        if (theme === 'light') {
+          body.classList.add('light');
+          btn.textContent = '\u2600\uFE0F';
+        } else {
+          body.classList.remove('light');
+          btn.textContent = '\uD83C\uDF19';
+        }
+        localStorage.setItem('theme', theme);
+      }
+      setTheme(localStorage.getItem('theme') || 'dark');
+      btn.addEventListener('click', function() {
+        setTheme(body.classList.contains('light') ? 'dark' : 'light');
+      });
+    })();
+  </script>
+</body>
+</html>
